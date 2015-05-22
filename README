@@ -1,0 +1,51 @@
+libicuid
+========
+I C U ID
+
+Copyright (c) 2015 Kurt Cancemi, <kurt@x64architecture.com>
+
+I C U ID is a library that provides a C interface for
+the CPUID opcode written by Kurt Cancemi and is
+licensed under the ISC License.
+
+Building
+========
+
+*NIX:
+ Prerequisites:
+    * cmake
+    * make
+    * gcc
+
+    1. git clone https://github.com/x64architecture/libicuid
+    2. mkdir build
+    3. cd build
+    # For static library
+    4. cmake -DCMAKE_BUILD_TYPE=Release ..
+    # For shared library
+    4. cmake -DBUILD_SHARED_LIBS=ON -DCMAKE_BUILD_TYPE=Release ..
+    5. make
+    6. make install
+    Libs are located in build/src and called libicuid.a or libicuid.so
+    icuid_tool is located in build/tool
+
+Windows:
+ Prerequisites:
+    * cmake
+    * Visual Studio (Versions >= 2008 known to work)
+
+    1. git clone https://github.com/x64architecture/libicuid
+    2. mkdir build
+    3. cd build
+    # For static library
+    4. cmake -G"NMake Makefiles" -DCMAKE_BUILD_TYPE=Release ..
+    # For shared library
+    4. cmake -G"NMake Makefiles" -DBUILD_SHARED_LIBS=ON^
+        -DCMAKE_BUILD_TYPE=Release ..
+    5. nmake
+    Libs are located in build/src and called libicuid.lib or libicuid.dll
+    icuid_tool.exe is located in build/tool
+
+ Note: You can make Visual Studio Solution files by excluding
+       the -G"NMake Makefiles" from the command and not running
+       nmake

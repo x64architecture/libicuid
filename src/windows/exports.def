@@ -1,0 +1,12 @@
+LIBRARY libicuid
+
+EXPORTS
+cpuid @1
+cpuid_ext @2
+cpuid_is_supported @3
+cpu_feature_str @4
+cpuid_get_raw_data @5
+cpuid_serialize_raw_data @6
+cpuid_deserialize_raw_data @7
+icuid_identify @8
+icuid_errorstr @9
