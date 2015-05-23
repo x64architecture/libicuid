@@ -223,9 +223,10 @@ void set_common_features(cpuid_raw_data_t *raw, cpuid_data_t *data)
         { 8, CPU_FEATURE_CONSTANT_TSC },
     };
 
-    if (data->cpuid_max_basic >= 1)
+    if (data->cpuid_max_basic >= 1) {
         set_feature_bits(regidmap_edx1, NELEMS(regidmap_edx1), raw->cpuid[1][3], data);
         set_feature_bits(regidmap_ecx1, NELEMS(regidmap_ecx1), raw->cpuid[1][2], data);
+    }
     if (data->cpuid_max_basic >= 7)
         set_feature_bits(regidmap_ebx7, NELEMS(regidmap_ebx7), raw->cpuid[7][1], data);
     if (data->cpuid_max_ext >= 0x80000001) {
