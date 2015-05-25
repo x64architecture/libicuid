@@ -79,7 +79,15 @@ static struct OPTION icuid_options[] = {
       DINIT(.argnr,     &icuid_opts.dataargnr),
       DINIT(.flag,      NULL),
     },
-    { NULL },
+    {
+      DINIT(.name,      NULL),
+      DINIT(.argname,   NULL),
+      DINIT(.desc,      NULL),
+      DINIT(.type,      0),
+      DINIT(.arg,       NULL),
+      DINIT(.argnr,     0),
+      DINIT(.flag,      NULL),
+    },
 };
 
 static int usage(void)
