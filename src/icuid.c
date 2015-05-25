@@ -71,7 +71,7 @@ static int parse_line(char *line, const char *token, uint32_t regs[][4])
         return 0;
     /* Get value */
     for (count = 0; line[count] != '='; count++);
-    (void) strlcpy(valuebuf, line+count+1, 36);
+    (void) strlcpy(valuebuf, line+count+1, sizeof(valuebuf));
     if (sscanf(valuebuf, "%x%x%x%x", &eax, &ebx, &ecx, &edx) != 4)
         return 0;
     regs[level][0] = eax;
@@ -105,18 +105,22 @@ int cpuid_serialize_raw_data(cpuid_raw_data_t *raw, const char *file)
             continue;
 
         if (parse_line(line, "cpuid", raw->cpuid) == 0)
-            return ICUID_ERROR_PARSING;
+            goto parse_err;
         if (parse_line(line, "cpuid_ext", raw->cpuid_ext) == 0)
-            return ICUID_ERROR_PARSING;
+            goto parse_err;
         if (parse_line(line, "intel_dc", raw->intel_dc) == 0)
-            return ICUID_ERROR_PARSING;
+            goto parse_err;
         if (parse_line(line, "intel_et", raw->intel_et) == 0)
-            return ICUID_ERROR_PARSING;
+            goto parse_err;
     }
 
     fclose(fp);
 
     return ICUID_OK;
+
+parse_err:
+    fclose(fp);
+    return ICUID_ERROR_PARSING;
 }
 
 int cpuid_deserialize_raw_data(cpuid_raw_data_t *raw, const char *file)
@@ -137,8 +141,10 @@ int cpuid_deserialize_raw_data(cpuid_raw_data_t *raw, const char *file)
         return ICUID_ERROR_OPEN;
 
     ret = cpuid_get_raw_data(raw);
-    if (ret != ICUID_OK)
+    if (ret != ICUID_OK) {
+        fclose(fp);
         return ret;
+    }
 
     for (i = 0; i < MAX_CPUID_LEVEL; i++)
         fprintf(fp, "cpuid[%u]=%08x %08x %08x %08x\n", i,
