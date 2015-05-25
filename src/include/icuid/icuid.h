@@ -25,6 +25,21 @@
 extern "C" {
 #endif
 
+/** @mainpage libicuid
+ *
+ * libicuid is a library that provides a C interface for the CPUID opcode
+ * written by Kurt Cancemi and is licensed under the ISC License.
+ *
+ * Brief intro to some of the available functions
+ * <p>
+ * To check for the CPUID instruction, use \ref cpuid_is_supported <br>
+ * To run the CPUID instruction, use \ref cpuid <br>
+ * To get the raw CPUID info needed for CPU identification, use
+ *   \ref cpuid_get_raw_data <br>
+ * To decode that raw info use \ref icuid_identify <br>
+ * </p>
+ */
+
 /**
  * @brief Run the cpuid instruction
  * @param [in] eax - passed in to the EAX register when executing cpuid
