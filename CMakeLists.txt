@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 2.8.8)
 project(libicuid C)
 
+include(CTest)
 include(cmake/ConfigureChecks.cmake)
 
 option(BUILD_SHARED_LIBS
@@ -22,3 +23,4 @@ endif()
 
 add_subdirectory(src)
 add_subdirectory(tool)
+add_subdirectory(tests)

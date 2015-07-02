@@ -54,8 +54,8 @@ int cpuid_get_raw_data(cpuid_raw_data_t *raw)
 /* This probably needs some work but it still gets the job done */
 static int parse_line(char *line, const char *token, uint32_t regs[][4])
 {
-    char levelbuf[8];
-    char valuebuf[36];
+    char levelbuf[64];
+    char valuebuf[64];
     size_t count = strlen(token);
     uint32_t level;
     uint32_t eax, ebx, ecx, edx;
