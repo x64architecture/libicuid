@@ -15,7 +15,7 @@ Building
  Prerequisites:
     * cmake
     * make
-    * gcc
+    * gcc/clang
 
     1. git clone https://github.com/x64architecture/libicuid
     2. mkdir build
