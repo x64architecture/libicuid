@@ -23,7 +23,7 @@ set_target_properties(icuid PROPERTIES PREFIX "lib")
 install(TARGETS icuid
         LIBRARY DESTINATION lib
         ARCHIVE DESTINATION lib)
-install(DIRECTORY include/icuid DESTINATION /usr/include)
+install(DIRECTORY include/icuid DESTINATION include)
 
 add_subdirectory(cc)
 add_subdirectory(compat)
