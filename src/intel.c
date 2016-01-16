@@ -614,11 +614,9 @@ static void get_intel_features(cpuid_raw_data_t *raw, cpuid_data_t *data)
         { 17, CPU_FEATURE_PCID },
         { 18, CPU_FEATURE_DCA },
         { 20, CPU_FEATURE_SSE4_2 },
+        { 21, CPU_FEATURE_X2APIC },
         { 22, CPU_FEATURE_MOVBE },
         { 24, CPU_FEATURE_TSC_DEADLINE },
-        { 25, CPU_FEATURE_AES },
-        { 26, CPU_FEATURE_XSAVE },
-        { 27, CPU_FEATURE_OSXSAVE },
         { 30, CPU_FEATURE_RDRAND },
     };
     const cpuid_feature_map_t regidmap_ecx07[] = {
