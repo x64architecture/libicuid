@@ -2,7 +2,7 @@ libicuid
 ========
 I C U ID
 
-Copyright (c) 2015 Kurt Cancemi, <kurt@x64architecture.com>
+Copyright (c) 2015 - 2016 Kurt Cancemi, <kurt@x64architecture.com>
 
 I C U ID is a library that provides a C interface for
 the CPUID opcode written by Kurt Cancemi and is

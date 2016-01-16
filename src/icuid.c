@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, Kurt Cancemi (kurt@x64architecture.com)
+ * Copyright (c) 2015 - 2016, Kurt Cancemi (kurt@x64architecture.com)
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -245,12 +245,6 @@ int icuid_identify(cpuid_raw_data_t *raw, cpuid_data_t *data)
         data->ext_model |= data->model + (ext_model << 4);
     }
 
-    /* Get vendor specific info */
-    if (data->vendor == VENDOR_INTEL)
-        read_intel_data(raw, data);
-    else if (data->vendor == VENDOR_AMD)
-        read_amd_data(raw, data);
-
     /* Get brand string */
     if (data->cpuid_max_ext >= 0x80000004) {
         for (i = 0; i < 3; i++) {
@@ -277,6 +271,12 @@ int icuid_identify(cpuid_raw_data_t *raw, cpuid_data_t *data)
         data->physical_address_bits = raw->cpuid_ext[8][0] & 0xFF;
         data->virtual_address_bits = (raw->cpuid_ext[8][0] >> 8) & 0xFF;
     }
+
+    /* Get vendor specific info */
+    if (data->vendor == VENDOR_INTEL)
+        read_intel_data(raw, data);
+    else if (data->vendor == VENDOR_AMD)
+        read_amd_data(raw, data);
     
     return ICUID_OK;
 }

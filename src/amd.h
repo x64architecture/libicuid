@@ -14,8 +14,4 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-/* Model Codes */
-#define CPU_MODEL_BOBCAT        0x500F1
-#define CPU_MODEL_PILEDRIVER    0x600F2
-
 void read_amd_data(cpuid_raw_data_t *raw, cpuid_data_t *data);

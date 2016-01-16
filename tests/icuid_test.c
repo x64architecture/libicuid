@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, Kurt Cancemi (kurt@x64architecture.com)
+ * Copyright (c) 2015 - 2016, Kurt Cancemi (kurt@x64architecture.com)
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -160,8 +160,8 @@ int run_test(cpuid_data_t *data, const char *file)
             continue;
         }
         /* Check CPU codename */
-        if (sscanf(line, "codename=%s", tmp) == 1) {
-            if (strcmp(data->codename, tmp) != 0) {
+        if (sscanf(line, "codename=%[^\n]", tmp) == 1) {
+            if (memcmp(data->codename, tmp, strlen(data->codename)) != 0) {
                 _eprintf("ERROR: got %s instead of %s\n", data->codename, tmp);
                 errors++;
             }

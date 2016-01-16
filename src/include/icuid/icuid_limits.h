@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, Kurt Cancemi (kurt@x64architecture.com)
+ * Copyright (c) 2015 - 2016, Kurt Cancemi (kurt@x64architecture.com)
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -18,11 +18,11 @@
 #ifndef __LIBICUID_LIMITS_H__
 #define __LIBICUID_LIMITS_H__
 
-#define VENDOR_STR_MAX       13
+#define VENDOR_STR_MAX       16
 #define BRAND_STR_MAX        48
 #define CPU_FLAGS_MAX        128
-#define MAX_CPUID_LEVEL      8
-#define MAX_EXT_CPUID_LEVEL  9
+#define MAX_CPUID_LEVEL      32
+#define MAX_EXT_CPUID_LEVEL  32
 #define MAX_INTEL_DC_LEVEL   4
 #define MAX_INTEL_ET_LEVEL   4
 

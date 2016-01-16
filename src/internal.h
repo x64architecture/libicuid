@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, Kurt Cancemi (kurt@x64architecture.com)
+ * Copyright (c) 2015 - 2016, Kurt Cancemi (kurt@x64architecture.com)
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -17,4 +17,13 @@
 /* Get number of elements in an array (STACK ONLY!) */
 #define NELEMS(x) (sizeof(x) / sizeof(x[0]))
 
+typedef struct {
+    uint32_t family, model, stepping, ext_family, ext_model;
+    uint32_t cores, l2_cache, l3_cache, brand_code;
+    char uarch[32];
+} match_uarch_t;
+
 void set_common_features(cpuid_raw_data_t *raw, cpuid_data_t *data);
+int match_pattern(const char *haystack, const char *needle);
+void match_cpu_uarch(const match_uarch_t *matchtable, int count,
+                     cpuid_data_t *data, uint32_t brand_code);

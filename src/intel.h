@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, Kurt Cancemi (kurt@x64architecture.com)
+ * Copyright (c) 2015 - 2016, Kurt Cancemi (kurt@x64architecture.com)
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -19,23 +19,63 @@
 #define THREAD  0x1
 #define CORE    0x2
 
-/* Model Codes */
-#define CPU_MODEL_HASWELL       0x306C
-#define CPU_MODEL_HASWELL_E     0x306F
-#define CPU_MODEL_HASWELL_ULT   0x4065
-#define CPU_MODEL_IVYBRIDGE     0x306A
-#define CPU_MODEL_IVYBRIDGE_EP  0x306E
-#define CPU_MODEL_SANDYBRIDGE   0x206A
-#define CPU_MODEL_SANDYBRIDGE_E 0x206D
-#define CPU_MODEL_WESTMERE      0x2065
-#define CPU_MODEL_WESTMERE_EP   0x206C
-#define CPU_MODEL_WESTMERE_EX   0x206F
-#define CPU_MODEL_NEHALEM       0x106E
-#define CPU_MODEL_NEHALEM_EP    0x106A
-#define CPU_MODEL_NEHALEM_EX    0x206E
-#define CPU_MODEL_PENRYN        0x1067
-#define CPU_MODEL_PENRYN_E      0x106D
-#define CPU_MODEL_MEROM         0x006F
-
+typedef enum {
+    NA = -1,
+    NO_CODE,
+    PENTIUM = 10,
+    MOBILE_PENTIUM,
+    
+    XEON = 20,
+    XEON_IRWIN,
+    XEONMP,
+    XEON_POTOMAC,
+    XEON_I7,
+    XEON_GAINESTOWN,
+    XEON_WESTMERE,
+    
+    MOBILE_PENTIUM_M = 30,
+    CELERON,
+    MOBILE_CELERON,
+    NOT_CELERON,
+    
+    
+    CORE_SOLO = 40,
+    MOBILE_CORE_SOLO,
+    CORE_DUO,
+    MOBILE_CORE_DUO,
+    
+    WOLFDALE = 50,
+    MEROM,
+    PENRYN,
+    QUAD_CORE,
+    DUAL_CORE_HT,
+    QUAD_CORE_HT,
+    MORE_THAN_QUADCORE,
+    PENTIUM_D,
+    
+    ATOM = 60,
+    ATOM_SILVERTHORNE,
+    ATOM_DIAMONDVILLE,
+    ATOM_PINEVIEW,
+    ATOM_CEDARVIEW,
+    
+    CORE_I3 = 70,
+    CORE_I5,
+    CORE_I7,
+    CORE_IVYBRIDGE3,
+    CORE_IVYBRIDGE5,
+    CORE_IVYBRIDGE7,
+    CORE_HASWELL3,
+    CORE_HASWELL5,
+    CORE_HASWELL7,
+    CORE_DEVILSCANYON5,
+    CORE_DEVILSCANYON7,
+    CORE_BROADWELL3,
+    CORE_BROADWELL5,
+    CORE_BROADWELL7,
+    CORE_SKYLAKE3,
+    CORE_SKYLAKE5,
+    CORE_SKYLAKE7,
+} intel_uarch_t;
 
 void read_intel_data(cpuid_raw_data_t *raw, cpuid_data_t *data);

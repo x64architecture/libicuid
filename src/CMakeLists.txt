@@ -14,6 +14,7 @@ add_library(
     intel.c
     amd.c
     error.c
+    common.c
 
     $<TARGET_OBJECTS:cc>
     $<TARGET_OBJECTS:compat>
