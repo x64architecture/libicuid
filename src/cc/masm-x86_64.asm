@@ -2,16 +2,15 @@
 .code
 
 cpuid_is_supported proc
-    push rdi
     pushfq
-    pushfq
-    pop rdi
-    mov eax, edi
-    xor eax, 200000h
-    xor eax, edi
+    pop rax
+    mov rcx, rax
+    xor rax, 200000h
+    push rax
     popfq
-    pop rdi
-    test eax, eax
+    pushfq
+    pop rax
+    xor rax, rcx
     jnz cpuid_supported
     ret
 

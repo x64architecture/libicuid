@@ -21,35 +21,37 @@
 int cpuid_is_supported(void)
 {
 #if defined(__x86_64)
-    unsigned int ret;
+    int rv;
     __asm__ volatile(
-        "push %%rdi\n"
         "pushfq\n"
-        "pushfq\n"
-        "pop %%rdi\n"
-        "mov %%edi, %%eax\n"
-        "xor $0x200000, %%eax\n"
-        "xor %%edi, %%eax\n"
+        "pop %%rax\n"
+        "mov %%rax, %%rcx\n"
+        "xor $0x200000, %%rax\n"
+        "push %%rax\n"
         "popfq\n"
-        "pop %%rdi\n"
-        : "=m"(ret)
-        : : "rdi", "eax", "edi", "memory");
-    return (ret != 0);
+        "pushfq\n"
+        "pop %%rax\n"
+        "xor %%rcx, %%rax\n"
+        "mov %%eax, %0\n"
+        : "=m"(rv)
+        : : "rax", "rcx", "memory");
+    return (rv != 0);
 #elif defined(__i386__)
-    unsigned int ret;
+    int rv;
     __asm__ volatile(
-        "push %%edi\n"
-        "pushfl\n"
-        "pushfl\n"
-        "pop %%edi\n"
-        "mov %%edi, %%eax\n"
+        "pushfd\n"
+        "pop %%eax\n"
+        "mov %%eax, %%ecx\n"
         "xor $0x200000, %%eax\n"
-        "xor %%edi, %%eax\n"
-        "popfl\n"
-        "pop %%edi\n"
-        : "=m"(ret)
-        : : "eax", "edi", "memory");
-    return (ret != 0);
+        "push %%eax\n"
+        "popfd\n"
+        "pushfd\n"
+        "pop %%eax\n"
+        "xor %%ecx, %%eax\n"
+        "mov %%eax, %0"
+        : "=m"(rv)
+        : : "memory");
+    return (rv != 0);
 #endif
     return 0;
 }

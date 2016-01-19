@@ -24,21 +24,20 @@ extern void __run_cpuid(uint32_t *regs);
 
 int cpuid_is_supported(void)
 {
-    int retval;
+    int rv;
     __asm {
-        push edi
         pushfd
-        pushfd
-        pop edi
-        mov eax, edi
+        pop eax
+        mov ecx, eax
         xor eax, 0x200000
-        xor eax, edi
-        mov retval, eax
-        push edi
+        push eax
         popfd
-        pop edi
+        pushfd
+        pop eax
+        xor eax, ecx
+        mov retval, eax
     }
-    return (retval != 0);
+    return (rv != 0);
 }
 
 static void __run_cpuid(uint32_t *regs)
