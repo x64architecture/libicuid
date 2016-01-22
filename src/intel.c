@@ -107,7 +107,7 @@ static void get_intel_deterministic_cacheinfo(cpuid_raw_data_t *raw, cpuid_data_
  */
 static int read_intel_extended_topology(cpuid_raw_data_t *raw, cpuid_data_t *data)
 {
-    unsigned int i;
+    int i;
     uint32_t smt = 0, cores = 0, level_type;
     for (i = 0; i < 4; i++) {
         level_type = (raw->intel_et[i][2] >> 8) & 0xFF;
@@ -165,8 +165,7 @@ static intel_uarch_t brand_string_method(cpuid_data_t *data)
     intel_uarch_t uarch = NO_CODE;
     const char *bs = data->brand_str;
     char *p = NULL;
-    unsigned int need_table = 1;
-    unsigned int i;
+    int i, need_table = 1;
 
     const struct {
         intel_uarch_t uarch;
@@ -240,7 +239,7 @@ static intel_uarch_t brand_string_method(cpuid_data_t *data)
             uarch = MOBILE_PENTIUM;
     }
     if (need_table) {
-        for (i = 0; i < NELEMS(uarch_t); i++)
+        for (i = 0; i < (int)NELEMS(uarch_t); i++)
             if (match_pattern(bs, uarch_t[i].name)) {
                 uarch = uarch_t[i].uarch;
                 break;

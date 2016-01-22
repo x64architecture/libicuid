@@ -49,8 +49,7 @@ size_t icuid_strlcat(char *dest, const char *src, size_t size)
 
 int generate_test(cpuid_raw_data_t *raw, cpuid_data_t *data, const char *file)
 {
-    int ret = 0;
-    unsigned int i;
+    int i, ret = 0;
     FILE *fp;
 
     fp = fopen(file, "a+");
@@ -112,7 +111,8 @@ int run_test(cpuid_data_t *data, const char *file)
     FILE *fp;
     char line[BUF_SIZE], tmp[BUF_SIZE];
     char tmp_features[BUF_SIZE];
-    unsigned int i, tmpuint, errors = 0;
+    int i, errors = 0;
+    uint32_t tmpuint;
 
     fp = fopen(file, "rt");
     if (fp == NULL)

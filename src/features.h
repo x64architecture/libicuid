@@ -19,5 +19,5 @@ typedef struct {
     cpuid_feature_t feature;
 } cpuid_feature_map_t;
 
-void set_feature_bits(const cpuid_feature_map_t *feature, unsigned int num, uint32_t reg,
+void set_feature_bits(const cpuid_feature_map_t *feature, int num, uint32_t reg,
                       cpuid_data_t *data);

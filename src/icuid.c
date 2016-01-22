@@ -26,7 +26,7 @@
 
 int cpuid_get_raw_data(cpuid_raw_data_t *raw)
 {
-    unsigned int i;
+    int i;
 
     if (!cpuid_is_supported())
         return ICUID_NO_CPUID;
@@ -126,7 +126,7 @@ parse_err:
 int cpuid_deserialize_raw_data(cpuid_raw_data_t *raw, const char *file)
 {
     int ret = -1;
-    unsigned int i;
+    int i;
     FILE *fp;
 
     if (raw == NULL || file == NULL)
@@ -171,7 +171,7 @@ int cpuid_deserialize_raw_data(cpuid_raw_data_t *raw, const char *file)
 /* Must be called after the vendor string is obtained */
 static void GetVendor(cpuid_data_t *data)
 {
-    unsigned int i;
+    int i;
     const struct {
         char vendor_str[VENDOR_STR_MAX];
         cpu_vendor_t vendor;
@@ -202,7 +202,7 @@ static void GetVendor(cpuid_data_t *data)
 int icuid_identify(cpuid_raw_data_t *raw, cpuid_data_t *data)
 {
     int ret;
-    unsigned int i, j, k = 0;
+    int i, j, k = 0;
     uint8_t ext_family, ext_model;
     uint32_t eax, edx;
     char brandstr[BRAND_STR_MAX];

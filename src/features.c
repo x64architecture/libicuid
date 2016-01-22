@@ -22,10 +22,10 @@
 #include "internal.h"
 #include "features.h"
 
-void set_feature_bits(const cpuid_feature_map_t *feature, unsigned int num, uint32_t reg,
+void set_feature_bits(const cpuid_feature_map_t *feature, int num, uint32_t reg,
                       cpuid_data_t *data)
 {
-    unsigned int i;
+    int i;
     for (i = 0; i < num; i++) {
         if (reg & (1 << feature[i].bit))
             data->flags[feature[i].feature] |= 1;
@@ -35,7 +35,7 @@ void set_feature_bits(const cpuid_feature_map_t *feature, unsigned int num, uint
 /* Map feature to name */
 const char *cpu_feature_str(cpuid_feature_t feature)
 {
-    unsigned int i, n;
+    int i, n;
     const struct {
         cpuid_feature_t feature;
         const char *name;
@@ -155,7 +155,7 @@ const char *cpu_feature_str(cpuid_feature_t feature)
         fprintf(stderr, "Table needs to be updated. %s, %d\n", __FILE__, __LINE__);
         abort();
     }
-    for (i = 0; i < n; i++) {
+    for (i = 0; i < NUM_CPU_FEATURES; i++) {
         if (featurestr[i].feature == feature)
             return featurestr[i].name;
     }
