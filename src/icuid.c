@@ -52,7 +52,7 @@ int cpuid_get_raw_data(cpuid_raw_data_t *raw)
 }
 
 /* This probably needs some work but it still gets the job done */
-static int parse_line(char *line, const char *token, uint32_t regs[][4])
+static int parse_line(char *line, const char *token, uint32_t regs[][4], uint32_t limit)
 {
     char levelbuf[64];
     char valuebuf[64];
@@ -67,8 +67,9 @@ static int parse_line(char *line, const char *token, uint32_t regs[][4])
         return 2; /* Doesn't match (cpuid) */
     /* Get level */
     (void) strlcpy(levelbuf, line+count, count);
-    if (sscanf(levelbuf, "[%u]", &level) != 1)
+    if (sscanf(levelbuf, "[%u]", &level) != 1 || level >= limit)
         return 0;
+
     /* Get value */
     for (count = 0; line[count] != '='; count++);
     (void) strlcpy(valuebuf, line+count+1, sizeof(valuebuf));
@@ -104,13 +105,13 @@ int cpuid_serialize_raw_data(cpuid_raw_data_t *raw, const char *file)
         if (line[0] == '#')
             continue;
 
-        if (parse_line(line, "cpuid", raw->cpuid) == 0)
+        if (parse_line(line, "cpuid", raw->cpuid, MAX_CPUID_LEVEL) == 0)
             goto parse_err;
-        if (parse_line(line, "cpuid_ext", raw->cpuid_ext) == 0)
+        if (parse_line(line, "cpuid_ext", raw->cpuid_ext, MAX_EXT_CPUID_LEVEL) == 0)
             goto parse_err;
-        if (parse_line(line, "intel_dc", raw->intel_dc) == 0)
+        if (parse_line(line, "intel_dc", raw->intel_dc, MAX_INTEL_DC_LEVEL) == 0)
             goto parse_err;
-        if (parse_line(line, "intel_et", raw->intel_et) == 0)
+        if (parse_line(line, "intel_et", raw->intel_et, MAX_INTEL_ET_LEVEL) == 0)
             goto parse_err;
     }
 
