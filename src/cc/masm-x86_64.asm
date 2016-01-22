@@ -48,4 +48,19 @@ __run_cpuid proc
 
 __run_cpuid endp
 
+icuid_xgetbv proc
+    mov QWORD PTR [rsp+24], r8  ; o_edx
+    mov QWORD PTR [rsp+16], rdx ; o_eax
+    mov DWORD PTR [rsp+8],  ecx ; xcr
+    db 15, 1, 208 ; xgetbv
+    mov r10d, eax
+    mov r11d, edx
+    mov rax, QWORD PTR 16[rsp]
+    mov DWORD PTR [rax], r10d
+    mov rax, QWORD PTR 24[rsp]
+    mov DWORD PTR [rax], r11d
+    ret
+
+icuid_xgetbv endp
+
 END

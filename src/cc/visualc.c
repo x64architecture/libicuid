@@ -67,6 +67,16 @@ static void __run_cpuid(uint32_t *regs)
         pop ebx
     }
 }
+
+void icuid_xgetbv(uint32_t xcr, uint32_t *o_eax, uint32_t *o_edx)
+{
+    __asm {
+        mov ecx, xcr
+        _asm _emit 0x0f _asm _emit 0x01 _asm _emit 0xd0 /* xgetbv */
+        mov o_eax, eax
+        mov o_edx, edx
+    }
+}
 #endif /* !_WIN64 */
 
 void cpuid(uint32_t eax, uint32_t *regs)

@@ -21,6 +21,7 @@
 #define VENDOR_STR_MAX       16
 #define BRAND_STR_MAX        48
 #define CPU_FLAGS_MAX        128
+#define XFEATURE_FLAGS_MAX   32
 #define MAX_CPUID_LEVEL      32
 #define MAX_EXT_CPUID_LEVEL  32
 #define MAX_INTEL_DC_LEVEL   4

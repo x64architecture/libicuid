@@ -71,17 +71,17 @@ int cpuid_is_supported(void);
  * Usage:
  * @code
  * cpuid_data_t data;
- * unsigned int ret;
+ * int ret;
  * ...
  * ret = icuid_identify(NULL, &data)
- * if (ret != ICUID_OK) {
- *     // Error in determining cpu info
- * } else {
- *     if (data->flags[CPU_FEATURE_AVX2]) {
- *         // The CPU has AVX2
+ * if (ret == ICUID_OK) {
+ *     if (data->flags[CPU_FEATURE_AVX2] && data->xfeatures[XFEATURE_AVX]) {
+ *         // The CPU has AVX2 and AVX (YMM) registers are supported by the OS
  *     } else {
  *         // AVX2 unsupported
  *     }
+ * } else {
+ *     // Error getting cpu info
  * }
  * @endcode
  */
@@ -223,6 +223,24 @@ typedef enum {
     NUM_CPU_VENDORS,
 } cpu_vendor_t;
 
+/**
+ * @brief XSAVE Features, used to determine if a particular
+ *        feature is supported and enabled by the OS.
+ */
+typedef enum {
+    XFEATURE_FP = 0,    /*!< x87 FPU State */
+    XFEATURE_SSE,       /*!< SSE (XMM) State */
+    XFEATURE_AVX,       /*!< AVX (YMM) State */
+    XFEATURE_BNDREGS,   /*!< MPX: BND0-BND3 Regs State*/
+    XFEATURE_BNDCSR,    /*!< MPX: Bounds configuration and status component State */
+    XFEATURE_OPMASK,    /*!< AVX-512: Opmask Regs State */
+    XFEATURE_ZMM_Hi256, /*!< AVX-512: ZMM0-ZMM15 Regs State */
+    XFEATURE_Hi16_ZMM,  /*!< AVX-512: ZMM16-ZMM31 Regs State */
+    XFEATURE_IA32_XSS,  /*!< Extended Supervisor State Mask (R/W) MSR State */
+    XFEATURE_PKRU,      /*!< Protection Key Rights register for User pages State */
+    NUM_XFEATURES,
+} xfeature_t;
+
 typedef struct {
     /**
      * Basic CPUID Information
@@ -339,6 +357,9 @@ typedef struct {
     
     /** Virtual Address bits. */
     uint32_t virtual_address_bits;
+
+    /** XSAVE features */
+    uint32_t xfeatures[XFEATURE_FLAGS_MAX];
 } cpuid_data_t;
 
 /**

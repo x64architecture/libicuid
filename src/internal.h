@@ -24,6 +24,7 @@ typedef struct {
 } match_uarch_t;
 
 void set_common_features(cpuid_raw_data_t *raw, cpuid_data_t *data);
+void set_common_xfeatures(uint32_t eax, cpuid_data_t *data);
 int match_pattern(const char *haystack, const char *needle);
 void match_cpu_uarch(const match_uarch_t *matchtable, int count,
                      cpuid_data_t *data, uint32_t brand_code);

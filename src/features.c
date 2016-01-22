@@ -238,3 +238,27 @@ void set_common_features(cpuid_raw_data_t *raw, cpuid_data_t *data)
     if (data->cpuid_max_ext >= 0x80000007)
         set_feature_bits(regidmap_edx87, NELEMS(regidmap_edx87), raw->cpuid_ext[7][3], data);
 }
+
+void set_common_xfeatures(uint32_t eax, cpuid_data_t *data)
+{
+    int i;
+    const struct {
+        uint8_t bit;
+        xfeature_t feature;
+    } xfeatures_t[NUM_XFEATURES] = {
+        { 0, XFEATURE_FP },
+        { 1, XFEATURE_SSE },
+        { 2, XFEATURE_AVX },
+        { 3, XFEATURE_BNDREGS },
+        { 4, XFEATURE_BNDCSR },
+        { 5, XFEATURE_OPMASK },
+        { 6, XFEATURE_ZMM_Hi256 },
+        { 7, XFEATURE_Hi16_ZMM },
+        { 8, XFEATURE_IA32_XSS },
+        { 9, XFEATURE_PKRU },
+    };
+    for (i = 0; i < NUM_XFEATURES; i++) {
+        if (eax & (1 << xfeatures_t[i].bit))
+            data->xfeatures[xfeatures_t[i].feature] |= 1;
+    }
+}

@@ -141,6 +141,11 @@ static int print_summary(cpuid_raw_data_t *raw, cpuid_data_t *data)
     fprintf(out, " Address szs : %u bits physical, %u bits virtual\n",
             data->physical_address_bits, data->virtual_address_bits);
 
+    fprintf(out, " SSE State   : %s\n", (data->xfeatures[XFEATURE_SSE] == 1 ?
+                                                "Enabled" : "Disabled"));
+    fprintf(out, " AVX State   : %s\n", (data->xfeatures[XFEATURE_AVX] == 1 ?
+                                                "Enabled" : "Disabled"));
+
     fprintf(out, " Features    :");
     for (i = 0; i < NUM_CPU_FEATURES; i++) {
         if (data->flags[i])
