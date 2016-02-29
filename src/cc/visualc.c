@@ -35,7 +35,7 @@ int cpuid_is_supported(void)
         pushfd
         pop eax
         xor eax, ecx
-        mov retval, eax
+        mov rv, eax
     }
     return (rv != 0);
 }
