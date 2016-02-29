@@ -1,4 +1,8 @@
-1.1.0: Released: 22 Jan 2015
+1.1.1: Released: 28 Feb 2016
+============================
+  *) Fix Windows build
+
+1.1.0: Released: 22 Jan 2016
 ============================
   *) Improve CPU codename detection
   *) Support Visual Studio 2015
