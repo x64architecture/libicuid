@@ -4,15 +4,9 @@ project(libicuid C)
 include(CTest)
 include(cmake/ConfigureChecks.cmake)
 
-option(BUILD_SHARED_LIBS
-  "Build as a shared library instead of static" OFF)
-
 if (CMAKE_COMPILER_IS_GNUCC OR ${CMAKE_C_COMPILER_ID} STREQUAL "Clang")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror -Wextra -g")
     set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS} -O2")
-    if (BUILD_SHARED_LIBS)
-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
-    endif()
 elseif(MSVC)
     set(CMAKE_C_FLAGS "/W3 /WX")
     set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS} /MT /Ox /O2 /Ob2")
