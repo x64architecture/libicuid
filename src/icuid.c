@@ -19,7 +19,7 @@
 
 #include <icuid/icuid.h>
 
-#include "internal/stdcompat.h"
+#include <internal/stdcompat.h>
 #include "internal.h"
 #include "intel.h"
 #include "amd.h"
@@ -170,7 +170,7 @@ int cpuid_deserialize_raw_data(cpuid_raw_data_t *raw, const char *file)
 }
 
 /* Must be called after the vendor string is obtained */
-static void GetVendor(cpuid_data_t *data)
+static void get_vendor(cpuid_data_t *data)
 {
     int i;
     const struct {
@@ -195,8 +195,10 @@ static void GetVendor(cpuid_data_t *data)
         { "XenVMMXenVMM", VENDOR_HV_XEN },
     };
     for (i = 0; i < NUM_CPU_VENDORS; i++) {
-        if (strcmp(data->vendor_str, cpu_vendors[i].vendor_str) == 0)
+        if (strcmp(data->vendor_str, cpu_vendors[i].vendor_str) == 0) {
             data->vendor = cpu_vendors[i].vendor;
+            return;
+        }
     }
 }
 
@@ -230,8 +232,7 @@ int icuid_identify(cpuid_raw_data_t *raw, cpuid_data_t *data)
     data->vendor_str[12] = '\0';
 
     /* Get vendor */
-    data->vendor = VENDOR_UNKNOWN;
-    GetVendor(data);
+    get_vendor(data);
 
     if (data->cpuid_max_basic >= 1) {
         data->family = (raw->cpuid[1][0] >> 8) & 0xF;
@@ -249,10 +250,9 @@ int icuid_identify(cpuid_raw_data_t *raw, cpuid_data_t *data)
 
     /* Get brand string */
     if (data->cpuid_max_ext >= 0x80000004) {
-        for (i = 0; i < 3; i++) {
-            for (j = 0; j < 4; j++) {
-                memcpy(brandstr + k, &raw->cpuid_ext[2 + i][j], 4);
-                k += 4;
+        for (i = 2; i <= 4; i++) {
+            for (j = 0; j < 4; j++, k += 4) {
+                memcpy(brandstr + k, &raw->cpuid_ext[i][j], 4);
             }
         }
         /*
