@@ -16,13 +16,12 @@
 
 #include <ctype.h>
 #include <string.h>
-#include <stdint.h>
 
 #include <icuid/icuid.h>
 
 #include "internal.h"
 
-static inline size_t regex_match(char c, const char *needle)
+static size_t regex_match(char c, const char *needle)
 {
     size_t j;
 
@@ -64,7 +63,7 @@ int match_pattern(const char *haystack, const char *needle)
     return 0;
 }
 
-static inline int score(const match_uarch_t *entry, const cpuid_data_t *data, uint32_t brand_code)
+static int score(const match_uarch_t *entry, const cpuid_data_t *data, uint32_t brand_code)
 {
     int rv = 0;
 
