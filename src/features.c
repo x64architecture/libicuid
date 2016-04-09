@@ -28,7 +28,7 @@ void set_feature_bits(const cpuid_feature_map_t *feature, int num, uint32_t reg,
     int i;
     for (i = 0; i < num; i++) {
         if (reg & (1 << feature[i].bit))
-            data->flags[feature[i].feature] |= 1;
+            data->flags[feature[i].feature] = 1;
     }
 }
 
@@ -239,7 +239,7 @@ void set_common_features(cpuid_raw_data_t *raw, cpuid_data_t *data)
         set_feature_bits(regidmap_edx87, NELEMS(regidmap_edx87), raw->cpuid_ext[7][3], data);
 }
 
-void set_common_xfeatures(uint32_t eax, cpuid_data_t *data)
+void set_common_xfeatures(const uint64_t xcr0, cpuid_data_t *data)
 {
     int i;
     const struct {
@@ -258,7 +258,7 @@ void set_common_xfeatures(uint32_t eax, cpuid_data_t *data)
         { 9, XFEATURE_PKRU },
     };
     for (i = 0; i < NUM_XFEATURES; i++) {
-        if (eax & (1 << xfeatures_t[i].bit))
-            data->xfeatures[xfeatures_t[i].feature] |= 1;
+        if (xcr0 & (uint64_t)(1 << xfeatures_t[i].bit))
+            data->xfeatures[xfeatures_t[i].feature] = 1;
     }
 }

@@ -66,6 +66,15 @@ void cpuid_ext(uint32_t *regs);
 int cpuid_is_supported(void);
 
 /**
+ * @brief Run the xgetbv instruction
+ * @param [in] xcr - passed in to the ECX register when executing xgetbv (can only be 0 atow)
+ * @returns 64-bits of the extended control register (XCR) specified by |xcr|
+ * @warning This function will cause a crash if an unsupported XCR is used. For example
+            icuid_xgetbv(0) can't be used if data->features[CPU_FEATURE_OSXSAVE] is not set
+ */
+uint64_t icuid_xgetbv(const uint32_t xcr);
+
+/**
  * @brief CPU feature bits
  *
  * Usage:

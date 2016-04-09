@@ -68,13 +68,14 @@ static void __run_cpuid(uint32_t *regs)
     }
 }
 
-void icuid_xgetbv(uint32_t xcr, uint32_t *o_eax, uint32_t *o_edx)
+uint64_t icuid_xgetbv(const uint32_t xcr)
 {
     __asm {
         mov ecx, xcr
         _asm _emit 0x0f _asm _emit 0x01 _asm _emit 0xd0 /* xgetbv */
-        mov o_eax, eax
-        mov o_edx, edx
+        shl edx, 32
+        or  edx, eax
+        mov eax, edx
     }
 }
 #endif /* !_WIN64 */

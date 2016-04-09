@@ -125,10 +125,14 @@ void cpuid_ext(uint32_t *regs)
     __run_cpuid(regs);
 }
 
-void icuid_xgetbv(uint32_t xcr, uint32_t *eax, uint32_t *edx)
+uint64_t icuid_xgetbv(const uint32_t xcr)
 {
+    uint32_t eax, edx;
+
     __asm__ volatile(
         ".byte 0x0f, 0x01, 0xd0" /* xgetbv */
-        : "=a"(*eax), "=d"(*edx) : "c"(xcr)
+        : "=a"(eax), "=d"(edx) : "c"(xcr)
     );
+
+    return (((uint64_t)edx) << 32) | eax;
 }

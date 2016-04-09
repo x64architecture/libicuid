@@ -207,7 +207,6 @@ int icuid_identify(cpuid_raw_data_t *raw, cpuid_data_t *data)
     int ret;
     int i, j, k = 0;
     uint8_t ext_family, ext_model;
-    uint32_t eax, edx;
     char brandstr[BRAND_STR_MAX];
     cpuid_raw_data_t iraw;
 
@@ -274,10 +273,9 @@ int icuid_identify(cpuid_raw_data_t *raw, cpuid_data_t *data)
         data->virtual_address_bits = (raw->cpuid_ext[8][0] >> 8) & 0xFF;
     }
 
-    extern void icuid_xgetbv(uint32_t xcr, uint32_t *eax, uint32_t *edx);
     if (data->flags[CPU_FEATURE_OSXSAVE]) {
-        icuid_xgetbv(0, &eax, &edx);
-        set_common_xfeatures(eax, data);
+        uint64_t xcr0 = icuid_xgetbv(0);
+        set_common_xfeatures(xcr0, data);
     }
 
     /* Get vendor specific info */

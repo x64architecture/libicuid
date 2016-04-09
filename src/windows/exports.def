@@ -10,3 +10,4 @@ cpuid_serialize_raw_data @6
 cpuid_deserialize_raw_data @7
 icuid_identify @8
 icuid_errorstr @9
+icuid_xgetbv @10
