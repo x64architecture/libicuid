@@ -1,16 +1,21 @@
+1.2.0: Released: 08 Apr 2016
+============================
+  *) Fixed build with older compilers
+  *) icuid_xgetbv() is now public 
+
 1.1.1: Released: 28 Feb 2016
 ============================
-  *) Fix Windows build
+  *) Fixed Windows build
 
 1.1.0: Released: 22 Jan 2016
 ============================
-  *) Improve CPU codename detection
-  *) Support Visual Studio 2015
-  *) Support XSAVE feature detection
-  *) Add bounds check in cpuid_serialize_raw_data()
-  *) Fix X2APIC, AES, XSAVE, and OSXSAVE feature detection on AMD processors
-  *) Fix make install
-  *) Fix cpuid_is_supported() (sometimes it would fail)
+  *) Improved CPU codename detection
+  *) Support for Visual Studio 2015
+  *) Support for XSAVE feature detection
+  *) Added bounds check in cpuid_serialize_raw_data()
+  *) Fixed X2APIC, AES, XSAVE, and OSXSAVE feature detection on AMD processors
+  *) Fixed make install
+  *) Fixed cpuid_is_supported() (sometimes it would fail)
   
 1.0.0: Released: 26 Jul 2015
 ============================

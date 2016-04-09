@@ -19,11 +19,11 @@
 
 #define LIBICUID_COPYRIGHT "2015 - 2016, Kurt Cancemi (kurt@x64architecture.com)"
 
-#define LIBICUID_VERSION "1.1.0"
+#define LIBICUID_VERSION "1.2.0"
 
 #define LIBICUID_VERSION_MAJOR 1
-#define LIBICUID_VERSION_MINOR 0
-#define LIBICUID_VERSION_PATCH 1
+#define LIBICUID_VERSION_MINOR 2
+#define LIBICUID_VERSION_PATCH 0
 
 #endif /* __LIBICUID_VER_H__ */
 
