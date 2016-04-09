@@ -164,10 +164,10 @@ const match_uarch_t uarch_amd_t[] = {
  */
 static void get_amd_procinfo(cpuid_data_t *data)
 {
+    amd_uarch_t uarch = NO_CODE;
+
     if (data->cpuid_max_basic < 1)
         return;
-
-    amd_uarch_t uarch = NO_CODE;
 
     match_cpu_uarch(uarch_amd_t, NELEMS(uarch_amd_t), data, uarch);
 }
