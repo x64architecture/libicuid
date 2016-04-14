@@ -16,9 +16,9 @@
 
 #include <icuid/icuid.h>
 
-#include "internal.h"
 #include "features.h"
-#include "amd.h"
+#include "internal.h"
+#include "match.h"
 
 /**
  * Get number of cores

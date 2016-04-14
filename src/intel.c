@@ -19,11 +19,12 @@
 #include <string.h>
 
 #include <icuid/icuid.h>
+#include <internal/stdcompat.h>
 
-#include "internal.h"
-#include "internal/stdcompat.h"
 #include "features.h"
+#include "internal.h"
 #include "intel.h"
+#include "match.h"
 
 typedef enum {
     Lnone, /*!< Indicates error */

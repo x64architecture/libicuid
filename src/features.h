@@ -21,3 +21,5 @@ typedef struct {
 
 void set_feature_bits(const cpuid_feature_map_t *feature, int num, uint32_t reg,
                       cpuid_data_t *data);
+void set_common_features(cpuid_raw_data_t *raw, cpuid_data_t *data);
+void set_common_xfeatures(const uint64_t xcr0, cpuid_data_t *data);

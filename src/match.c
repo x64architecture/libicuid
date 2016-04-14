@@ -19,7 +19,7 @@
 
 #include <icuid/icuid.h>
 
-#include "internal.h"
+#include "match.h"
 
 static size_t regex_match(char c, const char *needle)
 {
@@ -95,7 +95,7 @@ void match_cpu_uarch(const match_uarch_t *matchtable, int count,
     int bestscore = -1;
     int bestindex = 0;
     int i, t;
-    
+
     for (i = 0; i < count; i++) {
         t = score(&matchtable[i], data, brand_code);
         if (t > bestscore) {

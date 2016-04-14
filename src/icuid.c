@@ -20,7 +20,8 @@
 #include <icuid/icuid.h>
 
 #include <internal/stdcompat.h>
-#include "internal.h"
+
+#include "features.h"
 #include "intel.h"
 #include "amd.h"
 
