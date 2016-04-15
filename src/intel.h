@@ -78,4 +78,4 @@ typedef enum {
     CORE_SKYLAKE7,
 } intel_uarch_t;
 
-void read_intel_data(cpuid_raw_data_t *raw, cpuid_data_t *data);
+void read_intel_data(const cpuid_raw_data_t *raw, cpuid_data_t *data);

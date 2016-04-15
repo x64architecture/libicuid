@@ -21,7 +21,7 @@
 
 #include "match.h"
 
-static size_t regex_match(char c, const char *needle)
+static size_t regex_match(const char c, const char *needle)
 {
     size_t j;
 
@@ -63,7 +63,8 @@ int match_pattern(const char *haystack, const char *needle)
     return 0;
 }
 
-static int score(const match_uarch_t *entry, const cpuid_data_t *data, uint32_t brand_code)
+static int score(const cpuid_data_t *data, const match_uarch_t *entry,
+                 const uint32_t brand_code)
 {
     int rv = 0;
 
@@ -89,15 +90,15 @@ static int score(const match_uarch_t *entry, const cpuid_data_t *data, uint32_t 
     return rv;
 }
 
-void match_cpu_uarch(const match_uarch_t *matchtable, int count,
-                     cpuid_data_t *data, uint32_t brand_code)
+void match_cpu_uarch(cpuid_data_t *data, const match_uarch_t *matchtable,
+                     const int count, const uint32_t brand_code)
 {
     int bestscore = -1;
     int bestindex = 0;
     int i, t;
 
     for (i = 0; i < count; i++) {
-        t = score(&matchtable[i], data, brand_code);
+        t = score(data, &matchtable[i], brand_code);
         if (t > bestscore) {
             bestscore = t;
             bestindex = i;

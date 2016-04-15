@@ -23,7 +23,7 @@
 /**
  * Get number of cores
  */
-static void get_amd_number_cores(cpuid_raw_data_t *raw, cpuid_data_t *data)
+static void get_amd_number_cores(const cpuid_raw_data_t *raw, cpuid_data_t *data)
 {
     uint32_t logical_cpus = 0, cores = 0;
     
@@ -169,13 +169,13 @@ static void get_amd_procinfo(cpuid_data_t *data)
     if (data->cpuid_max_basic < 1)
         return;
 
-    match_cpu_uarch(uarch_amd_t, NELEMS(uarch_amd_t), data, uarch);
+    match_cpu_uarch(data, uarch_amd_t, NELEMS(uarch_amd_t), uarch);
 }
 
 /**
  * Get Cache Info
  */
-static void get_amd_cache_info(cpuid_raw_data_t *raw, cpuid_data_t *data)
+static void get_amd_cache_info(const cpuid_raw_data_t *raw, cpuid_data_t *data)
 {
     uint32_t l3_result;
     const uint32_t assoc_table[16] = {
@@ -206,7 +206,7 @@ static void get_amd_cache_info(cpuid_raw_data_t *raw, cpuid_data_t *data)
     }
 }
 
-static void get_amd_features(cpuid_raw_data_t *raw, cpuid_data_t *data)
+static void get_amd_features(const cpuid_raw_data_t *raw, cpuid_data_t *data)
 {
     const cpuid_feature_map_t regidmap_edx81[] = {
         { 22, CPU_FEATURE_MMXEXT },
@@ -243,15 +243,15 @@ static void get_amd_features(cpuid_raw_data_t *raw, cpuid_data_t *data)
     };
     if (data->cpuid_max_ext < 0x80000001)
         return;
-    set_feature_bits(regidmap_edx81, NELEMS(regidmap_edx81), raw->cpuid_ext[1][3], data);
-    set_feature_bits(regidmap_ecx81, NELEMS(regidmap_ecx81), raw->cpuid_ext[1][2], data);
+    set_feature_bits(data, regidmap_edx81, NELEMS(regidmap_edx81), raw->cpuid_ext[1][3]);
+    set_feature_bits(data, regidmap_ecx81, NELEMS(regidmap_ecx81), raw->cpuid_ext[1][2]);
 
     if (data->cpuid_max_ext < 0x80000007)
         return;
-    set_feature_bits(regidmap_edx87, NELEMS(regidmap_edx87), raw->cpuid_ext[7][3], data);
+    set_feature_bits(data, regidmap_edx87, NELEMS(regidmap_edx87), raw->cpuid_ext[7][3]);
 }
 
-void read_amd_data(cpuid_raw_data_t *raw, cpuid_data_t *data)
+void read_amd_data(const cpuid_raw_data_t *raw, cpuid_data_t *data)
 {
     get_amd_features(raw, data);
     get_amd_number_cores(raw, data);

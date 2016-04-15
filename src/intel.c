@@ -34,8 +34,9 @@ typedef enum {
     L3,    /*!< L3 Cache */
 } cache_type_t;
 
-static void set_cache_info(cache_type_t cache, uint32_t size, uint32_t associativity,
-                           uint32_t linesize, cpuid_data_t *data)
+static void set_cache_info(cpuid_data_t *data, const cache_type_t cache,
+                           const uint32_t size, const uint32_t associativity,
+                           const uint32_t linesize)
 {
     
     switch (cache) {
@@ -66,7 +67,7 @@ static void set_cache_info(cache_type_t cache, uint32_t size, uint32_t associati
 /**
  * Intel Deterministic Cache Method
  */
-static void get_intel_deterministic_cacheinfo(cpuid_raw_data_t *raw, cpuid_data_t *data)
+static void get_intel_deterministic_cacheinfo(const cpuid_raw_data_t *raw, cpuid_data_t *data)
 {
     uint32_t ecx;
     uint32_t associativity, partitions, linesize, sets, size, level, cache_type;
@@ -99,14 +100,14 @@ static void get_intel_deterministic_cacheinfo(cpuid_raw_data_t *raw, cpuid_data_
         linesize = (raw->intel_dc[ecx][1] & 0xFFF) + 1;
         sets = raw->intel_dc[ecx][2] + 1;
         size = (linesize * sets * associativity * partitions) >> 10; /* Size in kB */
-        set_cache_info(type, size, associativity, linesize, data);
+        set_cache_info(data, type, size, associativity, linesize);
     }
 }
 
 /**
  * Read Extended Topology Information
  */
-static int read_intel_extended_topology(cpuid_raw_data_t *raw, cpuid_data_t *data)
+static int read_intel_extended_topology(const cpuid_raw_data_t *raw, cpuid_data_t *data)
 {
     int i;
     uint32_t smt = 0, cores = 0, level_type;
@@ -135,7 +136,7 @@ static int read_intel_extended_topology(cpuid_raw_data_t *raw, cpuid_data_t *dat
 /**
  * Get the number of cores
  */
-static void get_intel_number_cores(cpuid_raw_data_t *raw, cpuid_data_t *data)
+static void get_intel_number_cores(const cpuid_raw_data_t *raw, cpuid_data_t *data)
 {
     uint32_t cores = 0, logical_cpus = 0;
     if (data->cpuid_max_basic >= 11) {
@@ -161,7 +162,7 @@ static void get_intel_number_cores(cpuid_raw_data_t *raw, cpuid_data_t *data)
     }
 }
 
-static intel_uarch_t brand_string_method(cpuid_data_t *data)
+static intel_uarch_t brand_string_method(const cpuid_data_t *data)
 {
     intel_uarch_t uarch = NO_CODE;
     const char *bs = data->brand_str;
@@ -582,14 +583,14 @@ static void get_intel_uarch(cpuid_data_t *data)
         return;
 
     brand_string_method(data);
-    match_cpu_uarch(uarch_intel_t, NELEMS(uarch_intel_t), data,
+    match_cpu_uarch(data, uarch_intel_t, NELEMS(uarch_intel_t),
                     brand_string_method(data));
 }
 
 /**
  * Load Intel specific features
  */
-static void get_intel_features(cpuid_raw_data_t *raw, cpuid_data_t *data)
+static void get_intel_features(const cpuid_raw_data_t *raw, cpuid_data_t *data)
 {
     const cpuid_feature_map_t regidmap_edx1[] = {
         { 18, CPU_FEATURE_PN },
@@ -633,13 +634,13 @@ static void get_intel_features(cpuid_raw_data_t *raw, cpuid_data_t *data)
     };
     if (data->cpuid_max_basic < 1)
         return;
-    set_feature_bits(regidmap_edx1, NELEMS(regidmap_edx1), raw->cpuid[1][3], data);
-    set_feature_bits(regidmap_ecx1, NELEMS(regidmap_ecx1), raw->cpuid[1][2], data);
+    set_feature_bits(data, regidmap_edx1, NELEMS(regidmap_edx1), raw->cpuid[1][3]);
+    set_feature_bits(data, regidmap_ecx1, NELEMS(regidmap_ecx1), raw->cpuid[1][2]);
     if (data->cpuid_max_basic >= 7)
-        set_feature_bits(regidmap_ecx07, NELEMS(regidmap_ecx07), raw->cpuid[7][1], data);
+        set_feature_bits(data, regidmap_ecx07, NELEMS(regidmap_ecx07), raw->cpuid[7][1]);
 }
 
-void read_intel_data(cpuid_raw_data_t *raw, cpuid_data_t *data)
+void read_intel_data(const cpuid_raw_data_t *raw, cpuid_data_t *data)
 {
     get_intel_features(raw, data);
     get_intel_number_cores(raw, data);

@@ -14,4 +14,4 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-void read_amd_data(cpuid_raw_data_t *raw, cpuid_data_t *data);
+void read_amd_data(const cpuid_raw_data_t *raw, cpuid_data_t *data);

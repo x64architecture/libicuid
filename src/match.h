@@ -21,5 +21,5 @@ typedef struct {
 } match_uarch_t;
 
 int match_pattern(const char *haystack, const char *needle);
-void match_cpu_uarch(const match_uarch_t *matchtable, int count,
-                     cpuid_data_t *data, uint32_t brand_code);
+void match_cpu_uarch(cpuid_data_t *data, const match_uarch_t *matchtable,
+                     const int count, const uint32_t brand_code);

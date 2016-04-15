@@ -22,8 +22,8 @@
 #include "internal.h"
 #include "features.h"
 
-void set_feature_bits(const cpuid_feature_map_t *feature, int num, uint32_t reg,
-                      cpuid_data_t *data)
+void set_feature_bits(cpuid_data_t *data, const cpuid_feature_map_t *feature,
+                      const int num, const uint32_t reg)
 {
     int i;
     for (i = 0; i < num; i++) {
@@ -162,8 +162,8 @@ const char *cpu_feature_str(cpuid_feature_t feature)
     return "";
 }
 
-/* Set Common Features (shared between Intel & AMD) */
-void set_common_features(cpuid_raw_data_t *raw, cpuid_data_t *data)
+/* Set common features (shared between Intel & AMD) */
+void set_common_features(const cpuid_raw_data_t *raw, cpuid_data_t *data)
 {
     const cpuid_feature_map_t regidmap_edx1[] = {
         { 0, CPU_FEATURE_FPU },
@@ -226,20 +226,20 @@ void set_common_features(cpuid_raw_data_t *raw, cpuid_data_t *data)
     };
 
     if (data->cpuid_max_basic >= 1) {
-        set_feature_bits(regidmap_edx1, NELEMS(regidmap_edx1), raw->cpuid[1][3], data);
-        set_feature_bits(regidmap_ecx1, NELEMS(regidmap_ecx1), raw->cpuid[1][2], data);
+        set_feature_bits(data, regidmap_edx1, NELEMS(regidmap_edx1), raw->cpuid[1][3]);
+        set_feature_bits(data, regidmap_ecx1, NELEMS(regidmap_ecx1), raw->cpuid[1][2]);
     }
     if (data->cpuid_max_basic >= 7)
-        set_feature_bits(regidmap_ebx7, NELEMS(regidmap_ebx7), raw->cpuid[7][1], data);
+        set_feature_bits(data, regidmap_ebx7, NELEMS(regidmap_ebx7), raw->cpuid[7][1]);
     if (data->cpuid_max_ext >= 0x80000001) {
-        set_feature_bits(regidmap_edx81, NELEMS(regidmap_edx81), raw->cpuid_ext[1][3], data);
-        set_feature_bits(regidmap_ecx81, NELEMS(regidmap_ecx81), raw->cpuid_ext[1][2], data);
+        set_feature_bits(data, regidmap_edx81, NELEMS(regidmap_edx81), raw->cpuid_ext[1][3]);
+        set_feature_bits(data, regidmap_ecx81, NELEMS(regidmap_ecx81), raw->cpuid_ext[1][2]);
     }
     if (data->cpuid_max_ext >= 0x80000007)
-        set_feature_bits(regidmap_edx87, NELEMS(regidmap_edx87), raw->cpuid_ext[7][3], data);
+        set_feature_bits(data, regidmap_edx87, NELEMS(regidmap_edx87), raw->cpuid_ext[7][3]);
 }
 
-void set_common_xfeatures(const uint64_t xcr0, cpuid_data_t *data)
+void set_common_xfeatures(cpuid_data_t *data, const uint64_t xcr0)
 {
     int i;
     const struct {

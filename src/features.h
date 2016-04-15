@@ -19,7 +19,7 @@ typedef struct {
     cpuid_feature_t feature;
 } cpuid_feature_map_t;
 
-void set_feature_bits(const cpuid_feature_map_t *feature, int num, uint32_t reg,
-                      cpuid_data_t *data);
-void set_common_features(cpuid_raw_data_t *raw, cpuid_data_t *data);
-void set_common_xfeatures(const uint64_t xcr0, cpuid_data_t *data);
+void set_feature_bits(cpuid_data_t *data, const cpuid_feature_map_t *feature,
+                      const int num, const uint32_t reg);
+void set_common_features(const cpuid_raw_data_t *raw, cpuid_data_t *data);
+void set_common_xfeatures(cpuid_data_t *data, const uint64_t xcr0);
