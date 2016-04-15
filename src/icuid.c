@@ -14,7 +14,10 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+#include <errno.h>
+#include <limits.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include <icuid/icuid.h>
@@ -52,34 +55,67 @@ int cpuid_get_raw_data(cpuid_raw_data_t *raw)
     return ICUID_OK;
 }
 
-/* This probably needs some work but it still gets the job done */
-static int parse_line(char *line, const char *token, uint32_t regs[][4], uint32_t limit)
+static int parse_line(char *line, const char *token, uint32_t regs[][4],
+                      const uint32_t limit)
 {
-    char levelbuf[64];
-    char valuebuf[64];
-    size_t count = strlen(token);
-    uint32_t level;
-    uint32_t eax, ebx, ecx, edx;
+    int i;
+    char buf[64];
+    char *p, *pp, *ex;
+    size_t tokenlen = strlen(token);
+    unsigned long level, reg;
 
     /* Check if our token matches the line */
-    if (strncmp(line, token, count) != 0)
-        return 2; /* Doesn't match */
-    if (line[count] == '_')
-        return 2; /* Doesn't match (cpuid) */
-    /* Get level */
-    (void) strlcpy(levelbuf, line+count, count);
-    if (sscanf(levelbuf, "[%u]", &level) != 1 || level >= limit)
+    if (line[tokenlen] != '[')
+        return 2;
+    if (strncmp(line, token, tokenlen) != 0)
+        return 2;
+
+    /* Since strtok modifies the original buffer we need to make a copy */
+    (void) strlcpy(buf, line + tokenlen + 1, sizeof(buf));
+
+    /* Separate the text between the brackets into separate strings */
+    p = strtok(buf, "[ ]");
+    if (p == NULL)
         return 0;
 
-    /* Get value */
-    for (count = 0; line[count] != '='; count++);
-    (void) strlcpy(valuebuf, line+count+1, sizeof(valuebuf));
-    if (sscanf(valuebuf, "%x%x%x%x", &eax, &ebx, &ecx, &edx) != 4)
+    errno = 0;
+    level = strtoul(p, &ex, 10);
+    if (ex == p) {
         return 0;
-    regs[level][0] = eax;
-    regs[level][1] = ebx;
-    regs[level][2] = ecx;
-    regs[level][3] = edx;
+    } else if (level == ULONG_MAX && errno == ERANGE) {
+        return 0;
+    } else if (level > limit) {
+        return 0;
+    } else if ((level == 0 && errno == EINVAL)) {
+        return 0;
+    }
+
+    /* Get the text after the equals sign */
+    p = strstr(line, "=") + 1;
+    if (p == NULL)
+        return 0;
+
+    /* Separate the text with spaces into separate strings */
+    pp = strtok(p, " ");
+    if (pp == NULL)
+        return 0;
+
+    for (i = 0; i < 4 && pp != NULL; i++) {
+        errno = 0;
+        reg = strtoul(pp, &ex, 16);
+        if (ex == pp) {
+            return 0;
+        } else if (reg == ULONG_MAX && errno == ERANGE) {
+            return 0;
+        } else if (reg > (0xFFFFFFFF - 1) /* 2^32-1 */) {
+            return 0;
+        } else if ((reg == 0 && errno == EINVAL)) {
+            return 0;
+        }
+        regs[level][i] = reg;
+        pp = strtok(NULL, " "); /* Get next string */
+    }
+
     return 1;
 }
 
@@ -100,19 +136,19 @@ int cpuid_serialize_raw_data(cpuid_raw_data_t *raw, const char *file)
         return ICUID_ERROR_OPEN;
 
     memset(raw, 0, sizeof(cpuid_raw_data_t));
-    
+
     while (fgets(line, sizeof(line), fp)) {
 
         if (line[0] == '#')
             continue;
 
-        if (parse_line(line, "cpuid", raw->cpuid, MAX_CPUID_LEVEL) == 0)
+        if (!parse_line(line, "cpuid", raw->cpuid, MAX_CPUID_LEVEL))
             goto parse_err;
-        if (parse_line(line, "cpuid_ext", raw->cpuid_ext, MAX_EXT_CPUID_LEVEL) == 0)
+        if (!parse_line(line, "cpuid_ext", raw->cpuid_ext, MAX_EXT_CPUID_LEVEL))
             goto parse_err;
-        if (parse_line(line, "intel_dc", raw->intel_dc, MAX_INTEL_DC_LEVEL) == 0)
+        if (!parse_line(line, "intel_dc", raw->intel_dc, MAX_INTEL_DC_LEVEL))
             goto parse_err;
-        if (parse_line(line, "intel_et", raw->intel_et, MAX_INTEL_ET_LEVEL) == 0)
+        if (!parse_line(line, "intel_et", raw->intel_et, MAX_INTEL_ET_LEVEL))
             goto parse_err;
     }
 
