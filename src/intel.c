@@ -582,7 +582,6 @@ static void get_intel_uarch(cpuid_data_t *data)
     if (data->cpuid_max_basic < 1)
         return;
 
-    brand_string_method(data);
     match_cpu_uarch(data, uarch_intel_t, NELEMS(uarch_intel_t),
                     brand_string_method(data));
 }
