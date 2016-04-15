@@ -204,6 +204,8 @@ typedef enum {
     CPU_FEATURE_ADX,           /*!< Intel ADX Extensions */
     CPU_FEATURE_SMAP,          /*!< Supervisor Mode Access Prevention */
     CPU_FEATURE_SHA,           /*!< Intel SHA Extensions */
+    CPU_FEATURE_CLZERO,        /*!< CLZERO Instruction Support (AMD Only) */
+    CPU_FEATURE_IRPERF,        /*!< Instructions Retired Count (AMD Only) */
     NUM_CPU_FEATURES,
 } cpuid_feature_t;
 

@@ -149,6 +149,8 @@ const char *cpu_feature_str(cpuid_feature_t feature)
         { CPU_FEATURE_ADX, "adx" },
         { CPU_FEATURE_SMAP, "smap" },
         { CPU_FEATURE_SHA, "sha" },
+        { CPU_FEATURE_CLZERO, "clzero" },
+        { CPU_FEATURE_IRPERF, "irperf" },
     };
     n = NELEMS(featurestr);
     if (n != NUM_CPU_FEATURES) {
