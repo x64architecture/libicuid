@@ -619,7 +619,7 @@ static void get_intel_features(const cpuid_raw_data_t *raw, cpuid_data_t *data)
         { 24, CPU_FEATURE_TSC_DEADLINE },
         { 30, CPU_FEATURE_RDRAND },
     };
-    const cpuid_feature_map_t regidmap_ecx07[] = {
+    const cpuid_feature_map_t regidmap_ebx07[] = {
         { 0, CPU_FEATURE_FSGSBASE },      
         { 4, CPU_FEATURE_HLE },
         { 7, CPU_FEATURE_SMEP },
@@ -636,7 +636,7 @@ static void get_intel_features(const cpuid_raw_data_t *raw, cpuid_data_t *data)
     set_feature_bits(data, regidmap_edx1, NELEMS(regidmap_edx1), raw->cpuid[1][3]);
     set_feature_bits(data, regidmap_ecx1, NELEMS(regidmap_ecx1), raw->cpuid[1][2]);
     if (data->cpuid_max_basic >= 7)
-        set_feature_bits(data, regidmap_ecx07, NELEMS(regidmap_ecx07), raw->cpuid[7][1]);
+        set_feature_bits(data, regidmap_ebx07, NELEMS(regidmap_ebx07), raw->cpuid[7][1]);
 }
 
 void read_intel_data(const cpuid_raw_data_t *raw, cpuid_data_t *data)
