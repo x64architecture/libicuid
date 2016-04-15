@@ -82,6 +82,7 @@ const char *cpu_feature_str(cpuid_feature_t feature)
         { CPU_FEATURE_TM2, "tm2" },
         { CPU_FEATURE_SSSE3, "ssse3" },
         { CPU_FEATURE_CID, "cid" },
+        { CPU_FEATURE_SDBG, "sdbg" },
         { CPU_FEATURE_CX16, "cx16" },
         { CPU_FEATURE_XTPR, "xtpr" },
         { CPU_FEATURE_PDCM, "pdcm" },

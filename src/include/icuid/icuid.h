@@ -137,6 +137,7 @@ typedef enum {
     CPU_FEATURE_TM2,           /*!< Thermal Monitor 2 */
     CPU_FEATURE_SSSE3,         /*!< SSSE3 Instructions Supported */
     CPU_FEATURE_CID,           /*!< Context ID Supported */
+    CPU_FEATURE_SDBG,          /*!< Silicon Debug Supported */
     CPU_FEATURE_CX16,          /*!< CMPXCHG16B Instruction Supported */
     CPU_FEATURE_XTPR,          /*!< Send Task Priority Messages Disable */
     CPU_FEATURE_PDCM,          /*!< Performance Capabilities MSR Supported */

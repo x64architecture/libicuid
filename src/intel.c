@@ -609,6 +609,7 @@ static void get_intel_features(const cpuid_raw_data_t *raw, cpuid_data_t *data)
         {  7, CPU_FEATURE_EST },
         {  8, CPU_FEATURE_TM2 },
         { 10, CPU_FEATURE_CID },
+        { 11, CPU_FEATURE_SDBG },
         { 14, CPU_FEATURE_XTPR },
         { 15, CPU_FEATURE_PDCM },
         { 17, CPU_FEATURE_PCID },
