@@ -107,7 +107,7 @@ static int parse_line(char *line, const char *token, uint32_t regs[][4],
             return 0;
         } else if (reg == ULONG_MAX && errno == ERANGE) {
             return 0;
-        } else if (reg > (0xFFFFFFFF - 1) /* 2^32-1 */) {
+        } else if (reg > 0xFFFFFFFF /* 2^32-1 */) {
             return 0;
         } else if ((reg == 0 && errno == EINVAL)) {
             return 0;
