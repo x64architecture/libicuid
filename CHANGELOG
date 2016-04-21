@@ -14,6 +14,8 @@
   *) Feature bugfixes: PCLMULDQ and SSE4_2 were only detected on Intel
       processors. AMD ABM was wrongly detected on Intel processors
   *) Internal code cleanup
+  *) cpuid_data_t API Change: The members flags and xfeatures are now uint8_t's
+      instead of uint32_t's to save wasted memory.
 
 1.2.0: Released: 08 Apr 2016
 ============================

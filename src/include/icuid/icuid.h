@@ -367,7 +367,7 @@ typedef struct {
     /** Contains the max extended cpuid level */
     uint32_t cpuid_max_ext;
     /** Contains the feature flags */
-    uint32_t flags[CPU_FLAGS_MAX];
+    uint8_t flags[CPU_FLAGS_MAX];
 
     /** Number of cores on the current CPU */
     uint32_t cores;
@@ -428,7 +428,7 @@ typedef struct {
     uint32_t virtual_address_bits;
 
     /** XSAVE features */
-    uint32_t xfeatures[XFEATURE_FLAGS_MAX];
+    uint8_t xfeatures[XFEATURE_FLAGS_MAX];
 } cpuid_data_t;
 
 /**
