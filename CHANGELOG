@@ -1,7 +1,24 @@
+1.3.0: Released: ?? Apr 2016
+============================
+  *) Rewrite internal parse_line() function without sscanf as its behavior
+      is undefined with numbers to large for the type specified
+  *) Added support for the detection of some of the new AMD Family 17h features
+      CLZERO IRPERF
+  *) Added support for the detection of AMD EXTAPIC, CR8_LEGACY, ABM, LWP, TCE,
+      NODEID_MSR, TBM, TOPOEXT, PERFCTR_CORE, PERFCTR_NB, BPEXT, PERFCTR_L2,
+      MONITORX features (See full descriptions in icuid.h)
+  *) Added support for the detection of the Intel Silicon Debug feature
+  *) Added support for the detection of Intel TSC_ADJUST, RTM, CQM, AVX512F,
+      AVX512DQ, PCOMMIT, CLFLUSHOPT, CLWB, AVX512PF, AVX512ER, AVX512CD,
+      AVX512BW and AVX512VL features (See full descriptions in icuid.h)
+  *) Feature bugfixes: PCLMULDQ and SSE4_2 were only detected on Intel
+      processors. AMD ABM was wrongly detected on Intel processors
+  *) Internal code cleanup
+
 1.2.0: Released: 08 Apr 2016
 ============================
   *) Fixed build with older compilers
-  *) icuid_xgetbv() is now public 
+  *) icuid_xgetbv() is now public
 
 1.1.1: Released: 28 Feb 2016
 ============================

@@ -95,7 +95,42 @@ uint64_t icuid_xgetbv(const uint32_t xcr);
  * @endcode
  */
 typedef enum {
-    CPU_FEATURE_FPU = 0,       /*!< Floating Point Unit On-Chip */
+    /* cpuid 0x00000001, ecx */
+    CPU_FEATURE_PNI = 0,       /*!< PNI (SSE3) Instructions Supported */
+    CPU_FEATURE_PCLMULDQ,      /*!< PCLMULDQ Instruction Supported */
+    CPU_FEATURE_DTS64,         /*!< 64-bit Debug Store Supported */
+    CPU_FEATURE_MONITOR,       /*!< MONITOR / MWAIT Supported */
+    CPU_FEATURE_DS_CPL,        /*!< CPL Qualified Debug Store */
+    CPU_FEATURE_VMX,           /*!< Virtualization Technology Supported */
+    CPU_FEATURE_SMX,           /*!< Safer Mode Exceptions */
+    CPU_FEATURE_EST,           /*!< Enhanced SpeedStep */
+    CPU_FEATURE_TM2,           /*!< Thermal Monitor 2 */
+    CPU_FEATURE_SSSE3,         /*!< SSSE3 Instructions Supported */
+    CPU_FEATURE_CID,           /*!< Context ID Supported */
+    CPU_FEATURE_SDBG,          /*!< Silicon Debug Supported */
+    CPU_FEATURE_FMA,           /*!< The FMA Instruction Set */
+    CPU_FEATURE_CX16,          /*!< CMPXCHG16B Instruction Supported */
+    CPU_FEATURE_XTPR,          /*!< Send Task Priority Messages Disable */
+    CPU_FEATURE_PDCM,          /*!< Performance Capabilities MSR Supported */
+    /* 16 Reserved */
+    CPU_FEATURE_PCID,          /*!< Process Context Identifiers Supported */
+    CPU_FEATURE_DCA,           /*!< Direct Cache Access Supported */
+    CPU_FEATURE_SSE4_1,        /*!< SSE 4.1 Instructions Supported */
+    CPU_FEATURE_SSE4_2,        /*!< SSE 4.2 Instructions Supported */
+    CPU_FEATURE_X2APIC,        /*!< x2APIC Support */
+    CPU_FEATURE_MOVBE,         /*!< MOVBE Instruction Supported */
+    CPU_FEATURE_POPCNT,        /*!< POPCNT Instruction Supported */
+    CPU_FEATURE_TSC_DEADLINE,  /*!< APIC Supports One-Shot Operation Using A TSC Deadline Value */
+    CPU_FEATURE_AES,           /*!< AES Instructions Supported */
+    CPU_FEATURE_XSAVE,         /*!< XSAVE/XRSTOR/XSETBV/XGETBV Instructions Supported */
+    CPU_FEATURE_OSXSAVE,       /*!< Indicates The OS Enabled Support For XSAVE */
+    CPU_FEATURE_AVX,           /*!< Advanced Vector Extensions Supported */
+    CPU_FEATURE_F16C,          /*!< 16-bit FP convert Instruction Support */
+    CPU_FEATURE_RDRAND,        /*!< RDRAND Instruction */
+    CPU_FEATURE_HYPERVISOR,    /*!< Running On a Hypervisor */
+
+    /* cpuid 0x00000001, edx */
+    CPU_FEATURE_FPU,           /*!< Floating Point Unit On-Chip */
     CPU_FEATURE_VME,           /*!< Virtual Mode Extension */
     CPU_FEATURE_DE,            /*!< Debugging Extension */
     CPU_FEATURE_PSE,           /*!< Page Size Extension */
@@ -105,6 +140,7 @@ typedef enum {
     CPU_FEATURE_MCE,           /*!< Machine-Check Exception */
     CPU_FEATURE_CX8,           /*!< CMPXCHG8 Instruction Supported */
     CPU_FEATURE_APIC,          /*!< On-chip APIC Support */
+    /* 10 Reserved */
     CPU_FEATURE_SEP,           /*!< Fast System Call (SYSENTER/SYSEXIT) Instructions Supported */
     CPU_FEATURE_MTRR,          /*!< Memory Type Range Registers */
     CPU_FEATURE_PGE,           /*!< Page Global Enable */
@@ -118,7 +154,6 @@ typedef enum {
     CPU_FEATURE_ACPI,          /*!< ACPI support (Power States) */
     CPU_FEATURE_MMX,           /*!< MMX Instruction Set Supported */
     CPU_FEATURE_FXSR,          /*!< FXSAVE/FXRSTOR Supported */
-    CPU_FEATURE_PDPE1GB,       /*!< Gibibyte Pages Supported */
     CPU_FEATURE_SSE,           /*!< Streaming SIMD Extensions (SSE) Supported */
     CPU_FEATURE_SSE2,          /*!< Streaming SIMD Extensions 2 (SSE2) Instructions Supported */
     CPU_FEATURE_SS,            /*!< Self-Snoop */
@@ -126,51 +161,89 @@ typedef enum {
     CPU_FEATURE_TM,            /*!< Thermal Monitor */
     CPU_FEATURE_IA64,          /*!< IA64 Supported (Itanium only) */
     CPU_FEATURE_PBE,           /*!< Pending-Break Enable */
-    CPU_FEATURE_PNI,           /*!< PNI (SSE3) Instructions Supported */
-    CPU_FEATURE_PCLMULDQ,      /*!< PCLMULDQ Instruction Supported */
-    CPU_FEATURE_DTS64,         /*!< 64-bit Debug Store Supported */
-    CPU_FEATURE_MONITOR,       /*!< MONITOR / MWAIT Supported */
-    CPU_FEATURE_DS_CPL,        /*!< CPL Qualified Debug Store */
-    CPU_FEATURE_VMX,           /*!< Virtualization Technology Supported */
-    CPU_FEATURE_SMX,           /*!< Safer Mode Exceptions */
-    CPU_FEATURE_EST,           /*!< Enhanced SpeedStep */
-    CPU_FEATURE_TM2,           /*!< Thermal Monitor 2 */
-    CPU_FEATURE_SSSE3,         /*!< SSSE3 Instructions Supported */
-    CPU_FEATURE_CID,           /*!< Context ID Supported */
-    CPU_FEATURE_SDBG,          /*!< Silicon Debug Supported */
-    CPU_FEATURE_CX16,          /*!< CMPXCHG16B Instruction Supported */
-    CPU_FEATURE_XTPR,          /*!< Send Task Priority Messages Disable */
-    CPU_FEATURE_PDCM,          /*!< Performance Capabilities MSR Supported */
-    CPU_FEATURE_PCID,          /*!< Process Context Identifiers Supported */
-    CPU_FEATURE_DCA,           /*!< Direct Cache Access Supported */
-    CPU_FEATURE_SSE4_1,        /*!< SSE 4.1 Instructions Supported */
-    CPU_FEATURE_SSE4_2,        /*!< SSE 4.2 Instructions Supported */
-    CPU_FEATURE_SYSCALL,       /*!< SYSCALL/SYSRET Instructions Supported */
-    CPU_FEATURE_NX,            /*!< No-Execute Bit Supported */
-    CPU_FEATURE_MOVBE,         /*!< MOVBE Instruction Supported */
-    CPU_FEATURE_POPCNT,        /*!< POPCNT Instruction Supported */
-    CPU_FEATURE_TSC_DEADLINE,  /*!< APIC Supports One-Shot Operation Using A TSC Deadline Value */
-    CPU_FEATURE_AES,           /*!< AES Instructions Supported */
-    CPU_FEATURE_XSAVE,         /*!< XSAVE/XRSTOR/XSETBV/XGETBV Instructions Supported */
-    CPU_FEATURE_OSXSAVE,       /*!< Indicates The OS Enabled Support For XSAVE */
-    CPU_FEATURE_AVX,           /*!< Advanced Vector Extensions Supported */
-    CPU_FEATURE_MMXEXT,        /*!< AMD MMX-Extended Instructions Supported */
-    CPU_FEATURE_3DNOW,         /*!< AMD 3DNow! Instructions Supported */
-    CPU_FEATURE_3DNOWEXT,      /*!< AMD 3DNow! Extended Instructions Supported */
-    CPU_FEATURE_FXSR_OPT,      /*!< FXSAVE and FXRSTOR Instructions (AMD Only) */
-    CPU_FEATURE_RDTSCP,        /*!< RDTSCP Instruction Supported */
-    CPU_FEATURE_LM,            /*!< Long Mode (x86_64/EM64T) Supported */
+
+    /* cpuid 0x00000007, ebx */
+    CPU_FEATURE_FSGSBASE,      /*!< Access To Base Of %fs And %gs */
+    CPU_FEATURE_TSC_ADJUST,    /*!< TSC Adjustment MSR 0x3b */
+    /* 2 Reserved */
+    CPU_FEATURE_BMI1,          /*!< BMI1 Instructions */
+    CPU_FEATURE_HLE,           /*!< Transactional Synchronization Extensions */
+    CPU_FEATURE_AVX2,          /*!< AVX2 Instructions */
+    /* 6 Reserved */
+    CPU_FEATURE_SMEP,          /*!< Supervisor-Mode Execution Prevention */
+    CPU_FEATURE_BMI2,          /*!< BMI2 Instructions */
+    CPU_FEATURE_ERMS,          /*!< Enhanced REP MOVSB/STOSB Instructions */
+    CPU_FEATURE_INVPCID,       /*!< INVPCID Instruction */
+    CPU_FEATURE_RTM,           /*!< Restricted Transactional Memory */
+    CPU_FEATURE_CQM,           /*!< Cache QoS Monitoring */
+    /* 13 Reserved */
+    CPU_FEATURE_MPX,           /*!< Intel MPX Extensions */
+    /* 15 Reserved */
+    CPU_FEATURE_AVX512F,       /*!< AVX-512 Foundation */
+    CPU_FEATURE_AVX512DQ,      /*!< AVX-512 Doubleword and Quadword */
+    CPU_FEATURE_RDSEED,        /*!< Intel RDSEED Instruction */
+    CPU_FEATURE_ADX,           /*!< Intel ADX Extensions */
+    CPU_FEATURE_SMAP,          /*!< Supervisor Mode Access Prevention */
+    /* 21 Reserved */
+    CPU_FEATURE_PCOMMIT,       /*!< PCOMMIT Instruction */
+    CPU_FEATURE_CLFLUSHOPT,    /*!< CLFLUSHOPT Instruction */
+    CPU_FEATURE_CLWB,          /*!< CLWB Instruction */
+    CPU_FEATURE_AVX512PF,      /*!< AVX-512 Prefetch Instructions */
+    CPU_FEATURE_AVX512ER,      /*!< AVX-512 Exponential and Reciprocal Instructions */
+    CPU_FEATURE_AVX512CD,      /*!< AVX-512 Conflict Detection Instructions */
+    CPU_FEATURE_SHA,           /*!< Intel SHA Extensions */
+    CPU_FEATURE_AVX512BW,      /*!< AVX-512 Byte and Word Instructions */
+    CPU_FEATURE_AVX512VL,      /*!< AVX-512 Vector Length Instructions */
+
+    /* cpuid 0x80000001, ecx */
     CPU_FEATURE_LAHF_LM,       /*!< LAHF/SAHF Supported In 64-bit Mode */
-    CPU_FEATURE_CMP_LEGACY,    /*!< Core Multi-Processing Legacy Mode */
-    CPU_FEATURE_SVM,           /*!< AMD Secure Virtual Machine */
-    CPU_FEATURE_ABM,           /*!< LZCNT Instruction Support */
-    CPU_FEATURE_MISALIGNSSE,   /*!< Misaligned SSE Supported */
-    CPU_FEATURE_SSE4A,         /*!< SSE 4A */
+    CPU_FEATURE_CMP_LEGACY,    /*!< Core Multi-Processing Legacy Mode (AMD Only) */
+    CPU_FEATURE_SVM,           /*!< AMD Secure Virtual Machine (AMD Only) */
+    CPU_FEATURE_EXTAPIC,       /*!< Extended APIC space (AMD Only) */
+    CPU_FEATURE_CR8_LEGACY,    /*!< CR8 in 32-bit mode (AMD Only) */
+    CPU_FEATURE_ABM,           /*!< Advanced Bit Manipulation (AMD Only) */
+    CPU_FEATURE_SSE4A,         /*!< SSE 4A (AMD Only) */
+    CPU_FEATURE_MISALIGNSSE,   /*!< Misaligned SSE Supported (AMD Only) */
     CPU_FEATURE_3DNOWPREFETCH, /*!< PREFETCH/PREFETCHW Support (AMD Only) */
     CPU_FEATURE_OSVW,          /*!< OS Visible Workaround (AMD Only) */
     CPU_FEATURE_IBS,           /*!< Instruction-Based Sampling (AMD Only) */
+    CPU_FEATURE_XOP,           /*!< The XOP Instruction Set (AMD Only) */
     CPU_FEATURE_SKINIT,        /*!< SKINIT/STGI Supported (AMD Only) */
     CPU_FEATURE_WDT,           /*!< Watchdog Timer Support (AMD Only) */
+    /* 14 Reserved */
+    CPU_FEATURE_LWP,           /*!< Light Weight Profiling (AMD Only) */
+    CPU_FEATURE_FMA4,          /*!< The FMA4 Instruction Set (AMD Only) */
+    CPU_FEATURE_TCE,           /*!< Translation Cache Extension (AMD Only) */
+    /* 18 Reserved */
+    CPU_FEATURE_NODEID_MSR,    /*!< NodeId MSR (AMD Only) */
+    /* 20 Reserved */
+    CPU_FEATURE_TBM,           /*!< Trailing bit manipulation Instruction support (AMD Only) */
+    CPU_FEATURE_TOPOEXT,       /*!< Topology extension CPUID leafs (AMD Only) */
+    CPU_FEATURE_PERFCTR_CORE,  /*!< Core Performance Counter Extensions (AMD Only) */
+    CPU_FEATURE_PERFCTR_NB,    /*!< NB Core Performance Counter Extensions (AMD Only) */
+    /* 25 Reserved */
+    CPU_FEATURE_BPEXT,         /*!< Data Breakpoint Extension (AMD Only) */
+    /* 27 Reserved */
+    CPU_FEATURE_PERFCTR_L2,    /*!< L2 Performance Counter Extensions (AMD Only) */
+    CPU_FEATURE_MONITORX,      /*!< MONITORX / MWAITX Supported (AMD Only) */
+
+    /* cpuid 0x80000001, edx */
+    /* 0-10 Reserved */
+    CPU_FEATURE_SYSCALL,       /*!< SYSCALL/SYSRET Instructions Supported */
+    /* 12-19 Reserved */
+    CPU_FEATURE_NX,            /*!< No-Execute Bit Supported */
+    /* 21 Reserved */
+    CPU_FEATURE_MMXEXT,        /*!< AMD MMX-Extended Instructions Supported */
+    /* 23-24 Reserved */
+    CPU_FEATURE_FXSR_OPT,      /*!< FXSAVE and FXRSTOR Instructions (AMD Only) */
+    CPU_FEATURE_PDPE1GB,       /*!< Gibibyte Pages Supported */
+    CPU_FEATURE_RDTSCP,        /*!< RDTSCP Instruction Supported */
+    /* 28 Reserved */
+    CPU_FEATURE_LM,            /*!< Long Mode (x86_64/EM64T) Supported */
+    CPU_FEATURE_3DNOWEXT,      /*!< AMD 3DNow! Extended Instructions Supported */
+    CPU_FEATURE_3DNOW,         /*!< AMD 3DNow! Instructions Supported */
+
+    /* cpuid 0x80000007, edx */
     CPU_FEATURE_TS,            /*!< Temperature Sensor (AMD Only) */
     CPU_FEATURE_FID,           /*!< Frequency ID Control (AMD Only) */
     CPU_FEATURE_VID,           /*!< Voltage ID Control (AMD Only) */
@@ -179,34 +252,18 @@ typedef enum {
     CPU_FEATURE_STC,           /*!< Software Thermal Control (AMD Only) */
     CPU_FEATURE_100MHZSTEPS,   /*!< 100 MHz Multiplier Control (AMD Only) */
     CPU_FEATURE_HWPSTATE,      /*!< Hardware P-state Control (AMD Only) */
+    CPU_FEATURE_CONSTANT_TSC,  /*!< TSC ticks At A Constant Rate */
     CPU_FEATURE_CPB,           /*!< Core Performance Boost (AMD Only) */
     CPU_FEATURE_APERFMPERF,    /*!< MPERF/APERF MSRs support (AMD Only) */
-    CPU_FEATURE_PA,            /*!< Processor Accumulator (AMD Only) */
     CPU_FEATURE_PFI,           /*!< Processor Feedback Interface Support (AMD Only) */
-    CPU_FEATURE_CONSTANT_TSC,  /*!< TSC ticks At A Constant Rate */
-    CPU_FEATURE_XOP,           /*!< The XOP Instruction Set (same as CPU_FEATURE_SSE5) */
-    CPU_FEATURE_FMA,           /*!< The FMA3 Instruction Set */
-    CPU_FEATURE_FMA4,          /*!< The FMA4 Instruction Set */
-    CPU_FEATURE_TBM,           /*!< Trailing bit manipulation Instruction support */
-    CPU_FEATURE_F16C,          /*!< 16-bit FP convert Instruction Support */
-    CPU_FEATURE_RDRAND,        /*!< RDRAND Instruction */
-    CPU_FEATURE_HYPERVISOR,    /*!< Running On a Hypervisor */
-    CPU_FEATURE_X2APIC,        /*!< x2APIC Support */
-    CPU_FEATURE_FSGSBASE,      /*!< Access To Base Of %fs And %gs */
-    CPU_FEATURE_BMI1,          /*!< BMI1 Instructions */
-    CPU_FEATURE_HLE,           /*!< Transactional Synchronization Extensions */
-    CPU_FEATURE_AVX2,          /*!< AVX2 Instructions */
-    CPU_FEATURE_SMEP,          /*!< Supervisor-Mode Execution Prevention */
-    CPU_FEATURE_BMI2,          /*!< BMI2 Instructions */
-    CPU_FEATURE_ERMS,          /*!< Enhanced REP MOVSB/STOSB Instructions */
-    CPU_FEATURE_INVPCID,       /*!< INVPCID Instruction */
-    CPU_FEATURE_MPX,           /*!< Intel MPX Extensions */
-    CPU_FEATURE_RDSEED,        /*!< Intel RDSEED Instruction */
-    CPU_FEATURE_ADX,           /*!< Intel ADX Extensions */
-    CPU_FEATURE_SMAP,          /*!< Supervisor Mode Access Prevention */
-    CPU_FEATURE_SHA,           /*!< Intel SHA Extensions */
+    CPU_FEATURE_PA,            /*!< Processor Accumulator (AMD Only) */
+    /* 13-31 Reserved */
+
+    /* cpuid 0x80000008, ebx */
     CPU_FEATURE_CLZERO,        /*!< CLZERO Instruction Support (AMD Only) */
     CPU_FEATURE_IRPERF,        /*!< Instructions Retired Count (AMD Only) */
+    /* 2-31 Reserved */
+
     NUM_CPU_FEATURES,
 } cpuid_feature_t;
 

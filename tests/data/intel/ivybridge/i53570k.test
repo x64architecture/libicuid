@@ -49,4 +49,4 @@ l2_linesz=64
 l3_linesz=64
 physical_addrsz=36
 virtual_addrsz=48
-features=fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr pdpe1gb sse sse2 ss ht tm pbe pni pclmuldq dts64 monitor ds_cpl vmx est tm2 ssse3 cx16 xtpr pdcm pcid sse4.1 sse4.2 syscall nx popcnt tsc_deadline_timer aes xsave osxsave avx rdtscp lm lahf_lm constant_tsc f16c rdrand fsgsbase smep erms
+features=pni pclmuldq dts64 monitor ds_cpl vmx est tm2 ssse3 cx16 xtpr pdcm pcid sse4.1 sse4.2 popcnt tsc_deadline_timer aes xsave osxsave avx f16c rdrand fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe fsgsbase smep erms lahf_lm syscall nx rdtscp lm constant_tsc

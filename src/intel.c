@@ -591,17 +591,7 @@ static void get_intel_uarch(cpuid_data_t *data)
  */
 static void get_intel_features(const cpuid_raw_data_t *raw, cpuid_data_t *data)
 {
-    const cpuid_feature_map_t regidmap_edx1[] = {
-        { 18, CPU_FEATURE_PN },
-        { 21, CPU_FEATURE_DTS },
-        { 22, CPU_FEATURE_ACPI },
-        { 27, CPU_FEATURE_SS },
-        { 29, CPU_FEATURE_TM },
-        { 30, CPU_FEATURE_IA64 },
-        { 31, CPU_FEATURE_PBE },
-    };
-    const cpuid_feature_map_t regidmap_ecx1[] = {
-        {  1, CPU_FEATURE_PCLMULDQ },
+    const cpuid_feature_map_t regidmap_ecx01[] = {
         {  2, CPU_FEATURE_DTS64 },
         {  4, CPU_FEATURE_DS_CPL },
         {  5, CPU_FEATURE_VMX },
@@ -614,30 +604,52 @@ static void get_intel_features(const cpuid_raw_data_t *raw, cpuid_data_t *data)
         { 15, CPU_FEATURE_PDCM },
         { 17, CPU_FEATURE_PCID },
         { 18, CPU_FEATURE_DCA },
-        { 20, CPU_FEATURE_SSE4_2 },
         { 21, CPU_FEATURE_X2APIC },
         { 22, CPU_FEATURE_MOVBE },
         { 24, CPU_FEATURE_TSC_DEADLINE },
         { 30, CPU_FEATURE_RDRAND },
     };
+    const cpuid_feature_map_t regidmap_edx01[] = {
+        { 18, CPU_FEATURE_PN },
+        { 21, CPU_FEATURE_DTS },
+        { 22, CPU_FEATURE_ACPI },
+        { 27, CPU_FEATURE_SS },
+        { 29, CPU_FEATURE_TM },
+        { 30, CPU_FEATURE_IA64 },
+        { 31, CPU_FEATURE_PBE },
+    };
     const cpuid_feature_map_t regidmap_ebx07[] = {
-        { 0, CPU_FEATURE_FSGSBASE },      
-        { 4, CPU_FEATURE_HLE },
-        { 7, CPU_FEATURE_SMEP },
-        { 9, CPU_FEATURE_ERMS },
+        {  0, CPU_FEATURE_FSGSBASE },
+        {  1, CPU_FEATURE_TSC_ADJUST },
+        {  4, CPU_FEATURE_HLE },
+        {  7, CPU_FEATURE_SMEP },
+        {  9, CPU_FEATURE_ERMS },
         { 10, CPU_FEATURE_INVPCID },
+        { 11, CPU_FEATURE_RTM },
+        { 12, CPU_FEATURE_CQM },
         { 14, CPU_FEATURE_MPX },
+        { 16, CPU_FEATURE_AVX512F },
+        { 17, CPU_FEATURE_AVX512DQ },
         { 18, CPU_FEATURE_RDSEED },
         { 19, CPU_FEATURE_ADX },
         { 20, CPU_FEATURE_SMAP },
+        { 22, CPU_FEATURE_PCOMMIT },
+        { 23, CPU_FEATURE_CLFLUSHOPT },
+        { 24, CPU_FEATURE_CLWB },
+        { 26, CPU_FEATURE_AVX512PF },
+        { 27, CPU_FEATURE_AVX512ER },
+        { 28, CPU_FEATURE_AVX512CD },
         { 29, CPU_FEATURE_SHA },
+        { 30, CPU_FEATURE_AVX512BW },
+        { 31, CPU_FEATURE_AVX512VL },
     };
     if (data->cpuid_max_basic < 1)
         return;
-    set_feature_bits(data, regidmap_edx1, NELEMS(regidmap_edx1), raw->cpuid[1][3]);
-    set_feature_bits(data, regidmap_ecx1, NELEMS(regidmap_ecx1), raw->cpuid[1][2]);
-    if (data->cpuid_max_basic >= 7)
-        set_feature_bits(data, regidmap_ebx07, NELEMS(regidmap_ebx07), raw->cpuid[7][1]);
+    set_feature_bits(data, regidmap_ecx01, NELEMS(regidmap_ecx01), raw->cpuid[1][2]);
+    set_feature_bits(data, regidmap_edx01, NELEMS(regidmap_edx01), raw->cpuid[1][3]);
+    if (data->cpuid_max_basic < 7)
+        return;
+    set_feature_bits(data, regidmap_ebx07, NELEMS(regidmap_ebx07), raw->cpuid[7][1]);
 }
 
 void read_intel_data(const cpuid_raw_data_t *raw, cpuid_data_t *data)
