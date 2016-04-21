@@ -54,7 +54,7 @@ static struct OPTION icuid_options[] = {
     },
     {
       DINIT(.name,      "output"),
-      DINIT(.argname,   "file"),
+      DINIT(.argname,   "<file>"),
       DINIT(.desc,      "Redirect output to file"),
       DINIT(.type,      OPTION_ARG),
       DINIT(.arg,       &icuid_opts.out),
@@ -63,7 +63,7 @@ static struct OPTION icuid_options[] = {
     },
     {
       DINIT(.name,      "dump"),
-      DINIT(.argname,   "file"),
+      DINIT(.argname,   "<file>"),
       DINIT(.desc,      "Dump raw cpuid data to file/stdin"),
       DINIT(.type,      OPTION_ARG_NR),
       DINIT(.arg,       &icuid_opts.dump),
@@ -72,7 +72,7 @@ static struct OPTION icuid_options[] = {
     },
     {
       DINIT(.name,      "data"),
-      DINIT(.argname,   "file"),
+      DINIT(.argname,   "<file>"),
       DINIT(.desc,      "Read raw cpuid data from file/stdout"),
       DINIT(.type,      OPTION_ARG_NR),
       DINIT(.arg,       &icuid_opts.data),

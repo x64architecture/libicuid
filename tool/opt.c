@@ -14,27 +14,12 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+#include <assert.h>
 #include <stdio.h>
 #include <string.h>
 
 #include "internal/stdcompat.h"
 #include "opt.h"
-
-#if defined(_MSC_VER) && !defined(HAVE_SNPRINTF)
-#include <stdarg.h>
-static int snprintf(char *buf, size_t n, const char *format, ...)
-{
-    va_list args;
-    int ret;
-
-    va_start(args, format);
-    ret = _vscprintf(format, args);
-    vsnprintf_s(buf, n, _TRUNCATE, format, args);
-    va_end(args);
-
-    return ret;
-}
-#endif
 
 #define OPT_WIDTH 5
 
@@ -48,8 +33,9 @@ void options_usage(struct OPTION *opts)
         if (opts[i].desc == NULL)
             continue;
 
-        snprintf(optstr, sizeof optstr, "--%s %s", opts[i].name,
-                 (opts[i].argname != NULL) ? opts[i].argname : "");
+        assert(strlen(opts[i].name) < sizeof(optstr));
+        sprintf(optstr, "--%s %s", opts[i].name,
+                (opts[i].argname != NULL) ? opts[i].argname : "");
         fprintf(stderr, " %-*s", OPT_WIDTH, optstr);
         if (strlen(optstr) > OPT_WIDTH)
             fprintf(stderr, "\n %-*s", OPT_WIDTH, "");
