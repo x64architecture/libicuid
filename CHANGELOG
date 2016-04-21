@@ -1,6 +1,6 @@
 1.3.0: Released: ?? Apr 2016
 ============================
-  *) Rewrite internal parse_line() function without sscanf as its behavior
+  *) Rewrote internal parse_line() function without sscanf as its behavior
       is undefined with numbers to large for the type specified
   *) Added support for the detection of some of the new AMD Family 17h features
       CLZERO IRPERF
