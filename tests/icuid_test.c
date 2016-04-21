@@ -20,31 +20,6 @@
 
 #include <icuid/icuid.h>
 
-size_t icuid_strlcpy(char *dest, const char *src, size_t size)
-{
-    size_t ret = strlen(src);
-
-    if (size) {
-        size_t len = (ret >= size) ? size - 1 : ret;
-        memcpy(dest, src, len);
-        dest[len] = '\0';
-    }
-
-    return ret;
-}
-
-size_t icuid_strlcat(char *dest, const char *src, size_t size)
-{
-    size_t len = 0;
-
-    while (size > 0 && *dest) {
-        size--;
-        dest++;
-        len++;
-    }
-    return len + icuid_strlcpy(dest, src, size);
-}
-
 #define _eprintf(format, ...) fprintf(stdout, format, __VA_ARGS__)
 
 int generate_test(cpuid_raw_data_t *raw, cpuid_data_t *data, const char *file)
@@ -321,8 +296,8 @@ int run_test(cpuid_data_t *data, const char *file)
             tmp_features[0] = '\0';
             for (i = 0; i < NUM_CPU_FEATURES; i++) {
                 if (data->flags[i]) {
-                    icuid_strlcat(tmp_features, cpu_feature_str(i), sizeof(tmp_features));
-                    icuid_strlcat(tmp_features, " ", sizeof(tmp_features));
+                    strcat(tmp_features, cpu_feature_str(i));
+                    strcat(tmp_features, " ");
                 }
             }
             tmp_features[strlen(tmp_features) - 1] = '\0'; /* Remove trailing space */
