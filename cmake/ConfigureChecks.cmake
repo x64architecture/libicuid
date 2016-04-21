@@ -1,5 +1,4 @@
 include (CheckFunctionExists)
-include (CheckSymbolExists)
 
 CHECK_FUNCTION_EXISTS(strlcpy HAVE_STRLCPY)
 
