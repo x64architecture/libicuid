@@ -179,7 +179,8 @@ static void get_amd_cache_info(const cpuid_raw_data_t *raw, cpuid_data_t *data)
 {
     uint32_t l3_result;
     const uint32_t assoc_table[16] = {
-        0, 1, 2, 0, 4, 0, 8, 0, 16, 0, 32, 48, 64, 92, 128, 255
+        /* 0x0 - 0xF */
+        0, 1, 2, 0, 4, 0, 8, 0, 16, 0, 32, 48, 64, 96, 128, 255
     };
     
     if (data->cpuid_max_ext >= 0x80000005) {
