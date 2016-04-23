@@ -605,9 +605,7 @@ static void get_intel_features(const cpuid_raw_data_t *raw, cpuid_data_t *data)
         { 17, CPU_FEATURE_PCID },
         { 18, CPU_FEATURE_DCA },
         { 21, CPU_FEATURE_X2APIC },
-        { 22, CPU_FEATURE_MOVBE },
         { 24, CPU_FEATURE_TSC_DEADLINE },
-        { 30, CPU_FEATURE_RDRAND },
     };
     const cpuid_feature_map_t regidmap_edx01[] = {
         { 18, CPU_FEATURE_PN },
@@ -619,10 +617,8 @@ static void get_intel_features(const cpuid_raw_data_t *raw, cpuid_data_t *data)
         { 31, CPU_FEATURE_PBE },
     };
     const cpuid_feature_map_t regidmap_ebx07[] = {
-        {  0, CPU_FEATURE_FSGSBASE },
         {  1, CPU_FEATURE_TSC_ADJUST },
         {  4, CPU_FEATURE_HLE },
-        {  7, CPU_FEATURE_SMEP },
         {  9, CPU_FEATURE_ERMS },
         { 10, CPU_FEATURE_INVPCID },
         { 11, CPU_FEATURE_RTM },

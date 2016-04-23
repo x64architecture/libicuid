@@ -189,12 +189,14 @@ void set_common_features(const cpuid_raw_data_t *raw, cpuid_data_t *data)
         { 13, CPU_FEATURE_CX16 },
         { 19, CPU_FEATURE_SSE4_1 },
         { 20, CPU_FEATURE_SSE4_2 },
+        { 22, CPU_FEATURE_MOVBE },
         { 23, CPU_FEATURE_POPCNT },
         { 25, CPU_FEATURE_AES },
         { 26, CPU_FEATURE_XSAVE },
         { 27, CPU_FEATURE_OSXSAVE },
         { 28, CPU_FEATURE_AVX },
         { 29, CPU_FEATURE_F16C },
+        { 30, CPU_FEATURE_RDRAND },
         { 31, CPU_FEATURE_HYPERVISOR },
     };
     const cpuid_feature_map_t regidmap_edx01[] = {
@@ -223,8 +225,10 @@ void set_common_features(const cpuid_raw_data_t *raw, cpuid_data_t *data)
         { 28, CPU_FEATURE_HT },
     };
     const cpuid_feature_map_t regidmap_ebx07[] = {
+        { 0, CPU_FEATURE_FSGSBASE },
         { 3, CPU_FEATURE_BMI1 },
         { 5, CPU_FEATURE_AVX2 },
+        { 7, CPU_FEATURE_SMEP },
         { 8, CPU_FEATURE_BMI2 },
     };
     const cpuid_feature_map_t regidmap_ecx81[] = {
