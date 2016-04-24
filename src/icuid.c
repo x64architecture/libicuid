@@ -91,9 +91,10 @@ static int parse_line(char *line, const char *token, uint32_t regs[][4],
     }
 
     /* Get the text after the equals sign */
-    p = strstr(line, "=") + 1;
+    p = strstr(line, "=");
     if (p == NULL)
         return 0;
+    p += 1;
 
     /* Separate the text with spaces into separate strings */
     pp = strtok(p, " ");
