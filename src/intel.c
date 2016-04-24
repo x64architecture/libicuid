@@ -155,7 +155,9 @@ static void get_intel_number_cores(const cpuid_raw_data_t *raw, cpuid_data_t *da
             data->logical_cpus = logical_cpus;
         } else {
             data->cores = 1;
-            data->logical_cpus = (logical_cpus >= 2 ? logical_cpus : 2);
+            data->logical_cpus = (logical_cpus >= 2 ? logical_cpus : 1);
+            if (data->num_logical_cpus == 1)
+                data->flags[CPU_FEATURE_HT] = 0;
         }
     } else {
         data->cores = data->logical_cpus = 1;
