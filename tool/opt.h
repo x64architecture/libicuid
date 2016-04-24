@@ -27,7 +27,6 @@ struct OPTION {
         OPTION_FLAG,
     } type;
     char **arg;
-    int *argnr;
     int *flag;
 };
 

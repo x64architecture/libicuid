@@ -85,7 +85,6 @@ int options_parse(int argc, char **argv, struct OPTION *opts, char **unnamed)
             } else if (opt->type == OPTION_ARG_NR) {
                 if (++i >= argc) {
                     *opt->arg = "";
-                    *opt->argnr = 1;
                     return 0;
                 }
             }
@@ -96,7 +95,6 @@ int options_parse(int argc, char **argv, struct OPTION *opts, char **unnamed)
                     break;
                 case OPTION_ARG_NR:
                     *opt->arg = argv[i];
-                    *opt->argnr = 0;
                     break;
                 case OPTION_FLAG:
                     *opt->flag = 1;

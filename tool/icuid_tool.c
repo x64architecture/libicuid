@@ -29,8 +29,6 @@ static struct {
     char *dump;
     char *data;
     int help;
-    int dumpargnr;
-    int dataargnr;
 } icuid_opts;
 
 #if !defined(_MSC_VER) || (_MSC_VER >= 1800)
@@ -49,7 +47,6 @@ static struct OPTION icuid_options[] = {
       DINIT(.desc,      "Print this help message"),
       DINIT(.type,      OPTION_FLAG),
       DINIT(.arg,       NULL),
-      DINIT(.argnr,     NULL),
       DINIT(.flag,      &icuid_opts.help),
     },
     {
@@ -58,7 +55,6 @@ static struct OPTION icuid_options[] = {
       DINIT(.desc,      "Redirect output to file"),
       DINIT(.type,      OPTION_ARG),
       DINIT(.arg,       &icuid_opts.out),
-      DINIT(.argnr,     NULL),
       DINIT(.flag,      NULL),
     },
     {
@@ -67,7 +63,6 @@ static struct OPTION icuid_options[] = {
       DINIT(.desc,      "Dump raw cpuid data to file/stdin"),
       DINIT(.type,      OPTION_ARG_NR),
       DINIT(.arg,       &icuid_opts.dump),
-      DINIT(.argnr,     &icuid_opts.dumpargnr),
       DINIT(.flag,      NULL),
     },
     {
@@ -76,7 +71,6 @@ static struct OPTION icuid_options[] = {
       DINIT(.desc,      "Read raw cpuid data from file/stdout"),
       DINIT(.type,      OPTION_ARG_NR),
       DINIT(.arg,       &icuid_opts.data),
-      DINIT(.argnr,     &icuid_opts.dataargnr),
       DINIT(.flag,      NULL),
     },
     {
@@ -85,7 +79,6 @@ static struct OPTION icuid_options[] = {
       DINIT(.desc,      NULL),
       DINIT(.type,      0),
       DINIT(.arg,       NULL),
-      DINIT(.argnr,     0),
       DINIT(.flag,      NULL),
     },
 };
@@ -182,7 +175,7 @@ int main(int argc, char **argv)
         }
     }
 
-    if (icuid_opts.dump != NULL || icuid_opts.dumpargnr == 1) {
+    if (icuid_opts.dump != NULL) {
         ret = cpuid_deserialize_raw_data(&raw, icuid_opts.dump);
         if (ret != ICUID_OK) {
             fprintf(out, "%s\n", icuid_errorstr(ret));
@@ -191,7 +184,7 @@ int main(int argc, char **argv)
         return 0;
     }
 
-    if (icuid_opts.data != NULL || icuid_opts.dataargnr == 1) {
+    if (icuid_opts.data != NULL) {
         ret = cpuid_serialize_raw_data(&raw, icuid_opts.data);
         if (ret != ICUID_OK) {
             fprintf(out, "%s\n", icuid_errorstr(ret));
