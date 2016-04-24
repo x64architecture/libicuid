@@ -76,19 +76,19 @@ int options_parse(int argc, char **argv, struct OPTION *opts, char **unnamed)
             if (strcmp(p, opt->name) != 0)
                 continue;
 
-        if (opt->type == OPTION_ARG) {
-            if (++i >= argc) {
-                fprintf(stderr, "missing %s argument for --%s\n",
-                    opt->argname, opt->name);
-                return 1;
+            if (opt->type == OPTION_ARG) {
+                if (++i >= argc) {
+                    fprintf(stderr, "missing %s argument for --%s\n",
+                            opt->argname, opt->name);
+                    return 1;
+                }
+            } else if (opt->type == OPTION_ARG_NR) {
+                if (++i >= argc) {
+                    *opt->arg = "";
+                    *opt->argnr = 1;
+                    return 0;
+                }
             }
-        } else if (opt->type == OPTION_ARG_NR) {
-            if (++i >= argc) {
-                *opt->arg = "";
-                *opt->argnr = 1;
-                return 0;
-            }
-        }
 
             switch (opt->type) {
                 case OPTION_ARG:
