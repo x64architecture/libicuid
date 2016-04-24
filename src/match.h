@@ -17,7 +17,7 @@
 typedef struct {
     uint32_t family, model, stepping, ext_family, ext_model;
     uint32_t cores, l2_cache, l3_cache, brand_code;
-    char uarch[32];
+    const char *uarch;
 } match_uarch_t;
 
 int match_pattern(const char *haystack, const char *needle);
