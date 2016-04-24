@@ -22,9 +22,10 @@
 typedef enum {
     NA = -1,
     NO_CODE,
+
     PENTIUM = 10,
     MOBILE_PENTIUM,
-    
+
     XEON = 20,
     XEON_IRWIN,
     XEONMP,
@@ -32,18 +33,18 @@ typedef enum {
     XEON_I7,
     XEON_GAINESTOWN,
     XEON_WESTMERE,
-    
+
     MOBILE_PENTIUM_M = 30,
     CELERON,
     MOBILE_CELERON,
     NOT_CELERON,
-    
-    
+
+
     CORE_SOLO = 40,
     MOBILE_CORE_SOLO,
     CORE_DUO,
     MOBILE_CORE_DUO,
-    
+
     WOLFDALE = 50,
     MEROM,
     PENRYN,
@@ -52,13 +53,13 @@ typedef enum {
     QUAD_CORE_HT,
     MORE_THAN_QUADCORE,
     PENTIUM_D,
-    
+
     ATOM = 60,
     ATOM_SILVERTHORNE,
     ATOM_DIAMONDVILLE,
     ATOM_PINEVIEW,
     ATOM_CEDARVIEW,
-    
+
     CORE_I3 = 70,
     CORE_I5,
     CORE_I7,
