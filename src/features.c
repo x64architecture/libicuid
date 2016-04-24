@@ -278,7 +278,7 @@ void set_common_xfeatures(cpuid_data_t *data, const uint64_t xcr0)
         { 9, XFEATURE_PKRU },
     };
     for (i = 0; i < NUM_XFEATURES; i++) {
-        if (xcr0 & (uint64_t)(1 << xfeatures_t[i].bit))
+        if (xcr0 & (1UL << xfeatures_t[i].bit))
             data->xfeatures[xfeatures_t[i].feature] = 1;
     }
 }
