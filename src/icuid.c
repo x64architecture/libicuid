@@ -242,7 +242,7 @@ static void get_vendor(cpuid_data_t *data)
 int icuid_identify(cpuid_raw_data_t *raw, cpuid_data_t *data)
 {
     int ret;
-    int i, j, k = 0;
+    int i, j = 0;
     uint8_t ext_family, ext_model;
     char brandstr[BRAND_STR_MAX];
     cpuid_raw_data_t iraw;
@@ -286,10 +286,11 @@ int icuid_identify(cpuid_raw_data_t *raw, cpuid_data_t *data)
 
     /* Get brand string */
     if (data->cpuid_max_ext >= 0x80000004) {
-        for (i = 2; i <= 4; i++) {
-            for (j = 0; j < 4; j++, k += 4) {
-                memcpy(brandstr + k, &raw->cpuid_ext[i][j], 4);
-            }
+        for (i = 2; i <= 4; i++, j += 16) {
+            memcpy(brandstr +  0 + j, &raw->cpuid_ext[i][0], 4);
+            memcpy(brandstr +  4 + j, &raw->cpuid_ext[i][1], 4);
+            memcpy(brandstr +  8 + j, &raw->cpuid_ext[i][2], 4);
+            memcpy(brandstr + 12 + j, &raw->cpuid_ext[i][3], 4);
         }
         /*
          * Some brand strings have spaces prepended to them so we have
