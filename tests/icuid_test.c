@@ -34,6 +34,7 @@ int generate_test(cpuid_raw_data_t *raw, cpuid_data_t *data, const char *file)
     ret = cpuid_deserialize_raw_data(raw, file);
     if (ret != ICUID_OK) {
         _eprintf("%s\n", icuid_errorstr(ret));
+        fclose(fp);
         return -1;
     }
 
