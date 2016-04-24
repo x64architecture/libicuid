@@ -20,6 +20,6 @@ typedef struct {
 } cpuid_feature_map_t;
 
 void set_feature_bits(cpuid_data_t *data, const cpuid_feature_map_t *feature,
-                      const int num, const uint32_t reg);
+                      const unsigned int array_size, const uint32_t reg);
 void set_common_features(const cpuid_raw_data_t *raw, cpuid_data_t *data);
 void set_common_xfeatures(cpuid_data_t *data, const uint64_t xcr0);

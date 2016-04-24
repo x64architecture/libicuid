@@ -63,10 +63,10 @@ int match_pattern(const char *haystack, const char *needle)
     return 0;
 }
 
-static int score(const cpuid_data_t *data, const match_uarch_t *entry,
-                 const uint32_t brand_code)
+static unsigned int score(const cpuid_data_t *data, const match_uarch_t *entry,
+                          const uint32_t brand_code)
 {
-    int rv = 0;
+    unsigned int rv = 0;
 
     if (entry->family     == data->family)
         rv += 2;
@@ -91,13 +91,13 @@ static int score(const cpuid_data_t *data, const match_uarch_t *entry,
 }
 
 void match_cpu_uarch(cpuid_data_t *data, const match_uarch_t *matchtable,
-                     const int count, const uint32_t brand_code)
+                     const unsigned int array_size, const uint32_t brand_code)
 {
-    int bestscore = -1;
-    int bestindex = 0;
-    int i, t;
+    unsigned int bestscore = 0;
+    unsigned int bestindex = 0;
+    unsigned int i, t;
 
-    for (i = 0; i < count; i++) {
+    for (i = 0; i < array_size; i++) {
         t = score(data, &matchtable[i], brand_code);
         if (t > bestscore) {
             bestscore = t;

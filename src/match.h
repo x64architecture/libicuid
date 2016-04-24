@@ -22,4 +22,4 @@ typedef struct {
 
 int match_pattern(const char *haystack, const char *needle);
 void match_cpu_uarch(cpuid_data_t *data, const match_uarch_t *matchtable,
-                     const int count, const uint32_t brand_code);
+                     const unsigned int array_size, const uint32_t brand_code);

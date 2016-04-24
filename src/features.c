@@ -23,10 +23,10 @@
 #include "features.h"
 
 void set_feature_bits(cpuid_data_t *data, const cpuid_feature_map_t *feature,
-                      const int num, const uint32_t reg)
+                      const unsigned int array_size, const uint32_t reg)
 {
-    int i;
-    for (i = 0; i < num; i++) {
+    unsigned int i;
+    for (i = 0; i < array_size; i++) {
         if (reg & (1 << feature[i].bit))
             data->flags[feature[i].feature] = 1;
     }
@@ -261,7 +261,7 @@ void set_common_features(const cpuid_raw_data_t *raw, cpuid_data_t *data)
 
 void set_common_xfeatures(cpuid_data_t *data, const uint64_t xcr0)
 {
-    int i;
+    unsigned int i;
     const struct {
         uint8_t bit;
         xfeature_t feature;
