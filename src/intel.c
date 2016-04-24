@@ -309,7 +309,6 @@ static intel_uarch_t brand_string_method(const cpuid_data_t *data)
     return uarch;
 }
 
-#define NA -1
 const match_uarch_t uarch_intel_t[] = {
     { NA, NA, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Unknown CPU uarch"       },
     
@@ -570,7 +569,6 @@ const match_uarch_t uarch_intel_t[] = {
     { 15, NA, NA, 16, NA,   1,    NA,    NA, NO_CODE           ,     "Itanium 2"                },
     
 };
-#undef NA
 
 /**
  * Get uarch (codename)

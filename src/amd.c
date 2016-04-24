@@ -51,7 +51,6 @@ typedef enum {
     NO_CODE,
 } amd_uarch_t;
 
-#define NA -1
 const match_uarch_t uarch_amd_t[] = {
     { NA, NA,  NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Unknown CPU uarch"             },
 
@@ -157,7 +156,6 @@ const match_uarch_t uarch_amd_t[] = {
     { 17, NA,  NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Zen"                           },
 
 };
-#undef NA
 
 /**
  * Get codename
