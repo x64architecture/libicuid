@@ -52,9 +52,9 @@ icuid_xgetbv proc
     mov DWORD PTR [rsp+8], ecx
     mov ecx, DWORD PTR 8[rsp]
     db 15, 1, 208 ; xgetbv
-	shl	rdx, 32
-	or	rdx, rax
-	mov	rax, rdx
+    shl rdx, 32
+    or  rdx, rax
+    mov rax, rdx
     ret
 
 icuid_xgetbv endp
