@@ -1,3 +1,12 @@
+1.3.1: Released: 24 Apr 2016
+============================
+  *) Fixed MOVBE, RDRAND, FSGSBASE, SMEP feature detection on AMD processors
+  *) Fixed AMD associativity table Dh should contain 96 not 92
+  *) Fixed icuid_xgetbv() on Win64
+  *) Fixed a bug that olds cpus had the hyperthreading bit set
+     Early P4 processors come with the HT bit set, but HT was not enabled
+  *) Various internal code fixes
+
 1.3.0: Released: 21 Apr 2016
 ============================
   *) Rewrote internal parse_line() function without sscanf as its behavior
