@@ -39,7 +39,6 @@ typedef enum {
     MOBILE_CELERON,
     NOT_CELERON,
 
-
     CORE_SOLO = 40,
     MOBILE_CORE_SOLO,
     CORE_DUO,

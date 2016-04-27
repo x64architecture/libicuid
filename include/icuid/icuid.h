@@ -53,7 +53,7 @@ void cpuid(uint32_t eax, uint32_t *regs);
  * @brief Run the cpuid instruction with custom register values
  * @param [in] regs - regs[0] (EAX), regs[1] (EBX), regs[2] (ECX), regs[3] (EDX)
  * @param [out] regs - result of cpuid. regs[0] = EAX, regs[1] = EBX, regs[2] = ecx, ...
- * @note cpuid will be executed with the input regs copied into their respective registers 
+ * @note cpuid will be executed with the input regs copied into their respective registers
          and the original input registers will be overwritten with the output of cpuid
  */
 void cpuid_ext(uint32_t *regs);
@@ -287,7 +287,7 @@ typedef enum {
     VENDOR_VIA,         /*!< VIA CPU */
     VENDOR_HV_KVM,      /*!< KVM HV */
     VENDOR_HV_HYPERV,   /*!< Microsoft Hyper-V */
-    VENDOR_HV_VMWARE,   /*!< VMware HV */  
+    VENDOR_HV_VMWARE,   /*!< VMware HV */
     VENDOR_HV_XEN,      /*!< Xen HV */
     NUM_CPU_VENDORS,
 } cpu_vendor_t;
@@ -371,7 +371,7 @@ typedef struct {
 
     /** Number of cores on the current CPU */
     uint32_t cores;
-    
+
     /**
      * Number of logical processors on the current CPU.
      * When Hyper-Threading is enabled the value will
@@ -384,46 +384,46 @@ typedef struct {
      * If there is no L1 D cache, this will be 0.
      */
     uint32_t l1_data_cache;
-    
+
     /**
      * L1 Instruction cache size in kB.
      * If there is no L1 I cache, this will be 0.
      */
     uint32_t l1_instruction_cache;
-    
+
     /**
      * L2 data cache size in kB.
      * If there is no L2 cache, this will be 0.
      */
     uint32_t l2_cache;
-    
+
     /**
      * L3 data cache size in kB.
      * If there is no L3 Cache, this will be 0.
      */
     uint32_t l3_cache;
-    
+
     /** Cache associativity for the L1 cache. */
     uint32_t l1_associativity;
-    
+
     /** Cache associativity for the L2 cache. */
     uint32_t l2_associativity;
-    
+
     /** Cache associativity for the L3 cache. */
     uint32_t l3_associativity;
-    
+
     /** Cache line size for the L1 cache. */
     uint32_t l1_cacheline;
-    
+
     /** Cache line size for the L2 cache. */
     uint32_t l2_cacheline;
-    
+
     /** Cache line size for the L3 cache. */
     uint32_t l3_cacheline;
 
     /** Physical Address bits. */
     uint32_t physical_address_bits;
-    
+
     /** Virtual Address bits. */
     uint32_t virtual_address_bits;
 
