@@ -172,6 +172,7 @@ const char *cpu_feature_str(cpuid_feature_t feature)
         case CPU_FEATURE_AVX512CD: return "avx512cd";
         case CPU_FEATURE_AVX512BW: return "avx512bw";
         case CPU_FEATURE_AVX512VL: return "avx512vl";
+        case CPU_FEATURE_SGX: return "sgx";
         default:
             return "";
     }

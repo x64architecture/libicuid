@@ -618,6 +618,7 @@ static void get_intel_features(const cpuid_raw_data_t *raw, cpuid_data_t *data)
     };
     const cpuid_feature_map_t regidmap_ebx07[] = {
         {  1, CPU_FEATURE_TSC_ADJUST },
+        {  2, CPU_FEATURE_SGX },
         {  4, CPU_FEATURE_HLE },
         {  9, CPU_FEATURE_ERMS },
         { 10, CPU_FEATURE_INVPCID },

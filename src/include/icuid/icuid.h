@@ -165,7 +165,7 @@ typedef enum {
     /* cpuid 0x00000007, ebx */
     CPU_FEATURE_FSGSBASE,      /*!< Access To Base Of %fs And %gs */
     CPU_FEATURE_TSC_ADJUST,    /*!< TSC Adjustment MSR 0x3b */
-    /* 2 Reserved */
+    CPU_FEATURE_SGX,           /*!< Software Guard Extensions */
     CPU_FEATURE_BMI1,          /*!< BMI1 Instructions */
     CPU_FEATURE_HLE,           /*!< Transactional Synchronization Extensions */
     CPU_FEATURE_AVX2,          /*!< AVX2 Instructions */
