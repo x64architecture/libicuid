@@ -1,4 +1,4 @@
-include_directories (${CMAKE_CURRENT_BINARY_DIR} ${PROJECT_SOURCE_DIR}/src/include)
+include_directories (${CMAKE_CURRENT_BINARY_DIR} ${PROJECT_SOURCE_DIR}/include)
 
 if (MSVC)
     set(RC "icuidtool.rc")

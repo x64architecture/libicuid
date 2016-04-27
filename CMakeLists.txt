@@ -15,6 +15,8 @@ else()
     message(FATAL_ERROR "Unsupported compiler:" ${CMAKE_C_COMPILER})
 endif()
 
+install(DIRECTORY include/icuid DESTINATION include)
+
 add_subdirectory(src)
 add_subdirectory(tool)
 add_subdirectory(tests)
