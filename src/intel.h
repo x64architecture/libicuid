@@ -50,7 +50,6 @@ typedef enum {
     QUAD_CORE,
     DUAL_CORE_HT,
     QUAD_CORE_HT,
-    MORE_THAN_QUADCORE,
     PENTIUM_D,
 
     ATOM = 60,
@@ -62,20 +61,7 @@ typedef enum {
     CORE_I3 = 70,
     CORE_I5,
     CORE_I7,
-    CORE_IVYBRIDGE3,
-    CORE_IVYBRIDGE5,
-    CORE_IVYBRIDGE7,
-    CORE_HASWELL3,
-    CORE_HASWELL5,
-    CORE_HASWELL7,
-    CORE_DEVILSCANYON5,
-    CORE_DEVILSCANYON7,
-    CORE_BROADWELL3,
-    CORE_BROADWELL5,
-    CORE_BROADWELL7,
-    CORE_SKYLAKE3,
-    CORE_SKYLAKE5,
-    CORE_SKYLAKE7,
+    DEVILSCANYON,
 } intel_uarch_t;
 
 void read_intel_data(const cpuid_raw_data_t *raw, cpuid_data_t *data);

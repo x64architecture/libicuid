@@ -80,7 +80,7 @@ int generate_test(cpuid_raw_data_t *raw, cpuid_data_t *data, const char *file)
     return 0;
 }
 
-#define BUF_SIZE 512
+#define BUF_SIZE 1024
 
 int run_test(cpuid_data_t *data, const char *file)
 {
@@ -113,7 +113,7 @@ int run_test(cpuid_data_t *data, const char *file)
         }
         /* Check CPU name */
         if (sscanf(line, "cpu_name=%[^\n]", tmp) == 1) {
-            if (memcmp(data->brand_str, tmp, strlen(data->brand_str)) != 0) {
+            if (memcmp(data->brand_str, tmp, strlen(tmp) - 1) != 0) {
                 _eprintf("ERROR: got %s instead of %s", data->brand_str, tmp);
                 errors++;
             }
@@ -137,7 +137,7 @@ int run_test(cpuid_data_t *data, const char *file)
         }
         /* Check CPU codename */
         if (sscanf(line, "codename=%[^\n]", tmp) == 1) {
-            if (memcmp(data->codename, tmp, strlen(data->codename)) != 0) {
+            if (memcmp(data->codename, tmp, strlen(tmp) - 1) != 0) {
                 _eprintf("ERROR: got %s instead of %s\n", data->codename, tmp);
                 errors++;
             }
@@ -294,16 +294,17 @@ int run_test(cpuid_data_t *data, const char *file)
         }
         /* Check CPU features with some regex magic */
         if (sscanf(line, "features=%[^\n]", tmp) == 1) {
-            tmp_features[0] = '\0';
+            tmp_features[sizeof(tmp_features) - 1] = '\0';
             for (i = 0; i < NUM_CPU_FEATURES; i++) {
                 if (data->flags[i]) {
                     strcat(tmp_features, cpu_feature_str(i));
+                    if (i == (NUM_CPU_FEATURES - 1))
+                        break;
                     strcat(tmp_features, " ");
                 }
             }
-            tmp_features[strlen(tmp_features) - 1] = '\0'; /* Remove trailing space */
-            if (memcmp(tmp_features, tmp, strlen(tmp_features)) != 0) {
-                _eprintf("ERROR: got: %s\ninstead of: %s", tmp_features, tmp);
+            if (memcmp(tmp_features, tmp, strlen(tmp) - 1) != 0) {
+                _eprintf("ERROR: got: %s\ninstead of: %s\n", tmp_features, tmp);
                 errors++;
             }
             continue;

@@ -197,19 +197,6 @@ static intel_uarch_t brand_string_method(const cpuid_data_t *data)
         need_table = 0;
         uarch = CORE_I3;
 
-        /* RDRAND is in Ivy Bridge+ */
-        if (data->flags[CPU_FEATURE_RDRAND])
-            uarch = CORE_IVYBRIDGE3;
-        /* FMA is in Haswell+ */
-        if (data->flags[CPU_FEATURE_FMA])
-            uarch = CORE_HASWELL3;
-        /* ADX is in Broadwell+ */
-        if (data->flags[CPU_FEATURE_ADX])
-            uarch = CORE_BROADWELL3;
-        /* MPX is in Skylake+ */
-        if (data->flags[CPU_FEATURE_MPX])
-            uarch = CORE_SKYLAKE3;
-
         switch (*p) {
             case '3':
                 uarch = uarch + 0;
@@ -222,18 +209,8 @@ static intel_uarch_t brand_string_method(const cpuid_data_t *data)
                 break;
         }
 
-        switch (uarch) {
-            case CORE_HASWELL5:
-                if (strstr(bs, "4690K") != NULL)
-                    uarch = CORE_DEVILSCANYON5;
-                break;
-            case CORE_HASWELL7:
-                if (strstr(bs, "4790K") != NULL)
-                    uarch = CORE_DEVILSCANYON7;
-                break;
-            default:
-                break;
-        }
+        if (strstr(bs, "4690K") != NULL || strstr(bs, "4790K") != NULL)
+            uarch = DEVILSCANYON;
     }
     if (strstr(bs, "Mobile") != NULL) {
         need_table = 0;
@@ -277,15 +254,12 @@ static intel_uarch_t brand_string_method(const cpuid_data_t *data)
                     uarch = QUAD_CORE_HT;
                 break;
             default:
-                uarch = MORE_THAN_QUADCORE;
+                uarch = NO_CODE;
                 break;
         }
     }
     
-    if (uarch == CORE_DUO && data->ext_model >= 23) {
-        uarch = WOLFDALE;
-    }
-    if (uarch == PENTIUM_D && data->ext_model >= 23) {
+    if ((uarch == CORE_DUO || uarch == PENTIUM_D) && data->ext_model >= 23) {
         uarch = WOLFDALE;
     }
     if (uarch == MOBILE_CORE_DUO && data->model != 14) {
@@ -312,263 +286,211 @@ static intel_uarch_t brand_string_method(const cpuid_data_t *data)
 }
 
 const match_uarch_t uarch_intel_t[] = {
-    { NA, NA, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Unknown CPU uarch"       },
-    
+    { NA, NA, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Unknown CPU uarch"  },
+
     /* i486 */
-    {  4, NA, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Unknown i486"            },
-    {  4,  0, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "i486 DX-25/33"           },
-    {  4,  1, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "i486 DX-50"              },
-    {  4,  2, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "i486 SX"                 },
-    {  4,  3, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "i486 DX2"                },
-    {  4,  4, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "i486 SL"                 },
-    {  4,  5, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "i486 SX2"                },
-    {  4,  7, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "i486 DX2 WriteBack"      },
-    {  4,  8, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "i486 DX4"                },
-    {  4,  9, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "i486 DX4 WriteBack"      },
-    
+    {  4, NA, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Unknown i486"       },
+    {  4,  0, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "i486 DX-25/33"      },
+    {  4,  1, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "i486 DX-50"         },
+    {  4,  2, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "i486 SX"            },
+    {  4,  3, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "i486 DX2"           },
+    {  4,  4, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "i486 SL"            },
+    {  4,  5, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "i486 SX2"           },
+    {  4,  7, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "i486 DX2 WriteBack" },
+    {  4,  8, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "i486 DX4"           },
+    {  4,  9, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "i486 DX4 WriteBack" },
+
     /* Pentium 1 - P5 based */
-    {  5, NA, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Unknown Pentium"         },
-    {  5,  0, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Pentium A-Step"          },
-    {  5,  1, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Pentium 1 (0.8u)"        },
-    {  5,  2, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Pentium 1 (0.35u)"       },
-    {  5,  3, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Pentium OverDrive"       },
-    {  5,  4, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Pentium 1 (0.35u)"       },
-    {  5,  7, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Pentium 1 (0.35u)"       },
-    {  5,  8, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Pentium MMX (0.25u)"     },
-    {  5,  9, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Clanton"                 },
-    
+    {  5, NA, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Unknown Pentium"    },
+    {  5,  0, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Pentium A-Step"     },
+    {  5,  1, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Pentium 1 (0.8u)"   },
+    {  5,  2, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Pentium 1 (0.35u)"  },
+    {  5,  3, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Pentium OverDrive"  },
+    {  5,  4, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Pentium 1 (0.35u)"  },
+    {  5,  7, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Pentium 1 (0.35u)"  },
+    {  5,  8, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Pentium MMX (0.25u)" },
+    {  5,  9, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Clanton"            },
+
     /* Pentium 2 / 3 / M - P6 based */
-    {  6, NA, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Unknown P6"              },
-    {  6,  0, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Pentium Pro"             },
-    {  6,  1, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Pentium Pro"             },
-    {  6,  3, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Pentium II (Klamath)"    },
-    {  6,  5, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Pentium II (Deschutes)"  },
-    {  6,  5, NA, NA, NA,   1,    NA,    NA, MOBILE_PENTIUM    ,     "Mobile Pentium II (Tonga)"},
-    {  6,  6, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Pentium II (Dixon)"      },
+    {  6, NA, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Unknown P6"         },
+    {  6,  0, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Pentium Pro"        },
+    {  6,  1, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Pentium Pro"        },
+    {  6,  3, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Klamath"            },
+    {  6,  5, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Deschutes"          },
+    {  6,  5, NA, NA, NA,   1,    NA,    NA, MOBILE_PENTIUM    ,     "Tonga"              },
+    {  6,  6, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Dixon"              },
+
+    {  6,  3, NA, NA, NA,   1,    NA,    NA, XEON              ,     "Klamath"            },
+    {  6,  5, NA, NA, NA,   1,    NA,    NA, XEON              ,     "Drake"              },
+    {  6,  6, NA, NA, NA,   1,    NA,    NA, XEON              ,     "Dixon"              },
+
+    {  6,  5, NA, NA, NA,   1,    NA,    NA, CELERON           ,     "Covingtons"         },
+    {  6,  6, NA, NA, NA,   1,    NA,    NA, CELERON           ,     "Mendocino"          },
+
+    {  6,  7, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Katmai"             },
+    {  6,  8, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Coppermine"         },
+    {  6, 10, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Coppermine"         },
+    {  6, 11, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Tualatin"           },
+
+    {  6,  7, NA, NA, NA,   1,    NA,    NA, XEON              ,     "Tanner"             },
+    {  6,  8, NA, NA, NA,   1,    NA,    NA, XEON              ,     "Cascades"           },
+    {  6, 10, NA, NA, NA,   1,    NA,    NA, XEON              ,     "Cascades"           },
+    {  6, 11, NA, NA, NA,   1,    NA,    NA, XEON              ,     "Tualatin"           },
+
+    {  6,  7, NA, NA, NA,   1,    NA,    NA, CELERON           ,     "Katmai"             },
+    {  6,  8, NA, NA, NA,   1,    NA,    NA, CELERON           ,     "Coppermine-128"     },
+    {  6, 10, NA, NA, NA,   1,    NA,    NA, CELERON           ,     "Coppermine-128"     },
+    {  6, 11, NA, NA, NA,   1,    NA,    NA, CELERON           ,     "Tualatin-256"       },
+
+    /* Netburst based (Pentium 4 and later) classic P4s */
+    { 15, NA, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Unknown Pentium 4"  },
+    { 15, NA, NA, 15, NA,   1,    NA,    NA, CELERON           ,     "Unknown P-4 Celeron" },
+    { 15, NA, NA, 15, NA,   1,    NA,    NA, XEON              ,     "Unknown Xeon"       },
     
-    {  6,  3, NA, NA, NA,   1,    NA,    NA, XEON              ,     "P-II Xeon"               },
-    {  6,  5, NA, NA, NA,   1,    NA,    NA, XEON              ,     "P-II Xeon"               },
-    {  6,  6, NA, NA, NA,   1,    NA,    NA, XEON              ,     "P-II Xeon"               },
-        
-    {  6,  5, NA, NA, NA,   1,    NA,    NA, CELERON           ,     "P-II Celeron (no L2)"    },
-    {  6,  6, NA, NA, NA,   1,    NA,    NA, CELERON           ,     "P-II Celeron (128K)"     },
-    
-    {  6,  7, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Pentium III (Katmai)"    },
-    {  6,  8, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Pentium III (Coppermine)"},
-    {  6, 10, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Pentium III (Coppermine)"},
-    {  6, 11, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Pentium III (Tualatin)"  },
-    
-    {  6,  7, NA, NA, NA,   1,    NA,    NA, XEON              ,     "P-III Xeon"              },
-    {  6,  8, NA, NA, NA,   1,    NA,    NA, XEON              ,     "P-III Xeon"              },
-    {  6, 10, NA, NA, NA,   1,    NA,    NA, XEON              ,     "P-III Xeon"              },
-    {  6, 11, NA, NA, NA,   1,    NA,    NA, XEON              ,     "P-III Xeon"              },
-    
-    {  6,  7, NA, NA, NA,   1,    NA,    NA, CELERON           ,     "P-III Celeron"           },
-    {  6,  8, NA, NA, NA,   1,    NA,    NA, CELERON           ,     "P-III Celeron"           },
-    {  6, 10, NA, NA, NA,   1,    NA,    NA, CELERON           ,     "P-III Celeron"           },
-    {  6, 11, NA, NA, NA,   1,    NA,    NA, CELERON           ,     "P-III Celeron"           },
-    
-    /* Netburst based (Pentium 4 and later)
-       classic P4s */
-    { 15, NA, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Unknown Pentium 4"       },
-    { 15, NA, NA, 15, NA,   1,    NA,    NA, CELERON           ,     "Unknown P-4 Celeron"     },
-    { 15, NA, NA, 15, NA,   1,    NA,    NA, XEON              ,     "Unknown Xeon"            },
-    
-    { 15,  0, NA, 15, NA,   1,    NA,    NA, NO_CODE           ,     "Pentium 4 (Willamette)"  },
-    { 15,  1, NA, 15, NA,   1,    NA,    NA, NO_CODE           ,     "Pentium 4 (Willamette)"  },
-    { 15,  2, NA, 15, NA,   1,    NA,    NA, NO_CODE           ,     "Pentium 4 (Northwood)"   },
-    { 15,  3, NA, 15, NA,   1,    NA,    NA, NO_CODE           ,     "Pentium 4 (Prescott)"    },
-    { 15,  4, NA, 15, NA,   1,    NA,    NA, NO_CODE           ,     "Pentium 4 (Prescott)"    },
-    { 15,  6, NA, 15, NA,   1,    NA,    NA, NO_CODE           ,     "Pentium 4 (Cedar Mill)"  },
-    { 15,  0, NA, 15, NA,   1,    NA,    NA, MOBILE_PENTIUM    ,     "Mobile P-4 (Willamette)" },
-    { 15,  1, NA, 15, NA,   1,    NA,    NA, MOBILE_PENTIUM    ,     "Mobile P-4 (Willamette)" },
-    { 15,  2, NA, 15, NA,   1,    NA,    NA, MOBILE_PENTIUM    ,     "Mobile P-4 (Northwood)"  },
-    { 15,  3, NA, 15, NA,   1,    NA,    NA, MOBILE_PENTIUM    ,     "Mobile P-4 (Prescott)"   },
-    { 15,  4, NA, 15, NA,   1,    NA,    NA, MOBILE_PENTIUM    ,     "Mobile P-4 (Prescott)"   },
-    { 15,  6, NA, 15, NA,   1,    NA,    NA, MOBILE_PENTIUM    ,     "Mobile P-4 (Cedar Mill)" },
-    
+    { 15,  0, NA, 15, NA,   1,    NA,    NA, NO_CODE           ,     "Willamette"         },
+    { 15,  1, NA, 15, NA,   1,    NA,    NA, NO_CODE           ,     "Willamette"         },
+    { 15,  2, NA, 15, NA,   1,    NA,    NA, NO_CODE           ,     "Northwood"          },
+    { 15,  3, NA, 15, NA,   1,    NA,    NA, NO_CODE           ,     "Prescott"           },
+    { 15,  4, NA, 15, NA,   1,    NA,    NA, NO_CODE           ,     "Prescott"           },
+    { 15,  6, NA, 15, NA,   1,    NA,    NA, NO_CODE           ,     "Cedar Mill"         },
+
     /* server CPUs */
-    { 15,  0, NA, 15, NA,   1,    NA,    NA, XEON              ,     "Xeon (Foster)"           },
-    { 15,  1, NA, 15, NA,   1,    NA,    NA, XEON              ,     "Xeon (Foster)"           },
-    { 15,  2, NA, 15, NA,   1,    NA,    NA, XEON              ,     "Xeon (Prestonia)"        },
-    { 15,  2, NA, 15, NA,   1,    NA,    NA, XEONMP            ,     "Xeon (Gallatin)"         },
-    { 15,  3, NA, 15, NA,   1,    NA,    NA, XEON              ,     "Xeon (Nocona)"           },
-    { 15,  4, NA, 15, NA,   1,    NA,    NA, XEON              ,     "Xeon (Nocona)"           },
-    { 15,  4, NA, 15, NA,   1,    NA,    NA, XEON_IRWIN        ,     "Xeon (Irwindale)"        },
-    { 15,  4, NA, 15, NA,   1,    NA,    NA, XEONMP            ,     "Xeon (Cranford)"         },
-    { 15,  4, NA, 15, NA,   1,    NA,    NA, XEON_POTOMAC      ,     "Xeon (Potomac)"          },
-    { 15,  6, NA, 15, NA,   1,    NA,    NA, XEON              ,     "Xeon (Dempsey)"          },
-    
+    { 15,  0, NA, 15, NA,   1,    NA,    NA, XEON              ,     "Foster"             },
+    { 15,  1, NA, 15, NA,   1,    NA,    NA, XEON              ,     "Foster"             },
+    { 15,  2, NA, 15, NA,   1,    NA,    NA, XEON              ,     "Prestonia"          },
+    { 15,  2, NA, 15, NA,   1,    NA,    NA, XEONMP            ,     "Gallatin"           },
+    { 15,  3, NA, 15, NA,   1,    NA,    NA, XEON              ,     "Nocona"             },
+    { 15,  4, NA, 15, NA,   1,    NA,    NA, XEON              ,     "Nocona"             },
+    { 15,  4, NA, 15, NA,   1,    NA,    NA, XEON_IRWIN        ,     "Irwindale"          },
+    { 15,  4, NA, 15, NA,   1,    NA,    NA, XEONMP            ,     "Cranford"           },
+    { 15,  4, NA, 15, NA,   1,    NA,    NA, XEON_POTOMAC      ,     "Potomac"            },
+    { 15,  6, NA, 15, NA,   1,    NA,    NA, XEON              ,     "Dempsey"            },
+    { 15, NA, NA, NA,  6,  NA,    NA,    NA, NO_CODE           ,     "Tulsa"              },
+
     /* Pentium Ds */
-    { 15,  4,  4, 15, NA,   1,    NA,    NA, NO_CODE           ,     "Pentium D"               },
-    { 15,  4, NA, 15, NA,   1,    NA,    NA, PENTIUM_D         ,     "Pentium D"               },
-    { 15,  4,  7, 15, NA,   1,    NA,    NA, NO_CODE           ,     "Pentium D"               },
-    { 15,  6, NA, 15, NA,   1,    NA,    NA, PENTIUM_D         ,     "Pentium D"               },
+    { 15,  4,  4, 15, NA,   1,    NA,    NA, NO_CODE           ,     "SmithField"         },
+    { 15,  4, NA, 15, NA,   1,    NA,    NA, PENTIUM_D         ,     "SmithField"         },
+    { 15,  4,  7, 15, NA,   1,    NA,    NA, NO_CODE           ,     "SmithField"         },
+    { 15,  6, NA, 15, NA,   1,    NA,    NA, PENTIUM_D         ,     "Presler"            },
 
     /* Celeron and Celeron Ds */
-    { 15,  1, NA, 15, NA,   1,    NA,    NA, CELERON           ,     "P-4 Celeron (128K)"      }, 
-    { 15,  2, NA, 15, NA,   1,    NA,    NA, CELERON           ,     "P-4 Celeron (128K)"      },
-    { 15,  3, NA, 15, NA,   1,    NA,    NA, CELERON           ,     "Celeron D"               },
-    { 15,  4, NA, 15, NA,   1,    NA,    NA, CELERON           ,     "Celeron D"               },
-    { 15,  6, NA, 15, NA,   1,    NA,    NA, CELERON           ,     "Celeron D"               },
-    {  6, 55, NA, NA, NA,   2,    NA,    NA, CELERON           ,     "Celeron (Bay Trail-M)"   },
-    {  6, 55, NA, NA, NA,   4,    NA,    NA, CELERON           ,     "Celeron (Bay Trail-D)"   },
+    { 15,  1, NA, 15, NA,   1,    NA,    NA, CELERON           ,     "Willamette-128"     },
+    { 15,  2, NA, 15, NA,   1,    NA,    NA, CELERON           ,     "Northwood-128"      },
+    { 15,  3, NA, 15, NA,   1,    NA,    NA, CELERON           ,     "Prescott-256"       },
+    { 15,  4, NA, 15, NA,   1,    NA,    NA, CELERON           ,     "Prescott-256"       },
+    { 15,  6, NA, 15, NA,   1,    NA,    NA, CELERON           ,     "Cedar Mill-512"     },
+    {  6, 55, NA, NA, NA,   2,    NA,    NA, CELERON           ,     "Bay Trail-M"        },
+    {  6, 55, NA, NA, NA,   4,    NA,    NA, CELERON           ,     "Bay Trail-D"        },
 
     /* Intel Core - P6-based */
+
+    {  6,  9, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Unknown Pentium M"  },
+    {  6,  9, NA, NA, NA,   1,    NA,    NA, MOBILE_PENTIUM_M  ,     "Unknown Pentium M"  },
+    {  6,  9, NA, NA, NA,   1,    NA,    NA, PENTIUM           ,     "Banias"             },
+    {  6,  9, NA, NA, NA,   1,    NA,    NA, MOBILE_PENTIUM_M  ,     "Banias"             },
+    {  6,  9, NA, NA, NA,   1,    NA,    NA, CELERON           ,     "Celeron M"          },
+    {  6, 13, NA, NA, NA,   1,    NA,    NA, PENTIUM           ,     "Dothan"             },
+    {  6, 13, NA, NA, NA,   1,    NA,    NA, MOBILE_PENTIUM_M  ,     "Dothan"             },
+    {  6, 13, NA, NA, NA,   1,    NA,    NA, CELERON           ,     "Celeron M"          },
     
-    {  6,  9, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Unknown Pentium M"          },
-    {  6,  9, NA, NA, NA,   1,    NA,    NA, MOBILE_PENTIUM_M  ,     "Unknown Pentium M"          },
-    {  6,  9, NA, NA, NA,   1,    NA,    NA, PENTIUM           ,     "Pentium M (Banias)"         },
-    {  6,  9, NA, NA, NA,   1,    NA,    NA, MOBILE_PENTIUM_M  ,     "Pentium M (Banias)"         },
-    {  6,  9, NA, NA, NA,   1,    NA,    NA, CELERON           ,     "Celeron M"                  },
-    {  6, 13, NA, NA, NA,   1,    NA,    NA, PENTIUM           ,     "Pentium M (Dothan)"         },
-    {  6, 13, NA, NA, NA,   1,    NA,    NA, MOBILE_PENTIUM_M  ,     "Pentium M (Dothan)"         },
-    {  6, 13, NA, NA, NA,   1,    NA,    NA, CELERON           ,     "Celeron M"                  },
-    
-    {  6, 12, NA, NA, NA,  NA,    NA,    NA, ATOM              ,     "Unknown Atom"               },
-    {  6, 12, NA, NA, NA,  NA,    NA,    NA, ATOM_DIAMONDVILLE ,     "Atom (Diamondville)"        },
-    {  6, 12, NA, NA, NA,  NA,    NA,    NA, ATOM_SILVERTHORNE ,     "Atom (Silverthorne)"        },
-    {  6, 12, NA, NA, NA,  NA,    NA,    NA, ATOM_CEDARVIEW    ,     "Atom (Cedarview)"           },
-    {  6,  6, NA, NA, NA,  NA,    NA,    NA, ATOM_CEDARVIEW    ,     "Atom (Cedarview)"           },
-    {  6, 12, NA, NA, NA,  NA,    NA,    NA, ATOM_PINEVIEW     ,     "Atom (Pineview)"            },
-    {  6, 55, NA, NA, NA,  NA,    NA,    NA, ATOM              ,     "Atom (Bay Trail)"           },
-    {  6, 77, NA, NA, NA,  NA,    NA,    NA, NO_CODE           ,     "Atom (Avoton)"              },
-    
-    {  6, 14, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Unknown Yonah"              },
-    {  6, 14, NA, NA, NA,   1,    NA,    NA, CORE_SOLO         ,     "Yonah (Core Solo)"          },
-    {  6, 14, NA, NA, NA,   2,    NA,    NA, CORE_DUO          ,     "Yonah (Core Duo)"           },
-    {  6, 14, NA, NA, NA,   1,    NA,    NA, MOBILE_CORE_SOLO  ,     "Yonah (Core Solo)"          },
-    {  6, 14, NA, NA, NA,   2,    NA,    NA, MOBILE_CORE_DUO   ,     "Yonah (Core Duo)"           },
-    {  6, 14, NA, NA, NA,   1,    NA,    NA, CORE_SOLO         ,     "Yonah (Core Solo)"          },
-    
-    {  6, 15, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Unknown Core 2"             },
-    {  6, 15, NA, NA, NA,   2,  4096,    NA, CORE_DUO          ,     "Conroe (Core 2 Duo)"        },
-    {  6, 15, NA, NA, NA,   2,  1024,    NA, CORE_DUO          ,     "Conroe (Core 2 Duo) 1024K"  },
-    {  6, 15, NA, NA, NA,   2,   512,    NA, CORE_DUO          ,     "Conroe (Core 2 Duo) 512K"   },
-    {  6, 15, NA, NA, NA,   4,    NA,    NA, QUAD_CORE         ,     "Kentsfield (Core 2 Quad)"   },
-    {  6, 15, NA, NA, NA,   4,  4096,    NA, QUAD_CORE         ,     "Kentsfield (Core 2 Quad)"   },
-    {  6, 15, NA, NA, NA, 400,    NA,    NA, MORE_THAN_QUADCORE,     "More than quad-core"        },
-    {  6, 15, NA, NA, NA,   2,  2048,    NA, CORE_DUO          ,     "Allendale (Core 2 Duo)"     },
-    {  6, 15, NA, NA, NA,   2,    NA,    NA, MOBILE_CORE_DUO   ,     "Merom (Core 2 Duo)"         },
-    {  6, 15, NA, NA, NA,   2,  2048,    NA, MEROM             ,     "Merom (Core 2 Duo) 2048K"   },
-    {  6, 15, NA, NA, NA,   2,  4096,    NA, MEROM             ,     "Merom (Core 2 Duo) 4096K"   },
-    
-    {  6, 15, NA, NA, 15,   1,    NA,    NA, CELERON           ,     "Conroe-L (Celeron)"         },
-    {  6,  6, NA, NA, 22,   1,    NA,    NA, CELERON           ,     "Conroe-L (Celeron)"         },
-    {  6, 15, NA, NA, 15,   2,    NA,    NA, CELERON           ,     "Conroe-L (Allendale)"       },
-    {  6,  6, NA, NA, 22,   2,    NA,    NA, CELERON           ,     "Conroe-L (Allendale)"       },
-    
-    
-    {  6,  6, NA, NA, 22,   1,    NA,    NA, NO_CODE           ,     "Unknown Core ?"             },
-    {  6,  7, NA, NA, 23,   1,    NA,    NA, NO_CODE           ,     "Unknown Core ?"             },
-    {  6,  6, NA, NA, 22, 400,    NA,    NA, MORE_THAN_QUADCORE,     "More than quad-core"        },
-    {  6,  7, NA, NA, 23, 400,    NA,    NA, MORE_THAN_QUADCORE,     "More than quad-core"        },
-    
-    {  6,  7, NA, NA, 23,   1,    NA,    NA, CORE_SOLO         ,     "Unknown Core 45nm"          },
-    {  6,  7, NA, NA, 23,   1,    NA,    NA, CORE_DUO          ,     "Unknown Core 45nm"          },
-    {  6,  7, NA, NA, 23,   2,  1024,    NA, WOLFDALE          ,     "Celeron Wolfdale 1M"        },
-    {  6,  7, NA, NA, 23,   2,  2048,    NA, WOLFDALE          ,     "Wolfdale (Core 2 Duo) 2M"   },
-    {  6,  7, NA, NA, 23,   2,  3072,    NA, WOLFDALE          ,     "Wolfdale (Core 2 Duo) 3M"   },
-    {  6,  7, NA, NA, 23,   2,  6144,    NA, WOLFDALE          ,     "Wolfdale (Core 2 Duo) 6M"   },
-    {  6,  7, NA, NA, 23,   1,    NA,    NA, MOBILE_CORE_DUO   ,     "Penryn (Core 2 Duo)"        },
-    {  6,  7, NA, NA, 23,   2,  3072,    NA, PENRYN            ,     "Penryn (Core 2 Duo) 3M"     },
-    {  6,  7, NA, NA, 23,   2,  6144,    NA, PENRYN            ,     "Penryn (Core 2 Duo) 6M"     },
-    {  6,  7, NA, NA, 23,   4,  2048,    NA, QUAD_CORE         ,     "Yorkfield (Core 2 Quad) 2M" },
-    {  6,  7, NA, NA, 23,   4,  3072,    NA, QUAD_CORE         ,     "Yorkfield (Core 2 Quad) 3M" },
-    {  6,  7, NA, NA, 23,   4,  6144,    NA, QUAD_CORE         ,     "Yorkfield (Core 2 Quad) 6M" },
+    /* Intel Atom */
+    {  6, 12, NA, NA, NA,  NA,    NA,    NA, ATOM              ,     "Unknown Atom"       },
+    {  6, 12, NA, NA, NA,  NA,    NA,    NA, ATOM_DIAMONDVILLE ,     "Diamondville"       },
+    {  6, 12, NA, NA, NA,  NA,    NA,    NA, ATOM_SILVERTHORNE ,     "Silverthorne"       },
+    {  6, 12, NA, NA, NA,  NA,    NA,    NA, ATOM_CEDARVIEW    ,     "Cedarview"          },
+    {  6,  6, NA, NA, NA,  NA,    NA,    NA, ATOM_CEDARVIEW    ,     "Cedarview"          },
+    {  6, 12, NA, NA, NA,  NA,    NA,    NA, ATOM_PINEVIEW     ,     "Pineview"           },
+    {  6, 55, NA, NA, NA,  NA,    NA,    NA, ATOM              ,     "Bay Trail"          },
+    {  6, 77, NA, NA, NA,  NA,    NA,    NA, NO_CODE           ,     "Avoton"             },
+    {  6, NA, NA, NA, 38,  NA,    NA,    NA, NO_CODE           ,     "Tunnel Creek"       },
+
+    {  6, 14, NA, NA, NA,   NA,   NA,    NA, NO_CODE           ,     "Yonah"              },
+
+    {  6, 15, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Unknown Core 2"     },
+    {  6, 15, NA, NA, NA,   2,  4096,    NA, CORE_DUO          ,     "Conroe"             },
+    {  6, 15, NA, NA, NA,   2,  1024,    NA, CORE_DUO          ,     "Conroe"             },
+    {  6, 15, NA, NA, NA,   2,   512,    NA, CORE_DUO          ,     "Conroe"             },
+    {  6, 15, NA, NA, NA,   4,    NA,    NA, QUAD_CORE         ,     "Kentsfield"         },
+    {  6, 15, NA, NA, NA,   4,  4096,    NA, QUAD_CORE         ,     "Kentsfield"         },
+    {  6, 15, NA, NA, NA,   2,  2048,    NA, CORE_DUO          ,     "Allendale"          },
+    {  6, 15, NA, NA, NA,   2,    NA,    NA, MOBILE_CORE_DUO   ,     "Merom"              },
+    {  6, 15, NA, NA, NA,   2,  2048,    NA, MEROM             ,     "Merom"              },
+    {  6, 15, NA, NA, NA,   2,  4096,    NA, MEROM             ,     "Merom"              },
+
+    {  6, 15, NA, NA, 15,   1,    NA,    NA, CELERON           ,     "Celeron"            },
+    {  6,  6, NA, NA, 22,   1,    NA,    NA, CELERON           ,     "Celeron"            },
+    {  6, 15, NA, NA, 15,   2,    NA,    NA, CELERON           ,     "Allendale"          },
+    {  6,  6, NA, NA, 22,   2,    NA,    NA, CELERON           ,     "Allendale"          },
+
+    {  6,  7, NA, NA, 23,   2,  1024,    NA, WOLFDALE          ,     "Wolfdale"           },
+    {  6,  7, NA, NA, 23,   2,  2048,    NA, WOLFDALE          ,     "Wolfdale"           },
+    {  6,  7, NA, NA, 23,   2,  3072,    NA, WOLFDALE          ,     "Wolfdale"           },
+    {  6,  7, NA, NA, 23,   2,  6144,    NA, WOLFDALE          ,     "Wolfdale"           },
+    {  6,  7, NA, NA, 23,   1,    NA,    NA, MOBILE_CORE_DUO   ,     "Penryn"             },
+    {  6,  7, NA, NA, 23,   2,  3072,    NA, PENRYN            ,     "Penryn"             },
+    {  6,  7, NA, NA, 23,   2,  6144,    NA, PENRYN            ,     "Penryn"             },
+    {  6,  7, NA, NA, 23,   4,  2048,    NA, QUAD_CORE         ,     "Yorkfield"          },
+    {  6,  7, NA, NA, 23,   4,  3072,    NA, QUAD_CORE         ,     "Yorkfield"          },
+    {  6,  7, NA, NA, 23,   4,  6144,    NA, QUAD_CORE         ,     "Yorkfield"          },
     
     /* Xeons - Core based */
-    {  6, 14, NA, NA, 14,   1,    NA,    NA, XEON              ,     "Xeon LV"                  },
-    {  6, 15, NA, NA, 15,   2,  4096,    NA, XEON              ,     "Xeon (Woodcrest)"         },
-    {  6, 15, NA, NA, 15,   2,  2048,    NA, XEON              ,     "Xeon (Conroe/2M)"         },
-    {  6, 15, NA, NA, 15,   2,  4096,    NA, XEON              ,     "Xeon (Conroe/4M)"         },
-    {  6, 15, NA, NA, 15,   4,  4096,    NA, XEON              ,     "Xeon (Kentsfield)"        },
-    {  6, 15, NA, NA, 15,   4,  4096,    NA, XEON              ,     "Xeon (Clovertown)"        },
-    {  6,  7, NA, NA, 23,   2,  6144,    NA, XEON              ,     "Xeon (Wolfdale)"          },
-    {  6,  7, NA, NA, 23,   2,  6144,    NA, XEON              ,     "Xeon (Wolfdale DP)"       },
-    {  6,  7, NA, NA, 23,   4,  6144,    NA, XEON              ,     "Xeon (Harpertown)"        },
-    {  6,  7, NA, NA, 23,   4,  3072,    NA, XEON              ,     "Xeon (Yorkfield/3M)"      },
-    {  6,  7, NA, NA, 23,   4,  6144,    NA, XEON              ,     "Xeon (Yorkfield/6M)"      },
+    {  6, 14, NA, NA, 14,   1,    NA,    NA, XEON              ,     "LV"                 },
+    {  6, 15, NA, NA, 15,   2,  4096,    NA, XEON              ,     "Woodcrest"          },
+    {  6, 15, NA, NA, 15,   2,  2048,    NA, XEON              ,     "Conroe"             },
+    {  6, 15, NA, NA, 15,   2,  4096,    NA, XEON              ,     "Conroe"             },
+    {  6, 15, NA, NA, 15,   4,  4096,    NA, XEON              ,     "Kentsfield"         },
+    {  6, 15, NA, NA, 15,   4,  4096,    NA, XEON              ,     "Clovertown"         },
+    {  6,  7, NA, NA, 23,   2,  6144,    NA, XEON              ,     "Wolfdale"           },
+    {  6,  7, NA, NA, 23,   4,  6144,    NA, XEON              ,     "Harpertown"         },
+    {  6,  7, NA, NA, 23,   4,  3072,    NA, XEON              ,     "Yorkfield"          },
+    {  6,  7, NA, NA, 23,   4,  6144,    NA, XEON              ,     "Yorkfield"          },
 
     /* Nehalem (45nm) */
-    {  6, 10, NA, NA, 26,   4,    NA,    NA, XEON_GAINESTOWN   ,     "Gainestown (Xeon)"        },
-    {  6, 10, NA, NA, 26,   4,    NA,  4096, XEON_GAINESTOWN   ,     "Gainestown 4M (Xeon)"     },
-    {  6, 10, NA, NA, 26,   4,    NA,  8192, XEON_GAINESTOWN   ,     "Gainestown 8M (Xeon)"     },
-    {  6, 10, NA, NA, 26,   4,    NA,    NA, XEON_I7           ,     "Bloomfield (Xeon)"        },
-    {  6, 10, NA, NA, 26,   4,    NA,    NA, CORE_I7           ,     "Bloomfield (Core i7)"     },
-    {  6, 10, NA, NA, 30,   4,    NA,    NA, CORE_I7           ,     "Lynnfield (Core i7)"      },
-    {  6,  5, NA, NA, 37,   4,    NA,  8192, CORE_I5           ,     "Lynnfield (Core i5)"      },
+    {  6, NA, NA, NA, 46,   NA,   NA,    NA, NO_CODE           ,     "Beckton"            },
+    {  6, 10, NA, NA, 26,   NA,   NA,    NA, XEON_GAINESTOWN   ,     "Gainestown"         },
+    {  6, 10, NA, NA, 26,   NA,   NA,  4096, XEON_GAINESTOWN   ,     "Gainestown"         },
+    {  6, 10, NA, NA, 26,   NA,   NA,  8192, XEON_GAINESTOWN   ,     "Gainestown"         },
+    {  6, 10, NA, NA, 26,   NA,   NA,    NA, XEON_I7           ,     "Bloomfield"         },
+    {  6, 10, NA, NA, 26,   NA,   NA,    NA, CORE_I7           ,     "Bloomfield"         },
+    {  6, 10, NA, NA, 30,   NA,   NA,    NA, CORE_I7           ,     "Lynnfield"          },
+    {  6,  5, NA, NA, 37,   NA,   NA,  8192, CORE_I5           ,     "Lynnfield"          },
 
     /* Westmere (32nm) */
-    {  6,  5, NA, NA, 37,   2,    NA,    NA, NO_CODE           ,     "Unknown Core i3/i5"       },
-    {  6, 12, NA, NA, 44,  NA,    NA,    NA, XEON_WESTMERE     ,     "Westmere (Xeon)"          },
-    {  6, 12, NA, NA, 44,  NA,    NA, 12288, XEON_WESTMERE     ,     "Gulftown (Xeon)"          },
-    {  6, 12, NA, NA, 44,   4,    NA, 12288, CORE_I7           ,     "Gulftown (Core i7)"       },
-    {  6,  5, NA, NA, 37,   2,    NA,  4096, CORE_I5           ,     "Clarkdale (Core i5)"      },
-    {  6,  5, NA, NA, 37,   2,    NA,  4096, CORE_I3           ,     "Clarkdale (Core i3)"      },
-    {  6,  5, NA, NA, 37,   2,    NA,  4096, CORE_I7           ,     "Arrandale (Core i7)"      },
-    {  6,  5, NA, NA, 37,   2,    NA,  3072, CORE_I5           ,     "Arrandale (Core i5)"      },
-    {  6,  5, NA, NA, 37,   2,    NA,  3072, CORE_I3           ,     "Arrandale (Core i3)"      },
+    {  6, 12, NA, NA, 44,   NA,   NA,    NA, NO_CODE           ,     "Westmere"           },
+    {  6, NA, NA, NA, 47,   NA,   NA,    NA, NO_CODE           ,     "Westmere-EX"        },
+    {  6, 12, NA, NA, 44,   NA,   NA, 12288, NO_CODE           ,     "Gulftown"           },
+    {  6,  5, NA, NA, 37,   NA,   NA,  4096, NO_CODE           ,     "Clarkdale"          },
+    {  6,  5, NA, NA, 37,   NA,   NA,  4096, NO_CODE           ,     "Arrandale"          },
+    {  6,  5, NA, NA, 37,   NA,   NA,  3072, NO_CODE           ,     "Arrandale"          },
 
     /* Sandy Bridge (32nm) */
-    {  6, 10, NA, NA, 42,  NA,    NA,    NA, NO_CODE           ,     "Unknown Sandy Bridge"     },
-    {  6, 10, NA, NA, 42,  NA,    NA,    NA, XEON              ,     "Sandy Bridge (Xeon)"      },
-    {  6, 10, NA, NA, 42,  NA,    NA,    NA, CORE_I7           ,     "Sandy Bridge (Core i7)"   },
-    {  6, 10, NA, NA, 42,   4,    NA,    NA, CORE_I7           ,     "Sandy Bridge (Core i7)"   },
-    {  6, 10, NA, NA, 42,   4,    NA,    NA, CORE_I5           ,     "Sandy Bridge (Core i5)"   },
-    {  6, 10, NA, NA, 42,   2,    NA,    NA, CORE_I3           ,     "Sandy Bridge (Core i3)"   },
-    {  6, 10, NA, NA, 42,   2,    NA,    NA, PENTIUM           ,     "Sandy Bridge (Pentium)"   },
-    {  6, 10, NA, NA, 42,   1,    NA,    NA, CELERON           ,     "Sandy Bridge (Celeron)"   },
-    {  6, 10, NA, NA, 42,   2,    NA,    NA, CELERON           ,     "Sandy Bridge (Celeron)"   },
-    {  6, 13, NA, NA, 45,  NA,    NA,    NA, NO_CODE           ,     "Sandy Bridge-E"           },
-    {  6, 13, NA, NA, 45,  NA,    NA,    NA, XEON              ,     "Sandy Bridge-E (Xeon)"    },
+    {  6, 10, NA, NA, 42,   NA,   NA,    NA, NO_CODE           ,     "Sandy Bridge"       },
+    {  6, 13, NA, NA, 45,   NA,   NA,    NA, NO_CODE           ,     "Sandy Bridge-E"     },
 
     /* Ivy Bridge (22nm) */
-    {  6, 10, NA, NA, 58,  NA,    NA,    NA, XEON              ,     "Ivy Bridge (Xeon)"        },
-    {  6, 10, NA, NA, 58,   4,    NA,    NA, CORE_IVYBRIDGE7   ,     "Ivy Bridge (Core i7)"     },
-    {  6, 10, NA, NA, 58,   4,    NA,    NA, CORE_IVYBRIDGE5   ,     "Ivy Bridge (Core i5)"     },
-    {  6, 10, NA, NA, 58,   2,    NA,    NA, CORE_IVYBRIDGE3   ,     "Ivy Bridge (Core i3)"     },
-    {  6, 10, NA, NA, 58,   2,    NA,    NA, PENTIUM           ,     "Ivy Bridge (Pentium)"     },
-    {  6, 10, NA, NA, 58,   1,    NA,    NA, CELERON           ,     "Ivy Bridge (Celeron)"     },
-    {  6, 10, NA, NA, 58,   2,    NA,    NA, CELERON           ,     "Ivy Bridge (Celeron)"     },
-    {  6, 14, NA, NA, 62,  NA,    NA,    NA, NO_CODE           ,     "Ivy Bridge-E"             },
+    {  6, 10, NA, NA, 58,   NA,   NA,    NA, NO_CODE           ,     "Ivy Bridge"         },
+    {  6, 14, NA, NA, 62,   NA,   NA,    NA, NO_CODE           ,     "Ivy Bridge-E"       },
     
     /* Haswell (22nm) */
-    {  6, 12, NA, NA, 60,  NA,    NA,    NA, XEON              ,     "Haswell (Xeon)"           },
-    {  6, 12, NA, NA, 60,   4,    NA,    NA, CORE_HASWELL7     ,     "Haswell (Core i7)"        },
-    {  6,  5, NA, NA, 69,   4,    NA,    NA, CORE_HASWELL7     ,     "Haswell (Core i7)"        },
-    {  6, 12, NA, NA, 60,   4,    NA,    NA, CORE_HASWELL5     ,     "Haswell (Core i5)"        },
-    {  6,  5, NA, NA, 69,   4,    NA,    NA, CORE_HASWELL5     ,     "Haswell (Core i5)"        },
-    {  6, 12, NA, NA, 60,   2,    NA,    NA, CORE_HASWELL3     ,     "Haswell (Core i3)"        },
-    {  6,  5, NA, NA, 69,   2,    NA,    NA, CORE_HASWELL3     ,     "Haswell (Core i3)"        },
-    {  6, 12, NA, NA, 60,   2,    NA,    NA, PENTIUM           ,     "Haswell (Pentium)"        },
-    {  6, 12, NA, NA, 60,   2,    NA,    NA, CELERON           ,     "Haswell (Celeron)"        },
-    {  6, 12, NA, NA, 60,   1,    NA,    NA, CELERON           ,     "Haswell (Celeron)"        },
-    {  6, 15, NA, NA, 63,  NA,    NA,    NA, NO_CODE           ,     "Haswell-E"                },
-    /* Devil's Canyon */
-    {  6, 12, NA, NA, 60,   4,    NA,    NA, CORE_DEVILSCANYON5,     "Devil's Canyon (Core i5)" },
-    {  6, 12, NA, NA, 60,   4,    NA,    NA, CORE_DEVILSCANYON7,     "Devil's Canyon (Core i7)" },
+    {  6, 12, NA, NA, 60,   NA,   NA,    NA, NO_CODE           ,     "Haswell"            },
+    {  6, 15, NA, NA, 63,   NA,   NA,    NA, NO_CODE           ,     "Haswell-E"          },
+    {  6,  3, NA, NA, 60,   NA,   NA,    NA, NO_CODE           ,     "Haswell-DT"         },
+    {  6,  5, NA, NA, 69,   NA,   NA,    NA, NO_CODE           ,     "Haswell-ULT"        },
+    {  6, 12, NA, NA, 60,   NA,   NA,    NA, DEVILSCANYON      ,     "Devil's Canyon"     },
+    {  6,  1, NA, NA, 70,   NA,   NA,    NA, NO_CODE           ,     "Crystal Well-DT"    },
 
     /* Broadwell (14nm) */
-    {  6,  7, NA, NA, 71,   4,    NA,    NA, CORE_BROADWELL7   ,     "Broadwell (Core i7)"      },
-    {  6,  7, NA, NA, 71,   4,    NA,    NA, CORE_BROADWELL5   ,     "Broadwell (Core i5)"      },
-    {  6, 13, NA, NA, 61,   4,    NA,    NA, CORE_BROADWELL7   ,     "Broadwell-U (Core i7)"    },
-    {  6, 13, NA, NA, 61,   2,    NA,    NA, CORE_BROADWELL7   ,     "Broadwell-U (Core i7)"    },
-    {  6, 13, NA, NA, 61,   2,    NA,    NA, CORE_BROADWELL5   ,     "Broadwell-U (Core i5)"    },
-    {  6, 13, NA, NA, 61,   2,    NA,    NA, CORE_BROADWELL3   ,     "Broadwell-U (Core i3)"    },
-    {  6, 13, NA, NA, 61,   2,    NA,    NA, PENTIUM           ,     "Broadwell-U (Pentium)"    },
-    {  6, 13, NA, NA, 61,   2,    NA,    NA, CELERON           ,     "Broadwell-U (Celeron)"    },
-    {  6, 13, NA, NA, 61,   2,    NA,    NA, NA                ,     "Broadwell-U (Core M)"     },
+    {  6,  7, NA, NA, 71,   NA,   NA,    NA, NO_CODE           ,     "Broadwell"          },
+    {  6, 13, NA, NA, 61,   NA,   NA,    NA, NO_CODE           ,     "Broadwell-U"        },
     
     /* Skylake (14nm) */
-    {  6, 14, NA, NA, 94,   4,    NA,    NA, CORE_SKYLAKE7     ,     "Skylake (Core i7)"        },
-    {  6, 14, NA, NA, 94,   4,    NA,    NA, CORE_SKYLAKE5     ,     "Skylake (Core i5)"        },
-    {  6, 14, NA, NA, 94,   4,    NA,    NA, CORE_SKYLAKE3     ,     "Skylake (Core i3)"        },
-    {  6, 14, NA, NA, 94,   4,    NA,    NA, PENTIUM           ,     "Skylake (Pentium)"        },
+    {  6, 14, NA, NA, 78,   NA,   NA,    NA, NO_CODE           ,     "Skylake"            },
+    {  6, 14, NA, NA, 94,   NA,   NA,    NA, NO_CODE           ,     "Skylake-DT"         },
 
     /* Itanium */
-    {  7, NA, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Itanium"                  },
-    { 15, NA, NA, 16, NA,   1,    NA,    NA, NO_CODE           ,     "Itanium 2"                },
+    {  7, NA, NA, NA, NA,    1,   NA,    NA, NO_CODE           ,     "Itanium"            },
+    { 15, NA, NA, 16, NA,    1,   NA,    NA, NO_CODE           ,     "Itanium 2"          },
+    { 20, NA, NA, NA,  2,   NA,   NA,    NA, NO_CODE           ,     "Tukwila"            },
     
 };
 
