@@ -80,7 +80,7 @@ int generate_test(cpuid_raw_data_t *raw, cpuid_data_t *data, const char *file)
     return 0;
 }
 
-#define BUF_SIZE 1024
+#define BUF_SIZE 512
 
 int run_test(cpuid_data_t *data, const char *file)
 {
@@ -294,7 +294,7 @@ int run_test(cpuid_data_t *data, const char *file)
         }
         /* Check CPU features with some regex magic */
         if (sscanf(line, "features=%[^\n]", tmp) == 1) {
-            tmp_features[sizeof(tmp_features) - 1] = '\0';
+            tmp_features[0] = '\0';
             for (i = 0; i < NUM_CPU_FEATURES; i++) {
                 if (data->flags[i]) {
                     strcat(tmp_features, cpu_feature_str(i));
