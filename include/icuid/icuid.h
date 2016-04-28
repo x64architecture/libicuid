@@ -264,6 +264,10 @@ typedef enum {
     CPU_FEATURE_IRPERF,        /*!< Instructions Retired Count (AMD Only) */
     /* 2-31 Reserved */
 
+    /* cpuid 0x8000001F, eax */
+    CPU_FEATURE_SME,           /*!< Secure Memory Encryption Support (AMD Only) */
+    /* 1-31 Reserved */
+
     NUM_CPU_FEATURES,
 } cpuid_feature_t;
 

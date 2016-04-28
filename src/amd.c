@@ -257,6 +257,9 @@ static void get_amd_features(const cpuid_raw_data_t *raw, cpuid_data_t *data)
         {  0, CPU_FEATURE_CLZERO },
         {  1, CPU_FEATURE_IRPERF },
     };
+    const cpuid_feature_map_t regidmap_eax_8000_1F[] = {
+        {  0, CPU_FEATURE_SME },
+    };
 
     if (data->cpuid_max_ext < 0x80000001)
         return;
@@ -269,8 +272,11 @@ static void get_amd_features(const cpuid_raw_data_t *raw, cpuid_data_t *data)
 
     if (data->cpuid_max_ext < 0x80000008)
         return;
-
     set_feature_bits(data, regidmap_ebx88, NELEMS(regidmap_ebx88), raw->cpuid_ext[8][1]);
+
+    if (data->cpuid_max_ext < 0x8000001F)
+        return;
+    set_feature_bits(data, regidmap_eax_8000_1F, NELEMS(regidmap_eax_8000_1F), raw->cpuid_ext[31][0]);
 }
 
 void read_amd_data(const cpuid_raw_data_t *raw, cpuid_data_t *data)
