@@ -1,4 +1,4 @@
-include_directories (${PROJECT_SOURCE_DIR}/src/include)
+include_directories (${PROJECT_SOURCE_DIR}/include)
 
 set(INTELTDIR "${PROJECT_SOURCE_DIR}/tests/data/intel")
 
