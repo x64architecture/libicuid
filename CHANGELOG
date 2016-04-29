@@ -1,3 +1,9 @@
+1.4.0: Released: 28 Apr 2016
+============================
+  *) Added support for the detection of Intel Secure Guard Extensions (SGX)
+  *) Improved Intel Codename definitions
+  *) Added support for the detection of AMD Secure Memory Extensions (SME)
+
 1.3.1: Released: 24 Apr 2016
 ============================
   *) Fixed MOVBE, RDRAND, FSGSBASE, SMEP feature detection on AMD processors
