@@ -14,6 +14,8 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+#include <errno.h>
+#include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -80,233 +82,228 @@ int generate_test(cpuid_raw_data_t *raw, cpuid_data_t *data, const char *file)
     return 0;
 }
 
+int icuid_compare_string(const char *line, const char *name, const char *str)
+{
+    char *p = NULL;
+
+    if (strncmp(line, name, strlen(name)) != 0)
+        return 1;
+
+    p = strchr(line, '\n');
+    if (p != NULL) {
+        *p = '\0';
+        if (*(--p) == '\r')
+            *p = '\0';
+    }
+
+    p = strchr(line, '=');
+    if (p == NULL)
+        goto err;
+    p += 1;
+    if (strcmp(str, p) != 0)
+        goto err;
+
+    return 1;
+
+err:
+    _eprintf("ERROR: got '%s' instead of '%s'\n", str, p);
+    return 0;
+}
+
+int icuid_compare_uint(const char *line, const char *name, uint32_t value)
+{
+    char *p = NULL, *ex;
+    unsigned long tmp_uint;
+
+    if (strncmp(line, name, strlen(name)) != 0)
+        return 1;
+
+    p = strchr(line, '\n');
+    if (p != NULL) {
+        *p = '\0';
+        if (*(--p) == '\r')
+            *p = '\0';
+    }
+
+    p = strchr(line, '=');
+    if (p == NULL)
+        goto err;
+    p += 1;
+
+    errno = 0;
+    tmp_uint = strtoul(p, &ex, 10);
+    if (ex == p) {
+        return 0;
+    } else if (tmp_uint == ULONG_MAX && errno == ERANGE) {
+        return 0;
+    } else if (tmp_uint > 0xFFFFFFFF /* 2^32-1 */) {
+        return 0;
+    } else if ((tmp_uint == 0 && errno == EINVAL)) {
+        return 0;
+    }
+
+    if (value != tmp_uint)
+        goto err;
+
+    return 1;
+
+err:
+    _eprintf("ERROR: got '%u' instead of '%lu'\n", value, tmp_uint);
+    return 0;
+}
+
 #define BUF_SIZE 512
 
 int run_test(cpuid_data_t *data, const char *file)
 {
     FILE *fp;
-    char line[BUF_SIZE], tmp[BUF_SIZE];
+    char line[BUF_SIZE];
     char tmp_features[BUF_SIZE];
-    int i, errors = 0;
-    uint32_t tmpuint;
+    unsigned int i, errors = 0;
 
     fp = fopen(file, "rt");
     if (fp == NULL)
         return -1;
 
+    /* Convert features to string */
+    tmp_features[0] = '\0';
+    for (i = 0; i < NUM_CPU_FEATURES; i++) {
+        if (data->flags[i]) {
+            strcat(tmp_features, cpu_feature_str(i));
+            strcat(tmp_features, " ");
+        }
+    }
+    tmp_features[strlen(tmp_features) - 1] = '\0';
+
     while (fgets(line, sizeof(line), fp)) {
         /* Check vendor name */
-        if (sscanf(line, "vendor_str=%s", tmp) == 1) {
-            if (strcmp(data->vendor_str, tmp) != 0) {
-                _eprintf("ERROR: got %s instead of %s\n", data->vendor_str, tmp);
-                errors++;
-            }
+        if (!icuid_compare_string(line, "vendor_str", data->vendor_str)) {
+            errors++;
             continue;
         }
         /* Check vendor id */
-        if (sscanf(line, "vendor_id=%u", &tmpuint) == 1) {
-            if (data->vendor != tmpuint) {
-                _eprintf("ERROR: got %u instead of %u\n", data->vendor, tmpuint);
-                errors++;
-            }
+        if (!icuid_compare_uint(line, "vendor_id", data->vendor)) {
+            errors++;
             continue;
         }
         /* Check CPU name */
-        if (sscanf(line, "cpu_name=%[^\n]", tmp) == 1) {
-            if (memcmp(data->brand_str, tmp, strlen(tmp) - 1) != 0) {
-                _eprintf("ERROR: got %s instead of %s", data->brand_str, tmp);
-                errors++;
-            }
+        if (!icuid_compare_string(line, "cpu_name", data->brand_str)) {
+            errors++;
             continue;
         }
         /* Check number of cores */
-        if (sscanf(line, "cores=%u", &tmpuint) == 1) {
-            if (data->cores != tmpuint) {
-                _eprintf("ERROR: got %u instead of %u\n", data->cores, tmpuint);
-                errors++;
-            }
+        if (!icuid_compare_uint(line, "cores", data->cores)) {
+            errors++;
             continue;
         }
         /* Check number of logical cores */
-        if (sscanf(line, "logical=%u", &tmpuint) == 1) {
-            if (data->logical_cpus != tmpuint) {
-                _eprintf("ERROR: got %u instead of %u\n", data->logical_cpus, tmpuint);
-                errors++;
-            }
+        if (!icuid_compare_uint(line, "logical", data->logical_cpus)) {
+            errors++;
             continue;
         }
         /* Check CPU codename */
-        if (sscanf(line, "codename=%[^\n]", tmp) == 1) {
-            if (memcmp(data->codename, tmp, strlen(tmp) - 1) != 0) {
-                _eprintf("ERROR: got %s instead of %s\n", data->codename, tmp);
-                errors++;
-            }
+        if (!icuid_compare_string(line, "codename", data->codename)) {
+            errors++;
             continue;
         }
         /* Check CPU family */
-        if (sscanf(line, "family=%u", &tmpuint) == 1) {
-            if (data->family != tmpuint) {
-                _eprintf("ERROR: got %u instead of %u\n", data->family, tmpuint);
-                errors++;
-            }
+        if (!icuid_compare_uint(line, "family", data->family)) {
+            errors++;
             continue;
         }
         /* Check CPU model */
-        if (sscanf(line, "model=%u", &tmpuint) == 1) {
-            if (data->model != tmpuint) {
-                _eprintf("ERROR: got %u instead of %u\n", data->model, tmpuint);
-                errors++;
-            }
+        if (!icuid_compare_uint(line, "model", data->model)) {
+            errors++;
             continue;
         }
         /* Check CPU stepping */
-        if (sscanf(line, "stepping=%u", &tmpuint) == 1) {
-            if (data->stepping != tmpuint) {
-                _eprintf("ERROR: got %u instead of %u\n", data->stepping, tmpuint);
-                errors++;
-            }
+        if (!icuid_compare_uint(line, "stepping", data->stepping)) {
+            errors++;
             continue;
         }
         /* Check CPU type */
-        if (sscanf(line, "type=%u", &tmpuint) == 1) {
-            if (data->type != tmpuint) {
-                _eprintf("ERROR: got %u instead of %u\n", data->type, tmpuint);
-                errors++;
-            }
+        if (!icuid_compare_uint(line, "type", data->type)) {
+            errors++;
             continue;
         }
         /* Check CPU extended family */
-        if (sscanf(line, "ext_family=%u", &tmpuint) == 1) {
-            if (data->ext_family != tmpuint) {
-                _eprintf("ERROR: got %u instead of %u\n", data->ext_family, tmpuint);
-                errors++;
-            }
+        if (!icuid_compare_uint(line, "ext_family", data->ext_family)) {
+            errors++;
             continue;
         }
         /* Check CPU extended model */
-        if (sscanf(line, "ext_model=%u", &tmpuint) == 1) {
-            if (data->ext_model != tmpuint) {
-                _eprintf("ERROR: got %u instead of %u\n", data->ext_model, tmpuint);
-                errors++;
-            }
+        if (!icuid_compare_uint(line, "ext_model", data->ext_model)) {
+            errors++;
             continue;
         }
         /* Check CPU signature */
-        if (sscanf(line, "signature=%u", &tmpuint) == 1) {
-            if (data->signature != tmpuint) {
-                _eprintf("ERROR: got %u instead of %u\n", data->signature, tmpuint);
-                errors++;
-            }
+        if (!icuid_compare_uint(line, "signature", data->signature)) {
+            errors++;
             continue;
         }
         /* Check L1 data cache */
-        if (sscanf(line, "l1d_cache=%u", &tmpuint) == 1) {
-            if (data->l1_data_cache != tmpuint) {
-                _eprintf("ERROR: got %u instead of %u\n", data->l1_data_cache, tmpuint);
-                errors++;
-            }
-            continue;
-        }
-        /* Check L2 cache */
-        if (sscanf(line, "l2_cache=%u", &tmpuint) == 1) {
-            if (data->l2_cache != tmpuint) {
-                _eprintf("ERROR: got %u instead of %u\n", data->l2_cache, tmpuint);
-                errors++;
-            }
+        if (!icuid_compare_uint(line, "l1d_cache", data->l1_data_cache)) {
+            errors++;
             continue;
         }
         /* Check L1 instruction cache */
-        if (sscanf(line, "l3_cache=%u", &tmpuint) == 1) {
-            if (data->l3_cache != tmpuint) {
-                _eprintf("ERROR: got %u instead of %u\n", data->l3_cache, tmpuint);
-                errors++;
-            }
+        if (!icuid_compare_uint(line, "l1i_cache", data->l1_instruction_cache)) {
+            errors++;
+            continue;
+        }
+        /* Check L2 cache */
+        if (!icuid_compare_uint(line, "l2_cache", data->l2_cache)) {
+            errors++;
+            continue;
+        }
+        /* Check L3 cache */
+        if (!icuid_compare_uint(line, "l3_cache", data->l3_cache)) {
+            errors++;
             continue;
         }
         /* Check L1 associativity */
-        if (sscanf(line, "l1_assoc=%u", &tmpuint) == 1) {
-            if (data->l1_associativity != tmpuint) {
-                _eprintf("ERROR: got %u instead of %u\n",
-                         data->l1_associativity, tmpuint);
-                errors++;
-            }
+        if (!icuid_compare_uint(line, "l1_assoc", data->l1_associativity)) {
+            errors++;
             continue;
         }
         /* Check L2 associativity */
-        if (sscanf(line, "l2_assoc=%u", &tmpuint) == 1) {
-            if (data->l2_associativity != tmpuint) {
-                _eprintf("ERROR: got %u instead of %u\n",
-                         data->l2_associativity, tmpuint);
-                errors++;
-            }
+        if (!icuid_compare_uint(line, "l2_assoc", data->l2_associativity)) {
+            errors++;
             continue;
         }
         /* Check L3 associativity */
-        if (sscanf(line, "l3_assoc=%u", &tmpuint) == 1) {
-            if (data->l3_associativity != tmpuint) {
-                _eprintf("ERROR: got %u instead of %u\n",
-                         data->l3_associativity, tmpuint);
-                errors++;
-            }
+        if (!icuid_compare_uint(line, "l3_assoc", data->l3_associativity)) {
+            errors++;
             continue;
         }
         /* Check L1 cache line size */
-        if (sscanf(line, "l1_linesz=%u", &tmpuint) == 1) {
-            if (data->l1_cacheline != tmpuint) {
-                _eprintf("ERROR: got %u instead of %u\n", data->l1_cacheline, tmpuint);
-                errors++;
-            }
+        if (!icuid_compare_uint(line, "l1_linesz", data->l1_cacheline)) {
+            errors++;
             continue;
         }
         /* Check L2 cache line size */
-        if (sscanf(line, "l2_linesz=%u", &tmpuint) == 1) {
-            if (data->l2_cacheline != tmpuint) {
-                _eprintf("ERROR: got %u instead of %u\n", data->l2_cacheline, tmpuint);
-                errors++;
-            }
+        if (!icuid_compare_uint(line, "l2_linesz", data->l2_cacheline)) {
+            errors++;
             continue;
         }
         /* Check L3 cache line size */
-        if (sscanf(line, "l3_linesz=%u", &tmpuint) == 1) {
-            if (data->l3_cacheline != tmpuint) {
-                _eprintf("ERROR: got %u instead of %u\n", data->l3_cacheline, tmpuint);
-                errors++;
-            }
+        if (!icuid_compare_uint(line, "l3_linesz", data->l3_cacheline)) {
+            errors++;
             continue;
         }
         /* Check physical address size */
-        if (sscanf(line, "physical_addrsz=%u", &tmpuint) == 1) {
-            if (data->physical_address_bits != tmpuint) {
-                _eprintf("ERROR: got %u instead of %u\n",
-                    data->physical_address_bits, tmpuint);
-                errors++;
-            }
+        if (!icuid_compare_uint(line, "physical_addrsz", data->physical_address_bits)) {
+            errors++;
             continue;
         }
         /* Check virtual address size */
-        if (sscanf(line, "virtual_addrsz=%u", &tmpuint) == 1) {
-            if (data->virtual_address_bits != tmpuint) {
-                _eprintf("ERROR: got %u instead of %u\n",
-                         data->virtual_address_bits, tmpuint);
-                errors++;
-            }
+        if (!icuid_compare_uint(line, "virtual_addrsz", data->virtual_address_bits)) {
+            errors++;
             continue;
         }
-        /* Check CPU features with some regex magic */
-        if (sscanf(line, "features=%[^\n]", tmp) == 1) {
-            tmp_features[0] = '\0';
-            for (i = 0; i < NUM_CPU_FEATURES; i++) {
-                if (data->flags[i]) {
-                    strcat(tmp_features, cpu_feature_str(i));
-                    if (i == (NUM_CPU_FEATURES - 1))
-                        break;
-                    strcat(tmp_features, " ");
-                }
-            }
-            if (memcmp(tmp_features, tmp, strlen(tmp) - 1) != 0) {
-                _eprintf("ERROR: got: %s\ninstead of: %s\n", tmp_features, tmp);
-                errors++;
-            }
+        /* Check CPU features */
+        if (!icuid_compare_string(line, "features", tmp_features)) {
+            errors++;
             continue;
         }
     }
