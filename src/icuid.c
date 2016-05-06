@@ -91,7 +91,7 @@ static int parse_line(char *line, const char *token, uint32_t regs[][4],
     }
 
     /* Get the text after the equals sign */
-    p = strstr(line, "=");
+    p = strchr(line, '=');
     if (p == NULL)
         return 0;
     p += 1;
