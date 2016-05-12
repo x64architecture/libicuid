@@ -18,9 +18,15 @@
 
 #include <icuid/icuid_types.h>
 
+#if defined(__x86_64) || defined(__x86_64__)
+#define ICUID_X86_64
+#elif defined(__x86) || defined(__i386) || defined(__i386__)
+#define ICUID_X86
+#endif
+
 int cpuid_is_supported(void)
 {
-#if defined(__x86_64)
+#if defined(ICUID_X86_64)
     int rv;
     __asm__ volatile(
         "pushfq\n"
@@ -36,7 +42,7 @@ int cpuid_is_supported(void)
         : "=m"(rv)
         : : "rax", "rcx", "memory");
     return (rv != 0);
-#elif defined(__i386__)
+#elif defined(ICUID_X86)
     int rv;
     __asm__ volatile(
         "pushfd\n"
@@ -58,7 +64,7 @@ int cpuid_is_supported(void)
 
 static void __run_cpuid(uint32_t *regs)
 {
-#if defined(__x86_64)
+#if defined(ICUID_X86_64)
     __asm__ volatile(
         "mov %0, %%rdi\n"
 
@@ -84,7 +90,7 @@ static void __run_cpuid(uint32_t *regs)
         :"m"(regs)
         :"memory", "eax", "rsi", "rdi"
     );
-#elif defined(__i386__)
+#elif defined(ICUID_X86)
     __asm__ volatile(
         "mov %0, %%edi\n"
 
