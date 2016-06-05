@@ -127,7 +127,7 @@ int icuid_compare_uint(const char *line, const char *name, uint32_t value)
 
     p = strchr(line, '=');
     if (p == NULL)
-        goto err;
+        return 0;
     p += 1;
 
     errno = 0;
