@@ -282,8 +282,8 @@ int icuid_identify(cpuid_raw_data_t *raw, cpuid_data_t *data)
         if (data->vendor == VENDOR_AMD && data->family < 0xF)
             data->ext_family = data->family;
         else
-            data->ext_family |= data->family + ext_family;
-        data->ext_model |= data->model + (ext_model << 4);
+            data->ext_family = data->family + ext_family;
+        data->ext_model = data->model + (ext_model << 4);
     }
 
     /* Get brand string */

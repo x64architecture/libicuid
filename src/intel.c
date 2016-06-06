@@ -72,7 +72,7 @@ static void get_intel_deterministic_cacheinfo(const cpuid_raw_data_t *raw, cpuid
     uint32_t idx;
     uint32_t associativity, partitions, linesize, sets, size, level, cache_type;
     cache_type_t type = Lnone;
-    for (idx = 0; ecx < 4; idx++) {
+    for (idx = 0; idx < 4; idx++) {
         cache_type = raw->intel_dc[idx][eax] & 0x1F;
         if (cache_type == 0) /* Check validity */
             break;
