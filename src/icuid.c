@@ -322,6 +322,6 @@ int icuid_identify(cpuid_raw_data_t *raw, cpuid_data_t *data)
         read_intel_data(raw, data);
     else if (data->vendor == VENDOR_AMD)
         read_amd_data(raw, data);
-    
+
     return ICUID_OK;
 }

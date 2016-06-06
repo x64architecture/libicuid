@@ -60,8 +60,8 @@ void cpuid_ext(uint32_t *regs);
 
 /**
  * @brief Check if the cpuid instruction is supported
- * @retval ICUID_OK if the cpuid instruction is supported.
- * @retval ICUID_NO_CPUID if the cpuid instruction is unsupported.
+ * @retval 1 if the cpuid instruction is supported.
+ * @retval 0 if the cpuid instruction is unsupported.
  */
 int cpuid_is_supported(void);
 
@@ -297,8 +297,8 @@ typedef enum {
 } cpu_vendor_t;
 
 /**
- * @brief XSAVE Features, used to determine if a particular
- *        feature is supported and enabled by the OS.
+ * @brief XSAVE Features, used to determine if a particular feature is
+ *        supported and enabled by the OS.
  */
 typedef enum {
     XFEATURE_FP = 0,    /*!< x87 FPU State */
@@ -317,25 +317,25 @@ typedef enum {
 typedef struct {
     /**
      * Basic CPUID Information
-     * Contains: results of cpuid when eax=[0-7]
+     * Contains: results of cpuid when eax=[0-MAX_CPUID_LEVEL]
      */
     uint32_t cpuid[MAX_CPUID_LEVEL][4];
 
     /**
      * Extended CPUID Information
-     * Contains: results of cpuid when eax=[0x80000000-0x80000008]
+     * Contains: results of cpuid when eax=[0x80000000-MAX_EXT_CPUID_LEVEL]
      */
     uint32_t cpuid_ext[MAX_EXT_CPUID_LEVEL][4];
 
     /**
      * Intel Deterministic Cache
-     * Contains: eax=4 and ecx=[0-3]
+     * Contains: eax=4 and ecx=[0-MAX_INTEL_DC_LEVEL]
      */
     uint32_t intel_dc[MAX_INTEL_DC_LEVEL][4];
 
     /**
      * Intel Extended Topology
-     * Contains: eax=11 and ecx=[0-3]
+     * Contains: eax=11 and ecx=[0-MAX_INTEL_ET_LEVEL]
      */
     uint32_t intel_et[MAX_INTEL_ET_LEVEL][4];
 } cpuid_raw_data_t;
@@ -438,7 +438,7 @@ typedef struct {
 /**
  * @brief Returns the short form of the CPU feature flag
  * @param feature [in] - the feature, whose short form is desired
- * @returns a (const char) string of the CPU feature flag; e.g. "avx"
+ * @returns a (const char *) string of the CPU feature flag; e.g. "avx"
  */
 const char *cpu_feature_str(cpuid_feature_t feature);
 
@@ -485,7 +485,7 @@ int cpuid_deserialize_raw_data(cpuid_raw_data_t *raw, const char *file);
  *              by cpuid_get_raw_data or by passing NULL, in which case
  *              the function calls cpuid_get_raw_data itself.
  * @param data [out] - the decoded CPU information
- * @note This function will not fail even if some info is not collected
+ * @note This function will not fail if some information collected is wrong
  *       due to error or unsupported info.
  * @returns ICUID_OK if successful, and some other error code otherwise.
  *          The error message can be obtained by calling \ref icuid_errorstr.
