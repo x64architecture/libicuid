@@ -278,7 +278,7 @@ int icuid_identify(cpuid_raw_data_t *raw, cpuid_data_t *data)
         data->stepping = (raw->cpuid[1][eax] >> 0) & 0xF;
         ext_model = (raw->cpuid[1][eax] >> 16) & 0xF;
         ext_family = (raw->cpuid[1][eax] >> 20) & 0xFF;
-        data->signature = (raw->cpuid[1][eax] >> 4);
+        data->signature = (raw->cpuid[1][eax]);
         if (data->vendor == VENDOR_AMD && data->family < 0xF)
             data->ext_family = data->family;
         else
