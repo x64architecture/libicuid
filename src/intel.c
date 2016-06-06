@@ -69,14 +69,14 @@ static void set_cache_info(cpuid_data_t *data, const cache_type_t cache,
  */
 static void get_intel_deterministic_cacheinfo(const cpuid_raw_data_t *raw, cpuid_data_t *data)
 {
-    uint32_t ecx;
+    uint32_t idx;
     uint32_t associativity, partitions, linesize, sets, size, level, cache_type;
     cache_type_t type = Lnone;
-    for (ecx = 0; ecx < 4; ecx++) {
-        cache_type = raw->intel_dc[ecx][0] & 0x1F;
+    for (idx = 0; ecx < 4; idx++) {
+        cache_type = raw->intel_dc[idx][eax] & 0x1F;
         if (cache_type == 0) /* Check validity */
             break;
-        level = (raw->intel_dc[ecx][0] >> 5) & 0x7;
+        level = (raw->intel_dc[idx][eax] >> 5) & 0x7;
         switch (level) {
             case 1:
                 if (cache_type == 1)
@@ -95,10 +95,10 @@ static void get_intel_deterministic_cacheinfo(const cpuid_raw_data_t *raw, cpuid
             default:
                 fprintf(stderr, "Error level/type\n");
         }
-        associativity = (raw->intel_dc[ecx][1] >> 22) + 1;
-        partitions = ((raw->intel_dc[ecx][1] >> 12) & 0x3FF) + 1;
-        linesize = (raw->intel_dc[ecx][1] & 0xFFF) + 1;
-        sets = raw->intel_dc[ecx][2] + 1;
+        associativity = (raw->intel_dc[idx][ebx] >> 22) + 1;
+        partitions = ((raw->intel_dc[idx][ebx] >> 12) & 0x3FF) + 1;
+        linesize = (raw->intel_dc[idx][ebx] & 0xFFF) + 1;
+        sets = raw->intel_dc[idx][ecx] + 1;
         size = (linesize * sets * associativity * partitions) >> 10; /* Size in kB */
         set_cache_info(data, type, size, associativity, linesize);
     }
@@ -112,15 +112,15 @@ static int read_intel_extended_topology(const cpuid_raw_data_t *raw, cpuid_data_
     int i;
     uint32_t smt = 0, cores = 0, level_type;
     for (i = 0; i < 4; i++) {
-        level_type = (raw->intel_et[i][2] >> 8) & 0xFF;
+        level_type = (raw->intel_et[i][ecx] >> 8) & 0xFF;
         switch (level_type) {
             case INVALID:
                 break;
             case THREAD:
-                smt = raw->intel_et[i][1] & 0xFFFF;
+                smt = raw->intel_et[i][ebx] & 0xFFFF;
                 break;
             case CORE:
-                cores = raw->intel_et[i][1] & 0xFFFF;
+                cores = raw->intel_et[i][ebx] & 0xFFFF;
                 break;
             default:
                 break;
@@ -145,9 +145,9 @@ static void get_intel_number_cores(const cpuid_raw_data_t *raw, cpuid_data_t *da
     }
 
     if (data->cpuid_max_basic >= 1) {
-        logical_cpus = (raw->cpuid[1][1] >> 16) & 0xFF;
+        logical_cpus = (raw->cpuid[1][ebx] >> 16) & 0xFF;
         if (raw->cpuid[0][0] >= 4)
-            cores = 1 + ((raw->cpuid[4][0] >> 26) & 0x3F);
+            cores = 1 + ((raw->cpuid[4][eax] >> 26) & 0x3F);
     }
     if (data->flags[CPU_FEATURE_HT]) {
         if (cores > 1) {
@@ -566,11 +566,11 @@ static void get_intel_features(const cpuid_raw_data_t *raw, cpuid_data_t *data)
     };
     if (data->cpuid_max_basic < 1)
         return;
-    set_feature_bits(data, regidmap_ecx01, NELEMS(regidmap_ecx01), raw->cpuid[1][2]);
-    set_feature_bits(data, regidmap_edx01, NELEMS(regidmap_edx01), raw->cpuid[1][3]);
+    set_feature_bits(data, regidmap_ecx01, NELEMS(regidmap_ecx01), raw->cpuid[1][ecx]);
+    set_feature_bits(data, regidmap_edx01, NELEMS(regidmap_edx01), raw->cpuid[1][edx]);
     if (data->cpuid_max_basic < 7)
         return;
-    set_feature_bits(data, regidmap_ebx07, NELEMS(regidmap_ebx07), raw->cpuid[7][1]);
+    set_feature_bits(data, regidmap_ebx07, NELEMS(regidmap_ebx07), raw->cpuid[7][ebx]);
 }
 
 void read_intel_data(const cpuid_raw_data_t *raw, cpuid_data_t *data)

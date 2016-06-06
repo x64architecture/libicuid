@@ -24,6 +24,7 @@
 
 #include <internal/stdcompat.h>
 
+#include "internal.h"
 #include "features.h"
 #include "intel.h"
 #include "amd.h"
@@ -41,14 +42,14 @@ int cpuid_get_raw_data(cpuid_raw_data_t *raw)
         cpuid(0x80000000 + i, raw->cpuid_ext[i]);
     for (i = 0; i < MAX_INTEL_DC_LEVEL; i++) {
         memset(raw->intel_dc[i], 0, sizeof(raw->intel_dc[i]));
-        raw->intel_dc[i][0] = 4;
-        raw->intel_dc[i][2] = i;
+        raw->intel_dc[i][eax] = 4;
+        raw->intel_dc[i][ecx] = i;
         cpuid_ext(raw->intel_dc[i]);
     }
     for (i = 0; i < MAX_INTEL_ET_LEVEL; i++) {
         memset(raw->intel_et[i], 0, sizeof(raw->intel_et[i]));
-        raw->intel_et[i][0] = 11;
-        raw->intel_et[i][2] = i;
+        raw->intel_et[i][eax] = 11;
+        raw->intel_et[i][ecx] = i;
         cpuid_ext(raw->intel_et[i]);
     }
 
@@ -187,20 +188,20 @@ int cpuid_deserialize_raw_data(cpuid_raw_data_t *raw, const char *file)
 
     for (i = 0; i < MAX_CPUID_LEVEL; i++)
         fprintf(fp, "cpuid[%u]=%08x %08x %08x %08x\n", i,
-                raw->cpuid[i][0], raw->cpuid[i][1],
-                raw->cpuid[i][2], raw->cpuid[i][3]);
+                raw->cpuid[i][eax], raw->cpuid[i][ebx],
+                raw->cpuid[i][ecx], raw->cpuid[i][edx]);
     for (i = 0; i < MAX_EXT_CPUID_LEVEL; i++)
         fprintf(fp, "cpuid_ext[%u]=%08x %08x %08x %08x\n", i,
-                raw->cpuid_ext[i][0], raw->cpuid_ext[i][1],
-                raw->cpuid_ext[i][2], raw->cpuid_ext[i][3]);
+                raw->cpuid_ext[i][eax], raw->cpuid_ext[i][ebx],
+                raw->cpuid_ext[i][ecx], raw->cpuid_ext[i][edx]);
     for (i = 0; i < MAX_INTEL_DC_LEVEL; i++)
         fprintf(fp, "intel_dc[%u]=%08x %08x %08x %08x\n", i,
-                raw->intel_dc[i][0], raw->intel_dc[i][1],
-                raw->intel_dc[i][2], raw->intel_dc[i][3]);
+                raw->intel_dc[i][eax], raw->intel_dc[i][ebx],
+                raw->intel_dc[i][ecx], raw->intel_dc[i][edx]);
     for (i = 0; i < MAX_INTEL_ET_LEVEL; i++)
         fprintf(fp, "intel_et[%u]=%08x %08x %08x %08x\n", i,
-                raw->intel_et[i][0], raw->intel_et[i][1],
-                raw->intel_et[i][2], raw->intel_et[i][3]);
+                raw->intel_et[i][eax], raw->intel_et[i][ebx],
+                raw->intel_et[i][ecx], raw->intel_et[i][edx]);
 
     fclose(fp);
 
@@ -258,40 +259,40 @@ int icuid_identify(cpuid_raw_data_t *raw, cpuid_data_t *data)
     memset(data, 0, sizeof(cpuid_data_t));
 
     /* Get max cpuid level */
-    data->cpuid_max_basic = raw->cpuid[0][0];
+    data->cpuid_max_basic = raw->cpuid[0][eax];
     /* Get max extended cpuid level */
-    data->cpuid_max_ext = raw->cpuid_ext[0][0];
+    data->cpuid_max_ext = raw->cpuid_ext[0][eax];
 
     /* Get vendor string */
-    memcpy(data->vendor_str + 0, &raw->cpuid[0][1], 4);
-    memcpy(data->vendor_str + 4, &raw->cpuid[0][3], 4);
-    memcpy(data->vendor_str + 8, &raw->cpuid[0][2], 4);
+    memcpy(data->vendor_str + 0, &raw->cpuid[0][ebx], 4);
+    memcpy(data->vendor_str + 4, &raw->cpuid[0][edx], 4);
+    memcpy(data->vendor_str + 8, &raw->cpuid[0][ecx], 4);
     data->vendor_str[12] = '\0';
 
     /* Get vendor */
     get_vendor(data);
 
     if (data->cpuid_max_basic >= 1) {
-        data->family = (raw->cpuid[1][0] >> 8) & 0xF;
-        data->model = (raw->cpuid[1][0] >> 4) & 0xF;
-        data->stepping = (raw->cpuid[1][0] >> 0) & 0xF;
-        ext_model = (raw->cpuid[1][0] >> 16) & 0xF;
-        ext_family = (raw->cpuid[1][0] >> 20) & 0xFF;
-        data->signature = (raw->cpuid[1][0] >> 4);
+        data->family = (raw->cpuid[1][eax] >> 8) & 0xF;
+        data->model = (raw->cpuid[1][eax] >> 4) & 0xF;
+        data->stepping = (raw->cpuid[1][eax] >> 0) & 0xF;
+        ext_model = (raw->cpuid[1][eax] >> 16) & 0xF;
+        ext_family = (raw->cpuid[1][eax] >> 20) & 0xFF;
+        data->signature = (raw->cpuid[1][eax] >> 4);
         if (data->vendor == VENDOR_AMD && data->family < 0xF)
             data->ext_family = data->family;
         else
-            data->ext_family = data->family + ext_family;
-        data->ext_model = data->model + (ext_model << 4);
+            data->ext_family |= data->family + ext_family;
+        data->ext_model |= data->model + (ext_model << 4);
     }
 
     /* Get brand string */
     if (data->cpuid_max_ext >= 0x80000004) {
         for (i = 2; i <= 4; i++, j += 16) {
-            memcpy(brandstr +  0 + j, &raw->cpuid_ext[i][0], 4);
-            memcpy(brandstr +  4 + j, &raw->cpuid_ext[i][1], 4);
-            memcpy(brandstr +  8 + j, &raw->cpuid_ext[i][2], 4);
-            memcpy(brandstr + 12 + j, &raw->cpuid_ext[i][3], 4);
+            memcpy(brandstr +  0 + j, &raw->cpuid_ext[i][eax], 4);
+            memcpy(brandstr +  4 + j, &raw->cpuid_ext[i][ebx], 4);
+            memcpy(brandstr +  8 + j, &raw->cpuid_ext[i][ecx], 4);
+            memcpy(brandstr + 12 + j, &raw->cpuid_ext[i][edx], 4);
         }
         /*
          * Some brand strings have spaces prepended to them so we have
@@ -308,8 +309,8 @@ int icuid_identify(cpuid_raw_data_t *raw, cpuid_data_t *data)
 
     /* Get addressing info */
     if (data->cpuid_max_ext >= 0x80000008) {
-        data->physical_address_bits = raw->cpuid_ext[8][0] & 0xFF;
-        data->virtual_address_bits = (raw->cpuid_ext[8][0] >> 8) & 0xFF;
+        data->physical_address_bits = raw->cpuid_ext[8][eax] & 0xFF;
+        data->virtual_address_bits = (raw->cpuid_ext[8][eax] >> 8) & 0xFF;
     }
 
     if (data->flags[CPU_FEATURE_OSXSAVE]) {

@@ -28,9 +28,9 @@ static void get_amd_number_cores(const cpuid_raw_data_t *raw, cpuid_data_t *data
     uint32_t logical_cpus = 0, cores = 0;
     
     if (data->cpuid_max_basic >= 1) {
-        logical_cpus = (raw->cpuid[1][1] >> 16) & 0xFF;
+        logical_cpus = (raw->cpuid[1][ebx] >> 16) & 0xFF;
         if (raw->cpuid_ext[0][0] >= 8) {
-            cores = 1 + (raw->cpuid_ext[8][2] & 0xFF);
+            cores = 1 + (raw->cpuid_ext[8][ecx] & 0xFF);
         }
     }
     if (data->flags[CPU_FEATURE_HT]) {
@@ -182,24 +182,24 @@ static void get_amd_cache_info(const cpuid_raw_data_t *raw, cpuid_data_t *data)
     };
     
     if (data->cpuid_max_ext >= 0x80000005) {
-        data->l1_data_cache = (raw->cpuid_ext[5][2] >> 24) & 0xFF;
-        data->l1_associativity = (raw->cpuid_ext[5][2] >> 16) & 0xFF;
-        data->l1_cacheline = (raw->cpuid_ext[5][2]) & 0xFF;
-        data->l1_instruction_cache = (raw->cpuid_ext[5][3] >> 24) & 0xFF;
+        data->l1_data_cache = (raw->cpuid_ext[5][ecx] >> 24) & 0xFF;
+        data->l1_associativity = (raw->cpuid_ext[5][ecx] >> 16) & 0xFF;
+        data->l1_cacheline = (raw->cpuid_ext[5][ecx]) & 0xFF;
+        data->l1_instruction_cache = (raw->cpuid_ext[5][edx] >> 24) & 0xFF;
     }
 
     if (data->cpuid_max_ext < 0x80000006)
         return;
 
-    data->l2_cache = (raw->cpuid_ext[6][2] >> 16) & 0xFFFF;
-    data->l2_associativity = assoc_table[(raw->cpuid_ext[6][2] >> 12) & 0xF];
-    data->l2_cacheline = (raw->cpuid_ext[6][2]) & 0xFF;
+    data->l2_cache = (raw->cpuid_ext[6][ecx] >> 16) & 0xFFFF;
+    data->l2_associativity = assoc_table[(raw->cpuid_ext[6][ecx] >> 12) & 0xF];
+    data->l2_cacheline = (raw->cpuid_ext[6][ecx]) & 0xFF;
       
     l3_result = (raw->cpuid_ext[6][3] >> 18);
     if (l3_result > 0) {
         data->l3_cache = l3_result * 512; /* Size in kB */
-        data->l3_associativity = assoc_table[(raw->cpuid_ext[6][3] >> 12) & 0xF];
-        data->l3_cacheline = (raw->cpuid_ext[6][3]) & 0xFF;
+        data->l3_associativity = assoc_table[(raw->cpuid_ext[6][edx] >> 12) & 0xF];
+        data->l3_cacheline = (raw->cpuid_ext[6][edx]) & 0xFF;
     } else {
         data->l3_cache = 0;
     }
@@ -263,20 +263,20 @@ static void get_amd_features(const cpuid_raw_data_t *raw, cpuid_data_t *data)
 
     if (data->cpuid_max_ext < 0x80000001)
         return;
-    set_feature_bits(data, regidmap_edx81, NELEMS(regidmap_edx81), raw->cpuid_ext[1][3]);
-    set_feature_bits(data, regidmap_ecx81, NELEMS(regidmap_ecx81), raw->cpuid_ext[1][2]);
+    set_feature_bits(data, regidmap_edx81, NELEMS(regidmap_edx81), raw->cpuid_ext[1][edx]);
+    set_feature_bits(data, regidmap_ecx81, NELEMS(regidmap_ecx81), raw->cpuid_ext[1][ecx]);
 
     if (data->cpuid_max_ext < 0x80000007)
         return;
-    set_feature_bits(data, regidmap_edx87, NELEMS(regidmap_edx87), raw->cpuid_ext[7][3]);
+    set_feature_bits(data, regidmap_edx87, NELEMS(regidmap_edx87), raw->cpuid_ext[7][edx]);
 
     if (data->cpuid_max_ext < 0x80000008)
         return;
-    set_feature_bits(data, regidmap_ebx88, NELEMS(regidmap_ebx88), raw->cpuid_ext[8][1]);
+    set_feature_bits(data, regidmap_ebx88, NELEMS(regidmap_ebx88), raw->cpuid_ext[8][ebx]);
 
     if (data->cpuid_max_ext < 0x8000001F)
         return;
-    set_feature_bits(data, regidmap_eax_8000_1F, NELEMS(regidmap_eax_8000_1F), raw->cpuid_ext[31][0]);
+    set_feature_bits(data, regidmap_eax_8000_1F, NELEMS(regidmap_eax_8000_1F), raw->cpuid_ext[31][eax]);
 }
 
 void read_amd_data(const cpuid_raw_data_t *raw, cpuid_data_t *data)

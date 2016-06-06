@@ -16,3 +16,10 @@
 
 /* Get number of elements in an array (STACK ONLY!) */
 #define NELEMS(x) (sizeof(x) / sizeof(x[0]))
+
+typedef enum {
+    eax = 0,
+    ebx,
+    ecx,
+    edx
+} cpuid_register_t;
