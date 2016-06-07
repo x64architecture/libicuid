@@ -272,6 +272,9 @@ int icuid_identify(cpuid_raw_data_t *raw, cpuid_data_t *data)
     /* Get vendor */
     get_vendor(data);
 
+#define IS_AMD   (data->vendor == VENDOR_AMD)
+#define IS_INTEL (data->vendor == VENDOR_INTEL)
+
     if (data->cpuid_max_basic >= 1) {
         data->family = (raw->cpuid[1][eax] >> 8) & 0xF;
         data->model = (raw->cpuid[1][eax] >> 4) & 0xF;
@@ -279,11 +282,15 @@ int icuid_identify(cpuid_raw_data_t *raw, cpuid_data_t *data)
         ext_model = (raw->cpuid[1][eax] >> 16) & 0xF;
         ext_family = (raw->cpuid[1][eax] >> 20) & 0xFF;
         data->signature = (raw->cpuid[1][eax]);
-        if (data->vendor == VENDOR_AMD && data->family < 0xF)
-            data->ext_family = data->family;
-        else
+        if ((IS_INTEL || IS_AMD) && data->family == 0xF)
             data->ext_family = data->family + ext_family;
-        data->ext_model = data->model + (ext_model << 4);
+        else
+            data->ext_family = data->family;
+        if ((IS_INTEL && (data->family == 0x6 || data->family == 0xF)) ||
+            (IS_AMD && data->family == 0xF))
+            data->ext_model = data->model + (ext_model << 4);
+        else
+            data->ext_model = data->model;
     }
 
     /* Get brand string */
@@ -319,9 +326,9 @@ int icuid_identify(cpuid_raw_data_t *raw, cpuid_data_t *data)
     }
 
     /* Get vendor specific info */
-    if (data->vendor == VENDOR_INTEL)
+    if (IS_INTEL)
         read_intel_data(raw, data);
-    else if (data->vendor == VENDOR_AMD)
+    else if (IS_AMD)
         read_amd_data(raw, data);
 
     return ICUID_OK;
