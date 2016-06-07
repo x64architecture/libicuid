@@ -24,7 +24,7 @@
 #define XFEATURE_FLAGS_MAX   32
 #define MAX_CPUID_LEVEL      32
 #define MAX_EXT_CPUID_LEVEL  32
-#define MAX_INTEL_DC_LEVEL   4
-#define MAX_INTEL_ET_LEVEL   4
+#define MAX_INTEL_DC_LEVEL   16
+#define MAX_INTEL_ET_LEVEL   16
 
 #endif /* __LIBICUID_LIMITS_H__ */

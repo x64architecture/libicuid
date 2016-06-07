@@ -72,7 +72,7 @@ static void get_intel_deterministic_cacheinfo(const cpuid_raw_data_t *raw, cpuid
     uint32_t idx;
     uint32_t associativity, partitions, linesize, sets, size, level, cache_type;
     cache_type_t type = Lnone;
-    for (idx = 0; idx < 4; idx++) {
+    for (idx = 0; idx < MAX_INTEL_DC_LEVEL; idx++) {
         cache_type = raw->intel_dc[idx][eax] & 0x1F;
         if (cache_type == 0) /* Check validity */
             break;
@@ -93,7 +93,7 @@ static void get_intel_deterministic_cacheinfo(const cpuid_raw_data_t *raw, cpuid
                     type = L3;
                 break;
             default:
-                fprintf(stderr, "Error level/type\n");
+                break;
         }
         associativity = (raw->intel_dc[idx][ebx] >> 22) + 1;
         partitions = ((raw->intel_dc[idx][ebx] >> 12) & 0x3FF) + 1;
@@ -111,7 +111,7 @@ static int read_intel_extended_topology(const cpuid_raw_data_t *raw, cpuid_data_
 {
     int i;
     uint32_t smt = 0, cores = 0, level_type;
-    for (i = 0; i < 4; i++) {
+    for (i = 0; i < MAX_INTEL_ET_LEVEL; i++) {
         level_type = (raw->intel_et[i][ecx] >> 8) & 0xFF;
         switch (level_type) {
             case INVALID:
