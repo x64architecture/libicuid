@@ -405,6 +405,12 @@ typedef struct {
      */
     uint32_t l3_cache;
 
+    /**
+     * L4 data cache size in kB.
+     * If there is no L4 Cache, this will be 0.
+     */
+    uint32_t l4_cache;
+
     /** Cache associativity for the L1 cache. */
     uint32_t l1_associativity;
 
@@ -414,6 +420,9 @@ typedef struct {
     /** Cache associativity for the L3 cache. */
     uint32_t l3_associativity;
 
+    /** Cache associativity for the L4 cache. */
+    uint32_t l4_associativity;
+
     /** Cache line size for the L1 cache. */
     uint32_t l1_cacheline;
 
@@ -422,6 +431,9 @@ typedef struct {
 
     /** Cache line size for the L3 cache. */
     uint32_t l3_cacheline;
+
+    /** Cache line size for the L4 cache. */
+    uint32_t l4_cacheline;
 
     /** Physical Address bits. */
     uint32_t physical_address_bits;

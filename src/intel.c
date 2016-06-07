@@ -32,6 +32,7 @@ typedef enum {
     L1D,   /*!< L1 Data Cache */
     L2,    /*!< L2 Cache */
     L3,    /*!< L3 Cache */
+    L4,    /*!< L4 Cache */
 } cache_type_t;
 
 static void set_cache_info(cpuid_data_t *data, const cache_type_t cache,
@@ -59,6 +60,12 @@ static void set_cache_info(cpuid_data_t *data, const cache_type_t cache,
             data->l3_cache = size;
             data->l3_associativity = associativity;
             data->l3_cacheline = linesize;
+            break;
+        case L4:
+            data->l4_cache = size;
+            data->l4_associativity = associativity;
+            data->l4_cacheline = linesize;
+            break;
         default:
             break;
     }
@@ -71,8 +78,9 @@ static void get_intel_deterministic_cacheinfo(const cpuid_raw_data_t *raw, cpuid
 {
     uint32_t idx;
     uint32_t associativity, partitions, linesize, sets, size, level, cache_type;
-    cache_type_t type = Lnone;
+    cache_type_t type;
     for (idx = 0; idx < MAX_INTEL_DC_LEVEL; idx++) {
+        type = Lnone;
         cache_type = raw->intel_dc[idx][eax] & 0x1F;
         if (cache_type == 0) /* Check validity */
             break;
@@ -91,6 +99,10 @@ static void get_intel_deterministic_cacheinfo(const cpuid_raw_data_t *raw, cpuid
             case 3:
                 if (cache_type == 3)
                     type = L3;
+                break;
+            case 4:
+                if (cache_type == 3)
+                    type = L4;
                 break;
             default:
                 break;

@@ -58,12 +58,15 @@ int generate_test(cpuid_raw_data_t *raw, cpuid_data_t *data, const char *file)
     fprintf(fp, "l1i_cache=%u\n", data->l1_instruction_cache);
     fprintf(fp, "l2_cache=%u\n", data->l2_cache);
     fprintf(fp, "l3_cache=%u\n", data->l3_cache);
+    fprintf(fp, "l4_cache=%u\n", data->l4_cache);
     fprintf(fp, "l1_assoc=%u\n", data->l1_associativity);
     fprintf(fp, "l2_assoc=%u\n", data->l2_associativity);
     fprintf(fp, "l3_assoc=%u\n", data->l3_associativity);
+    fprintf(fp, "l4_assoc=%u\n", data->l4_associativity);
     fprintf(fp, "l1_linesz=%u\n", data->l1_cacheline);
     fprintf(fp, "l2_linesz=%u\n", data->l2_cacheline);
     fprintf(fp, "l3_linesz=%u\n", data->l3_cacheline);
+    fprintf(fp, "l4_linesz=%u\n", data->l4_cacheline);
     fprintf(fp, "physical_addrsz=%u\n", data->physical_address_bits);
     fprintf(fp, "virtual_addrsz=%u\n", data->virtual_address_bits);
     fprintf(fp, "features=");
@@ -261,6 +264,11 @@ int run_test(cpuid_data_t *data, const char *file)
             errors++;
             continue;
         }
+        /* Check L4 cache */
+        if (!icuid_compare_uint(line, "l4_cache", data->l4_cache)) {
+            errors++;
+            continue;
+        }
         /* Check L1 associativity */
         if (!icuid_compare_uint(line, "l1_assoc", data->l1_associativity)) {
             errors++;
@@ -276,6 +284,11 @@ int run_test(cpuid_data_t *data, const char *file)
             errors++;
             continue;
         }
+        /* Check L4 associativity */
+        if (!icuid_compare_uint(line, "l4_assoc", data->l4_associativity)) {
+            errors++;
+            continue;
+        }
         /* Check L1 cache line size */
         if (!icuid_compare_uint(line, "l1_linesz", data->l1_cacheline)) {
             errors++;
@@ -288,6 +301,11 @@ int run_test(cpuid_data_t *data, const char *file)
         }
         /* Check L3 cache line size */
         if (!icuid_compare_uint(line, "l3_linesz", data->l3_cacheline)) {
+            errors++;
+            continue;
+        }
+        /* Check L4 cache line size */
+        if (!icuid_compare_uint(line, "l4_linesz", data->l4_cacheline)) {
             errors++;
             continue;
         }

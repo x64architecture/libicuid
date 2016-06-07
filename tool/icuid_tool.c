@@ -124,12 +124,15 @@ static int print_summary(cpuid_raw_data_t *raw, cpuid_data_t *data)
     fprintf(out, " L1 I Cache  : %ukB\n", data->l1_instruction_cache);
     fprintf(out, " L2 Cache    : %ukB\n", data->l2_cache);
     fprintf(out, " L3 Cache    : %ukB\n", data->l3_cache);
+    fprintf(out, " L4 Cache    : %ukB\n", data->l4_cache);
     fprintf(out, " L1 Assoc.   : %u-way\n", data->l1_associativity);
     fprintf(out, " L2 Assoc.   : %u-way\n", data->l2_associativity);
     fprintf(out, " L3 Assoc.   : %u-way\n", data->l3_associativity);
+    fprintf(out, " L4 Assoc.   : %u-way\n", data->l4_associativity);
     fprintf(out, " L1 Line sz  : %u bytes\n", data->l1_cacheline);
     fprintf(out, " L2 Line sz  : %u bytes\n", data->l2_cacheline);
     fprintf(out, " L3 Line sz  : %u bytes\n", data->l3_cacheline);
+    fprintf(out, " L4 Line sz  : %u bytes\n", data->l4_cacheline);
 
     fprintf(out, " Address szs : %u bits physical, %u bits virtual\n",
             data->physical_address_bits, data->virtual_address_bits);
