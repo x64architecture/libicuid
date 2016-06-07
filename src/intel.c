@@ -479,7 +479,7 @@ const match_uarch_t uarch_intel_t[] = {
     {  6,  3, NA, NA, 60,   NA,   NA,    NA, NO_CODE           ,     "Haswell-DT"         },
     {  6,  5, NA, NA, 69,   NA,   NA,    NA, NO_CODE           ,     "Haswell-ULT"        },
     {  6, 12, NA, NA, 60,   NA,   NA,    NA, DEVILSCANYON      ,     "Devil's Canyon"     },
-    {  6,  1, NA, NA, 70,   NA,   NA,    NA, NO_CODE           ,     "Crystal Well-DT"    },
+    {  6,  6, NA, NA, 70,   NA,   NA,    NA, NO_CODE           ,     "Crystal Well-DT"    },
 
     /* Broadwell (14nm) */
     {  6,  7, NA, NA, 71,   NA,   NA,    NA, NO_CODE           ,     "Broadwell"          },
