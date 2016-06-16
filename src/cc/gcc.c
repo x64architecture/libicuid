@@ -27,21 +27,8 @@
 int cpuid_is_supported(void)
 {
 #if defined(ICUID_X86_64)
-    int rv;
-    __asm__ volatile(
-        "pushfq\n"
-        "pop %%rax\n"
-        "mov %%rax, %%rcx\n"
-        "xor $0x200000, %%rax\n"
-        "push %%rax\n"
-        "popfq\n"
-        "pushfq\n"
-        "pop %%rax\n"
-        "xor %%rcx, %%rax\n"
-        "mov %%eax, %0\n"
-        : "=m"(rv)
-        : : "rax", "rcx", "memory");
-    return (rv != 0);
+    /* CPUID is always supported in x86_64 */
+    return 1;
 #elif defined(ICUID_X86)
     int rv;
     __asm__ volatile(
@@ -58,8 +45,9 @@ int cpuid_is_supported(void)
         : "=m"(rv)
         : : "memory");
     return (rv != 0);
+#else
+    #error "Unsupported CPU architecture"
 #endif
-    return 0;
 }
 
 static void __run_cpuid(uint32_t *regs)

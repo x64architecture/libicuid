@@ -1,26 +1,6 @@
 
 .code
 
-cpuid_is_supported proc
-    pushfq
-    pop rax
-    mov rcx, rax
-    xor rax, 200000h
-    push rax
-    popfq
-    pushfq
-    pop rax
-    xor rax, rcx
-    jnz cpuid_supported
-    ret
-
-cpuid_supported:
-    xor eax, eax
-    inc eax
-    ret
-
-cpuid_is_supported endp
-
 __run_cpuid proc
     push rbx
     push rcx

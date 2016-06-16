@@ -20,6 +20,12 @@
 
 #if _WIN64
 extern void __run_cpuid(uint32_t *regs);
+
+int cpuid_is_supported(void)
+{
+    /* CPUID is always supported in x86_64 */
+    return 1;
+}
 #else
 
 int cpuid_is_supported(void)
