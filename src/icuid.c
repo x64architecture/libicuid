@@ -37,20 +37,20 @@ int cpuid_get_raw_data(cpuid_raw_data_t *raw)
         return ICUID_NO_CPUID;
 
     for (i = 0; i < MAX_CPUID_LEVEL; i++)
-        cpuid(i, raw->cpuid[i]);
+        icuid_cpuid(i, raw->cpuid[i]);
     for (i = 0; i < MAX_EXT_CPUID_LEVEL; i++)
-        cpuid(0x80000000 + i, raw->cpuid_ext[i]);
+        icuid_cpuid(0x80000000 + i, raw->cpuid_ext[i]);
     for (i = 0; i < MAX_INTEL_DC_LEVEL; i++) {
         memset(raw->intel_dc[i], 0, sizeof(raw->intel_dc[i]));
         raw->intel_dc[i][eax] = 4;
         raw->intel_dc[i][ecx] = i;
-        cpuid_ext(raw->intel_dc[i]);
+        icuid_cpuid_ext(raw->intel_dc[i]);
     }
     for (i = 0; i < MAX_INTEL_ET_LEVEL; i++) {
         memset(raw->intel_et[i], 0, sizeof(raw->intel_et[i]));
         raw->intel_et[i][eax] = 11;
         raw->intel_et[i][ecx] = i;
-        cpuid_ext(raw->intel_et[i]);
+        icuid_cpuid_ext(raw->intel_et[i]);
     }
 
     return ICUID_OK;

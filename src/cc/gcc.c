@@ -107,14 +107,14 @@ static void __run_cpuid(uint32_t *regs)
 #endif
 }
 
-void cpuid(uint32_t eax, uint32_t *regs)
+void icuid_cpuid(uint32_t eax, uint32_t *regs)
 {
     regs[0] = eax;
     regs[1] = regs[2] = regs[3] = 0;
     __run_cpuid(regs);
 }
 
-void cpuid_ext(uint32_t *regs)
+void icuid_cpuid_ext(uint32_t *regs)
 {
     __run_cpuid(regs);
 }

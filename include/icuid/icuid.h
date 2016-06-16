@@ -47,7 +47,7 @@ extern "C" {
  * @note cpuid will be executed with the input eax into the EAX register and all of the
          other registers (EBX, ECX, EDX) will be set to 0.
  */
-void cpuid(uint32_t eax, uint32_t *regs);
+void icuid_cpuid(uint32_t eax, uint32_t *regs);
 
 /**
  * @brief Run the cpuid instruction with custom register values
@@ -56,7 +56,7 @@ void cpuid(uint32_t eax, uint32_t *regs);
  * @note cpuid will be executed with the input regs copied into their respective registers
          and the original input registers will be overwritten with the output of cpuid
  */
-void cpuid_ext(uint32_t *regs);
+void icuid_cpuid_ext(uint32_t *regs);
 
 /**
  * @brief Check if the cpuid instruction is supported
