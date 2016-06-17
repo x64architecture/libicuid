@@ -32,13 +32,13 @@ int cpuid_is_supported(void)
 #elif defined(ICUID_X86)
     int rv;
     __asm__ volatile(
-        "pushfd\n"
+        "pushf\n"
         "pop %%eax\n"
         "mov %%eax, %%ecx\n"
         "xor $0x200000, %%eax\n"
         "push %%eax\n"
-        "popfd\n"
-        "pushfd\n"
+        "popf\n"
+        "pushf\n"
         "pop %%eax\n"
         "xor %%ecx, %%eax\n"
         "mov %%eax, %0"
