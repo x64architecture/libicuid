@@ -6,7 +6,7 @@ addons:
             - gcc-6
             - gcc-mingw-w64
         sources:
-            - ubuntu-toolchain-r
+            - ubuntu-toolchain-r-test
 
 dist: trusty
 
