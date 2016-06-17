@@ -1,3 +1,14 @@
+2.0.0: Released: ?? ??? 2016
+============================
+  *) Fixed Crystall Well-DT codename detection
+  *) Fixed gcc build in certain scenarios
+  *) Fixed shared build
+  *) Correctly set the extended family and extended model
+  *) Added support for the retrival of the L4 cache
+  *) Renamed cpuid() -> icuid_cpuid()
+  *) Renamed cpuid_ext() -> icuid_cpuid_ext()
+  *) Internal code cleanup and improvements
+
 1.4.1: Released: 29 Apr 2016
 ============================
   *) Fixed test build
