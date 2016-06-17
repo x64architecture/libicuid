@@ -15,6 +15,12 @@ else()
     message(FATAL_ERROR "Unsupported compiler:" ${CMAKE_C_COMPILER})
 endif()
 
+if (BUILD_SHARED_LIBS)
+    # Because we use OBJECT we have to globaly set
+    # CMAKE_POSITION_INDEPENDENT_CODE to TRUE
+    set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
+endif()
+
 install(DIRECTORY include/icuid DESTINATION include)
 
 add_subdirectory(src)
