@@ -19,13 +19,13 @@
 #include <icuid/icuid_types.h>
 
 #if _WIN64
-extern void __run_cpuid(uint32_t *regs);
 
 int cpuid_is_supported(void)
 {
     /* CPUID is always supported in x86_64 */
     return 1;
 }
+
 #else
 
 int cpuid_is_supported(void)
@@ -46,34 +46,6 @@ int cpuid_is_supported(void)
     return (rv != 0);
 }
 
-static void __run_cpuid(uint32_t *regs)
-{
-    __asm {
-        push ebx
-        push ecx
-        push edx
-        push edi
-        mov edi, regs
-
-        mov eax, [edi]
-        mov ebx, [edi+4]
-        mov ecx, [edi+8]
-        mov edx, [edi+12]
-
-        cpuid
-
-        mov [edi],    eax
-        mov [edi+4],  ebx
-        mov [edi+8],  ecx
-        mov [edi+12], edx
-
-        pop edi
-        pop edx
-        pop ecx
-        pop ebx
-    }
-}
-
 uint64_t icuid_xgetbv(const uint32_t xcr)
 {
     __asm {
@@ -84,16 +56,39 @@ uint64_t icuid_xgetbv(const uint32_t xcr)
         mov eax, edx
     }
 }
-#endif /* !_WIN64 */
 
-void icuid_cpuid(uint32_t eax, uint32_t *regs)
+void icuid_cpuid(uint32_t level, uint32_t *regs)
 {
-    regs[0] = eax;
-    regs[1] = regs[2] = regs[3] = 0;
-    __run_cpuid(regs);
+    __asm {
+        mov edi, regs
+
+        mov eax, level
+
+        cpuid
+
+        mov   [edi], eax
+        mov  4[edi], ebx
+        mov  8[edi], ecx
+        mov 12[edi], edx
+    }
 }
 
 void icuid_cpuid_ext(uint32_t *regs)
 {
-    __run_cpuid(regs);
+    __asm {
+        mov edi, regs
+
+        mov eax,   [edi]
+        mov ebx,  4[edi]
+        mov ecx,  8[edi]
+        mov edx, 12[edi]
+
+        cpuid
+
+        mov   [edi], eax
+        mov  4[edi], ebx
+        mov  8[edi], ecx
+        mov 12[edi], edx
+    }
 }
+#endif /* !_WIN64 */

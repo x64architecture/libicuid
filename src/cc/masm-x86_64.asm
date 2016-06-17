@@ -1,36 +1,50 @@
 
 .code
 
-__run_cpuid proc
-    push rbx
-    push rcx
-    push rdx
-    push rdi
-    
-    mov rdi, rcx
+cpuid_is_supported proc
+    mov eax, 1
+    ret
+cpuid_is_supported endp
 
-    mov eax, [rdi]
-    mov ebx, [rdi+4]
-    mov ecx, [rdi+8]
-    mov edx, [rdi+12]
-    
+icuid_cpuid proc
+    push rbx
+
+    mov rax, rcx
+    mov rdi, rdx
+
     cpuid
-    
-    mov [rdi],    eax
-    mov [rdi+4],  ebx
-    mov [rdi+8],  ecx
-    mov [rdi+12], edx
-    pop rdi
-    pop rdx
-    pop rcx
+
+    mov   [rdi], eax
+    mov  4[rdi], ebx
+    mov  8[rdi], ecx
+    mov 12[rdi], edx
+
     pop rbx
     ret
+icuid_cpuid endp
 
-__run_cpuid endp
+icuid_cpuid_ext proc
+    push rbx
+
+    mov rdi, rcx
+
+    mov eax,   [rdi]
+    mov ebx,  4[rdi]
+    mov ecx,  8[rdi]
+    mov edx, 12[rdi]
+
+    cpuid
+
+    mov   [rdi], eax
+    mov  4[rdi], ebx
+    mov  8[rdi], ecx
+    mov 12[rdi], edx
+
+    pop rbx
+    ret
+icuid_cpuid_ext endp
 
 icuid_xgetbv proc
-    mov DWORD PTR [rsp+8], ecx
-    mov ecx, DWORD PTR 8[rsp]
     db 15, 1, 208 ; xgetbv
     shl rdx, 32
     or  rdx, rax

@@ -17,13 +17,13 @@ if (${CMAKE_SYSTEM_PROCESSOR} STREQUAL "AMD64")
             masm-x86_64.asm
         )
     endif()
-endif()
+else()
     set(
         CC_SOURCES
 
-        ${CC_SOURCES}
         visualc.c
     )
+endif()
 else()
     message(FATAL_ERROR "Unsupported compiler:" ${CMAKE_C_COMPILER})
 endif()
