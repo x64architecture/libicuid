@@ -4,27 +4,52 @@ addons:
     apt:
         packages:
             - gcc-6
+            - binutils-mingw-w64
             - gcc-mingw-w64
         sources:
             - ubuntu-toolchain-r-test
 
+sudo: required
 dist: trusty
 
-os:
-    - linux
-    - osx
-
-compiler:
-    - clang
-    - gcc
+matrix:
+    include:
+        - os: linux
+          compiler: clang
+          env: CMAKE_C_FLAGS="-fsanitize=address"
+        - os: linux
+          compiler: gcc-6
+          env: CMAKE_C_FLAGS="-fsanitize=address -fsanitize=undefined"
+        - os: linux
+          compiler: gcc-6
+          env:
+              - CMAKE_C_FLAGS="-fsanitize=address -fsanitize=undefined"
+              - SHARED_BUILD="1"
+        - os: linux
+          compiler: i686-w64-mingw32-gcc
+          env: RUN_TESTS="0"
+        - os: linux
+          compiler: x86_64-w64-mingw32-gcc
+          env: RUN_TESTS="0"
 
 before_script:
     - mkdir build
     - cd build
-    - cmake ..
+    - if [ "$SHARED_BUILD" == "1" ]; then
+          cmake -DBUILD_SHARED_LIBS=TRUE ..;
+      elif [ "$CC" == i686-w64-mingw32-gcc ]; then
+          cmake -DCMAKE_SYSTEM_NAME="Windows" -DCMAKE_RC_COMPILER="i686-w64-mingw32-windres" ..;
+      elif [ "$CC" == x86_64-w64-mingw32-gcc ]; then
+          cmake -DCMAKE_SYSTEM_NAME="Windows" -DCMAKE_RC_COMPILER="x86_64-w64-mingw32-windres" ..;
+      else
+          cmake ..;
+      fi
     - cd ..
 
 script:
     - cd build
     - make
-    - make test
+    - if [ "$RUN_TESTS" != "0" ]; then
+          make test;
+      fi
+
