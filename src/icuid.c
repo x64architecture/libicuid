@@ -213,25 +213,19 @@ static void get_vendor(cpuid_data_t *data)
 {
     int i;
     const struct {
-        char vendor_str[VENDOR_STR_MAX];
+        const char *vendor_str;
         cpu_vendor_t vendor;
     } cpu_vendors[] = {
         { "GenuineIntel", VENDOR_INTEL },
         { "AuthenticAMD", VENDOR_AMD },
         { "CentaurHauls", VENDOR_CENTAUR },
         { "CyrixInstead", VENDOR_CYRIX },
-        { "TransmetaCPU", VENDOR_TRANSMETA },
         { "GenuineTMx86", VENDOR_TRANSMETA },
         { "Geode by NSC", VENDOR_NSC },
         { "NexGenDriven", VENDOR_NEXGEN },
         { "RiseRiseRise", VENDOR_RISE },
         { "SiS SiS SiS ", VENDOR_SIS },
         { "UMC UMC UMC ", VENDOR_UMC },
-        { "VIA VIA VIA ", VENDOR_VIA },
-        { "KVMKVMKVMKVM", VENDOR_HV_KVM },
-        { "Microsoft Hv", VENDOR_HV_HYPERV },
-        { "VMwareVMware", VENDOR_HV_VMWARE },
-        { "XenVMMXenVMM", VENDOR_HV_XEN },
     };
     for (i = 0; i < NUM_CPU_VENDORS; i++) {
         if (strcmp(data->vendor_str, cpu_vendors[i].vendor_str) == 0) {

@@ -288,11 +288,6 @@ typedef enum {
     VENDOR_RISE,        /*!< Rise CPU */
     VENDOR_SIS,         /*!< SiS CPU */
     VENDOR_NSC,         /*!< National Semiconductor CPU */
-    VENDOR_VIA,         /*!< VIA CPU */
-    VENDOR_HV_KVM,      /*!< KVM HV */
-    VENDOR_HV_HYPERV,   /*!< Microsoft Hyper-V */
-    VENDOR_HV_VMWARE,   /*!< VMware HV */
-    VENDOR_HV_XEN,      /*!< Xen HV */
     NUM_CPU_VENDORS,
 } cpu_vendor_t;
 
