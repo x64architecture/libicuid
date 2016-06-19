@@ -174,7 +174,11 @@ int cpuid_serialize_raw_data(cpuid_raw_data_t *raw, const char *file)
             goto parse_err;
     }
     raw->max_cpuid_level = raw->cpuid[0][eax] + 1;
+    if (raw->max_cpuid_level > MAX_CPUID_LEVEL)
+        goto parse_err;
     raw->max_cpuid_ext_level = (raw->cpuid_ext[0][eax] & ~0x80000000) + 1;
+    if (raw->max_cpuid_ext_level > MAX_EXT_CPUID_LEVEL)
+        goto parse_err;
 
     if (raw->max_cpuid_level >= 0x4) {
         for (i = 0; i < MAX_INTEL_DC_LEVEL; i++) {
