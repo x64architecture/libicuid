@@ -31,7 +31,7 @@ int cpuid_is_supported(void)
     return 1;
 #elif defined(ICUID_X86)
     int rv;
-    __asm__ volatile(
+    __asm__ (
         "pushf\n"
         "pop %%eax\n"
         "mov %%eax, %%ecx\n"
@@ -72,7 +72,7 @@ uint64_t icuid_xgetbv(const uint32_t xcr)
 {
     uint32_t eax, edx;
 
-    __asm__ volatile(
+    __asm__ (
         ".byte 0x0f, 0x01, 0xd0" /* xgetbv */
         : "=a"(eax), "=d"(edx) : "c"(xcr)
     );
