@@ -31,26 +31,45 @@
 
 int cpuid_get_raw_data(cpuid_raw_data_t *raw)
 {
-    int i;
+    uint32_t i;
 
     if (!cpuid_is_supported())
         return ICUID_NO_CPUID;
 
-    for (i = 0; i < MAX_CPUID_LEVEL; i++)
+    memset(raw, 0, sizeof(*raw));
+
+    icuid_cpuid(0, raw->cpuid[0]);
+    raw->max_cpuid_level = raw->cpuid[0][eax] + 1;
+    icuid_cpuid(0x80000000, raw->cpuid_ext[0]);
+    raw->max_cpuid_ext_level = (raw->cpuid_ext[0][eax] & ~0x80000000) + 1;
+
+    if (raw->max_cpuid_level > MAX_CPUID_LEVEL)
+        raw->max_cpuid_level = MAX_CPUID_LEVEL;
+    for (i = 1; i < raw->max_cpuid_level; i++)
         icuid_cpuid(i, raw->cpuid[i]);
-    for (i = 0; i < MAX_EXT_CPUID_LEVEL; i++)
+    if (raw->max_cpuid_ext_level > MAX_EXT_CPUID_LEVEL)
+        raw->max_cpuid_ext_level = MAX_EXT_CPUID_LEVEL;
+    for (i = 1; i < raw->max_cpuid_ext_level; i++)
         icuid_cpuid(0x80000000 + i, raw->cpuid_ext[i]);
-    for (i = 0; i < MAX_INTEL_DC_LEVEL; i++) {
-        memset(raw->intel_dc[i], 0, sizeof(raw->intel_dc[i]));
-        raw->intel_dc[i][eax] = 4;
-        raw->intel_dc[i][ecx] = i;
-        icuid_cpuid_ext(raw->intel_dc[i]);
+    if (raw->max_cpuid_level >= 0x4) {
+        for (i = 0; i < MAX_INTEL_DC_LEVEL; i++) {
+            raw->intel_dc[i][eax] = 4;
+            raw->intel_dc[i][ecx] = i;
+            icuid_cpuid_ext(raw->intel_dc[i]);
+            if ((raw->intel_dc[i][eax] & 0x1F) == 0)
+                break;
+        }
+        raw->max_intel_dc_level = i + 1;
     }
-    for (i = 0; i < MAX_INTEL_ET_LEVEL; i++) {
-        memset(raw->intel_et[i], 0, sizeof(raw->intel_et[i]));
-        raw->intel_et[i][eax] = 11;
-        raw->intel_et[i][ecx] = i;
-        icuid_cpuid_ext(raw->intel_et[i]);
+    if (raw->max_cpuid_level >= 0xB) {
+        for (i = 0; i < MAX_INTEL_ET_LEVEL; i++) {
+            raw->intel_et[i][eax] = 11;
+            raw->intel_et[i][ecx] = i;
+            icuid_cpuid_ext(raw->intel_et[i]);
+            if (raw->intel_et[i][ebx] == 0)
+                break;
+        }
+        raw->max_intel_et_level = i + 1;
     }
 
     return ICUID_OK;
@@ -125,6 +144,7 @@ int cpuid_serialize_raw_data(cpuid_raw_data_t *raw, const char *file)
 {
     char line[64];
     FILE *fp;
+    uint32_t i;
 
     if (raw == NULL || file == NULL)
         return ICUID_PASSED_NULL;
@@ -137,7 +157,7 @@ int cpuid_serialize_raw_data(cpuid_raw_data_t *raw, const char *file)
     if (fp == NULL)
         return ICUID_ERROR_OPEN;
 
-    memset(raw, 0, sizeof(cpuid_raw_data_t));
+    memset(raw, 0, sizeof(*raw));
 
     while (fgets(line, sizeof(line), fp)) {
 
@@ -153,9 +173,25 @@ int cpuid_serialize_raw_data(cpuid_raw_data_t *raw, const char *file)
         if (!parse_line(line, "intel_et", raw->intel_et, MAX_INTEL_ET_LEVEL))
             goto parse_err;
     }
+    raw->max_cpuid_level = raw->cpuid[0][eax] + 1;
+    raw->max_cpuid_ext_level = (raw->cpuid_ext[0][eax] & ~0x80000000) + 1;
+
+    if (raw->max_cpuid_level >= 0x4) {
+        for (i = 0; i < MAX_INTEL_DC_LEVEL; i++) {
+            if ((raw->intel_dc[i][eax] & 0x1F) == 0)
+                break;
+        }
+        raw->max_intel_dc_level = i + 1;
+    }
+    if (raw->max_cpuid_level >= 0xB) {
+        for (i = 0; i < MAX_INTEL_ET_LEVEL; i++) {
+            if (raw->intel_et[i][ebx] == 0)
+                break;
+        }
+        raw->max_intel_et_level = i + 1;
+    }
 
     fclose(fp);
-
     return ICUID_OK;
 
 parse_err:
@@ -166,7 +202,7 @@ parse_err:
 int cpuid_deserialize_raw_data(cpuid_raw_data_t *raw, const char *file)
 {
     int ret = -1;
-    int i;
+    uint32_t i;
     FILE *fp;
 
     if (raw == NULL || file == NULL)
@@ -186,19 +222,19 @@ int cpuid_deserialize_raw_data(cpuid_raw_data_t *raw, const char *file)
         return ret;
     }
 
-    for (i = 0; i < MAX_CPUID_LEVEL; i++)
+    for (i = 0; i < raw->max_cpuid_level; i++)
         fprintf(fp, "cpuid[%u]=%08x %08x %08x %08x\n", i,
                 raw->cpuid[i][eax], raw->cpuid[i][ebx],
                 raw->cpuid[i][ecx], raw->cpuid[i][edx]);
-    for (i = 0; i < MAX_EXT_CPUID_LEVEL; i++)
+    for (i = 0; i < raw->max_cpuid_ext_level; i++)
         fprintf(fp, "cpuid_ext[%u]=%08x %08x %08x %08x\n", i,
                 raw->cpuid_ext[i][eax], raw->cpuid_ext[i][ebx],
                 raw->cpuid_ext[i][ecx], raw->cpuid_ext[i][edx]);
-    for (i = 0; i < MAX_INTEL_DC_LEVEL; i++)
+    for (i = 0; i < raw->max_intel_dc_level; i++)
         fprintf(fp, "intel_dc[%u]=%08x %08x %08x %08x\n", i,
                 raw->intel_dc[i][eax], raw->intel_dc[i][ebx],
                 raw->intel_dc[i][ecx], raw->intel_dc[i][edx]);
-    for (i = 0; i < MAX_INTEL_ET_LEVEL; i++)
+    for (i = 0; i < raw->max_intel_dc_level; i++)
         fprintf(fp, "intel_et[%u]=%08x %08x %08x %08x\n", i,
                 raw->intel_et[i][eax], raw->intel_et[i][ebx],
                 raw->intel_et[i][ecx], raw->intel_et[i][edx]);
@@ -235,6 +271,8 @@ static void get_vendor(cpuid_data_t *data)
     }
 }
 
+#define IS_AMD   (data->vendor == VENDOR_AMD)
+#define IS_INTEL (data->vendor == VENDOR_INTEL)
 int icuid_identify(cpuid_raw_data_t *raw, cpuid_data_t *data)
 {
     int ret;
@@ -265,9 +303,6 @@ int icuid_identify(cpuid_raw_data_t *raw, cpuid_data_t *data)
 
     /* Get vendor */
     get_vendor(data);
-
-#define IS_AMD   (data->vendor == VENDOR_AMD)
-#define IS_INTEL (data->vendor == VENDOR_INTEL)
 
     if (data->cpuid_max_basic >= 1) {
         data->family = (raw->cpuid[1][eax] >> 8) & 0xF;

@@ -15,7 +15,6 @@
  */
 
 /* Extended Topology */
-#define INVALID 0x0
 #define THREAD  0x1
 #define CORE    0x2
 

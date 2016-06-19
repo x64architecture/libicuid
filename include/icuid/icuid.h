@@ -312,27 +312,27 @@ typedef enum {
 typedef struct {
     /**
      * Basic CPUID Information
-     * Contains: results of cpuid when eax=[0-MAX_CPUID_LEVEL]
      */
     uint32_t cpuid[MAX_CPUID_LEVEL][4];
+    uint32_t max_cpuid_level;
 
     /**
      * Extended CPUID Information
-     * Contains: results of cpuid when eax=[0x80000000-MAX_EXT_CPUID_LEVEL]
      */
     uint32_t cpuid_ext[MAX_EXT_CPUID_LEVEL][4];
+    uint32_t max_cpuid_ext_level;
 
     /**
      * Intel Deterministic Cache
-     * Contains: eax=4 and ecx=[0-MAX_INTEL_DC_LEVEL]
      */
     uint32_t intel_dc[MAX_INTEL_DC_LEVEL][4];
+    uint32_t max_intel_dc_level;
 
     /**
      * Intel Extended Topology
-     * Contains: eax=11 and ecx=[0-MAX_INTEL_ET_LEVEL]
      */
     uint32_t intel_et[MAX_INTEL_ET_LEVEL][4];
+    uint32_t max_intel_et_level;
 } cpuid_raw_data_t;
 
 typedef struct {
