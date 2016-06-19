@@ -7,38 +7,38 @@ cpuid_is_supported proc
 cpuid_is_supported endp
 
 icuid_cpuid proc
-    push rbx
+    mov r8, rdx
 
+    xor ecx, ecx
     mov rax, rcx
-    mov rdi, rdx
+
+    push rbx
 
     cpuid
 
-    mov   [rdi], eax
-    mov  4[rdi], ebx
-    mov  8[rdi], ecx
-    mov 12[rdi], edx
+    mov   [r8], eax
+    mov  4[r8], ebx
+    mov  8[r8], ecx
+    mov 12[r8], edx
 
     pop rbx
     ret
 icuid_cpuid endp
 
 icuid_cpuid_ext proc
+    mov r8, rcx
+
+    mov eax,   [r8]
+    mov ecx,  8[r8]
+
     push rbx
-
-    mov rdi, rcx
-
-    mov eax,   [rdi]
-    mov ebx,  4[rdi]
-    mov ecx,  8[rdi]
-    mov edx, 12[rdi]
 
     cpuid
 
-    mov   [rdi], eax
-    mov  4[rdi], ebx
-    mov  8[rdi], ecx
-    mov 12[rdi], edx
+    mov   [r8], eax
+    mov  4[r8], ebx
+    mov  8[r8], ecx
+    mov 12[r8], edx
 
     pop rbx
     ret

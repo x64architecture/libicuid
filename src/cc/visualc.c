@@ -53,6 +53,7 @@ void icuid_cpuid(uint32_t level, uint32_t *regs)
         mov edi, regs
 
         mov eax, level
+        xor ecx, ecx
 
         cpuid
 
@@ -69,9 +70,7 @@ void icuid_cpuid_ext(uint32_t *regs)
         mov edi, regs
 
         mov eax,   [edi]
-        mov ebx,  4[edi]
         mov ecx,  8[edi]
-        mov edx, 12[edi]
 
         cpuid
 
