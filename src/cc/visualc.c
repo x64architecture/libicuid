@@ -18,16 +18,6 @@
 
 #include <icuid/icuid_types.h>
 
-#if _WIN64
-
-int cpuid_is_supported(void)
-{
-    /* CPUID is always supported in x86_64 */
-    return 1;
-}
-
-#else
-
 int cpuid_is_supported(void)
 {
     int rv;
@@ -91,4 +81,3 @@ void icuid_cpuid_ext(uint32_t *regs)
         mov 12[edi], edx
     }
 }
-#endif /* !_WIN64 */

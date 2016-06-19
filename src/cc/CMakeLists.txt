@@ -16,6 +16,12 @@ if (${CMAKE_SYSTEM_PROCESSOR} STREQUAL "AMD64")
 
             masm-x86_64.asm
         )
+    else()
+        set(
+            CC_SOURCES
+
+            visualc.c
+        )  
     endif()
 else()
     set(
