@@ -53,6 +53,7 @@ int cpuid_is_supported(void)
 void icuid_cpuid(uint32_t eax, uint32_t *regs)
 {
     __asm__ (
+        "xor %%ecx, %%ecx\n"
         "cpuid"
         : "=a"(regs[0]), "=b"(regs[1]), "=c"(regs[2]), "=d"(regs[3])
         : "a"(eax)
@@ -64,7 +65,7 @@ void icuid_cpuid_ext(uint32_t *regs)
     __asm__ (
         "cpuid"
         : "=a"(regs[0]), "=b"(regs[1]), "=c"(regs[2]), "=d"(regs[3])
-        : "a"(regs[0]), "b"(regs[1]), "c"(regs[2]), "d"(regs[3])
+        : "a"(regs[0]), "c"(regs[2])
     );
 }
 
