@@ -50,6 +50,6 @@ script:
     - cd build
     - make
     - if [ "$RUN_TESTS" != "0" ]; then
-          make test;
+          make test ARGS="-V";
       fi
 
