@@ -377,31 +377,31 @@ typedef struct {
     uint32_t logical_cpus;
 
     /**
-     * L1 data cache size in kB.
+     * L1 data cache size in KB.
      * If there is no L1 D cache, this will be 0.
      */
     uint32_t l1_data_cache;
 
     /**
-     * L1 Instruction cache size in kB.
+     * L1 Instruction cache size in KB.
      * If there is no L1 I cache, this will be 0.
      */
     uint32_t l1_instruction_cache;
 
     /**
-     * L2 data cache size in kB.
+     * L2 data cache size in KB.
      * If there is no L2 cache, this will be 0.
      */
     uint32_t l2_cache;
 
     /**
-     * L3 data cache size in kB.
+     * L3 data cache size in KB.
      * If there is no L3 Cache, this will be 0.
      */
     uint32_t l3_cache;
 
     /**
-     * L4 data cache size in kB.
+     * L4 data cache size in KB.
      * If there is no L4 Cache, this will be 0.
      */
     uint32_t l4_cache;

@@ -109,7 +109,7 @@ static void get_intel_deterministic_cacheinfo(const cpuid_raw_data_t *raw, cpuid
         partitions = ((raw->intel_dc[idx][ebx] >> 12) & 0x3FF) + 1;
         linesize = (raw->intel_dc[idx][ebx] & 0xFFF) + 1;
         sets = raw->intel_dc[idx][ecx] + 1;
-        size = (linesize * sets * associativity * partitions) >> 10; /* Size in kB */
+        size = (linesize * sets * associativity * partitions) >> 10; /* Size in KB */
         set_cache_info(data, type, size, associativity, linesize);
     }
 }

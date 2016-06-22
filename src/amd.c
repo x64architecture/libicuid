@@ -197,7 +197,7 @@ static void get_amd_cache_info(const cpuid_raw_data_t *raw, cpuid_data_t *data)
       
     l3_result = (raw->cpuid_ext[6][3] >> 18);
     if (l3_result > 0) {
-        data->l3_cache = l3_result * 512; /* Size in kB */
+        data->l3_cache = l3_result * 512; /* Size in KB */
         data->l3_associativity = assoc_table[(raw->cpuid_ext[6][edx] >> 12) & 0xF];
         data->l3_cacheline = (raw->cpuid_ext[6][edx]) & 0xFF;
     } else {

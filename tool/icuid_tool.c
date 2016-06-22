@@ -120,11 +120,11 @@ static int print_summary(cpuid_raw_data_t *raw, cpuid_data_t *data)
     fprintf(out, " Signature   : 0x%0x\n", data->signature);
 
     /* fprintf(out, "Cache Info:\n"); */
-    fprintf(out, " L1 D Cache  : %ukB\n", data->l1_data_cache);
-    fprintf(out, " L1 I Cache  : %ukB\n", data->l1_instruction_cache);
-    fprintf(out, " L2 Cache    : %ukB\n", data->l2_cache);
-    fprintf(out, " L3 Cache    : %ukB\n", data->l3_cache);
-    fprintf(out, " L4 Cache    : %ukB\n", data->l4_cache);
+    fprintf(out, " L1 D Cache  : %uKB\n", data->l1_data_cache);
+    fprintf(out, " L1 I Cache  : %uKB\n", data->l1_instruction_cache);
+    fprintf(out, " L2 Cache    : %uKB\n", data->l2_cache);
+    fprintf(out, " L3 Cache    : %uKB\n", data->l3_cache);
+    fprintf(out, " L4 Cache    : %uKB\n", data->l4_cache);
     fprintf(out, " L1 Assoc.   : %u-way\n", data->l1_associativity);
     fprintf(out, " L2 Assoc.   : %u-way\n", data->l2_associativity);
     fprintf(out, " L3 Assoc.   : %u-way\n", data->l3_associativity);
