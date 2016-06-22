@@ -35,7 +35,7 @@ void set_feature_bits(cpuid_data_t *data, const cpuid_feature_map_t *feature,
 /* Map feature to string */
 const char *cpu_feature_str(cpuid_feature_t feature)
 {
-    switch(feature) {
+    switch (feature) {
         case CPU_FEATURE_FPU: return "fpu";
         case CPU_FEATURE_VME: return "vme";
         case CPU_FEATURE_DE: return "de";
