@@ -251,7 +251,7 @@ int cpuid_deserialize_raw_data(cpuid_raw_data_t *raw, const char *file)
 /* Must be called after the vendor string is obtained */
 static void get_vendor(cpuid_data_t *data)
 {
-    int i;
+    unsigned int i;
     const struct {
         const char *vendor_str;
         cpu_vendor_t vendor;
@@ -267,7 +267,7 @@ static void get_vendor(cpuid_data_t *data)
         { "SiS SiS SiS ", VENDOR_SIS },
         { "UMC UMC UMC ", VENDOR_UMC },
     };
-    for (i = 0; i < NUM_CPU_VENDORS; i++) {
+    for (i = 0; i < NELEMS(cpu_vendors); i++) {
         if (strcmp(data->vendor_str, cpu_vendors[i].vendor_str) == 0) {
             data->vendor = cpu_vendors[i].vendor;
             return;
