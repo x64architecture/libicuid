@@ -280,9 +280,10 @@ static void get_vendor(cpuid_data_t *data)
 int icuid_identify(cpuid_raw_data_t *raw, cpuid_data_t *data)
 {
     int ret;
-    int i, j = 0;
+    unsigned int i, j = 0;
     uint8_t ext_family, ext_model;
     char brandstr[BRAND_STR_MAX];
+    char *p;
     cpuid_raw_data_t iraw;
 
     if (raw == NULL) {
@@ -334,14 +335,14 @@ int icuid_identify(cpuid_raw_data_t *raw, cpuid_data_t *data)
             memcpy(brandstr +  8 + j, &raw->cpuid_ext[i][ecx], 4);
             memcpy(brandstr + 12 + j, &raw->cpuid_ext[i][edx], 4);
         }
+        brandstr[BRAND_STR_MAX - 1] = '\0'; /* Ensure NUL termination */
         /*
          * Some brand strings have spaces prepended to them so we have
          * to remove them.
          */
-        i = 0;
-        while (brandstr[i] == ' ')
-            i++;
-        (void) strlcpy(data->brand_str, brandstr + i, sizeof(data->brand_str));
+        for (p = brandstr; *p == ' '; p++)
+            ;
+        strcpy(data->brand_str, p);
     }
 
     /* Populate data->flags */
