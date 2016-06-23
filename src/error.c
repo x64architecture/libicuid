@@ -21,21 +21,15 @@ const char *icuid_errorstr(int err)
     switch (err) {
         case ICUID_OK:
             return "No error";
-            break;
         case ICUID_NO_CPUID:
             return "CPUID instruction is not supported";
-            break;
         case ICUID_PASSED_NULL:
             return "Passed NULL to a parameter which can't be NULL";
-            break;
         case ICUID_ERROR_OPEN:
             return "Error opening file";
-            break;
         case ICUID_ERROR_PARSING:
             return "Error parsing cpuid data from input";
-            break;
         default:
             return "Unknown error";
-            break;
     }
 }
