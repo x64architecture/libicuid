@@ -14,6 +14,12 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+#if defined(HAVE_STRLCPY)
+
+void *dummy = &dummy;
+
+#else
+
 #include <string.h>
 
 size_t strlcpy(char *dest, const char *src, size_t size)
@@ -28,3 +34,5 @@ size_t strlcpy(char *dest, const char *src, size_t size)
 
     return ret;
 }
+
+#endif
