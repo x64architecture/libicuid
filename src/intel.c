@@ -19,7 +19,6 @@
 #include <string.h>
 
 #include <icuid/icuid.h>
-#include <internal/stdcompat.h>
 
 #include "features.h"
 #include "internal.h"

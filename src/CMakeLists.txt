@@ -17,7 +17,6 @@ add_library(
     match.c
 
     $<TARGET_OBJECTS:cc>
-    $<TARGET_OBJECTS:compat>
 )
 set_target_properties(icuid PROPERTIES PREFIX "lib")
 
@@ -26,4 +25,3 @@ install(TARGETS icuid
         ARCHIVE DESTINATION lib)
 
 add_subdirectory(cc)
-add_subdirectory(compat)

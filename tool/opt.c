@@ -18,7 +18,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "internal/stdcompat.h"
 #include "opt.h"
 
 #define OPT_WIDTH 5
