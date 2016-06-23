@@ -85,13 +85,14 @@ static int parse_line(char *line, const char *token, uint32_t regs[][4],
     unsigned long level, reg;
 
     /* Check if our token matches the line */
-    if (line[tokenlen] != '[')
+    p = line + tokenlen;
+    if (*p != '[')
         return 2;
     if (strncmp(line, token, tokenlen) != 0)
         return 2;
 
     /* Since strtok modifies the original buffer we need to make a copy */
-    (void) strlcpy(buf, line + tokenlen + 1, sizeof(buf));
+    strcpy(buf, p);
 
     /* Separate the text between the brackets into separate strings */
     p = strtok(buf, "[ ]");
