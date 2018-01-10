@@ -195,6 +195,9 @@ typedef enum {
     CPU_FEATURE_AVX512BW,      /*!< AVX-512 Byte and Word Instructions */
     CPU_FEATURE_AVX512VL,      /*!< AVX-512 Vector Length Instructions */
 
+    /* cpuid 0x00000007, edx */
+    CPU_FEATURE_SPEC_CTRL,     /*!< Control Speculation Control */
+
     /* cpuid 0x80000001, ecx */
     CPU_FEATURE_LAHF_LM,       /*!< LAHF/SAHF Supported In 64-bit Mode */
     CPU_FEATURE_CMP_LEGACY,    /*!< Core Multi-Processing Legacy Mode (AMD Only) */

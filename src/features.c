@@ -174,6 +174,7 @@ const char *cpu_feature_str(cpuid_feature_t feature)
         case CPU_FEATURE_AVX512VL: return "avx512vl";
         case CPU_FEATURE_SGX: return "sgx";
         case CPU_FEATURE_SME: return "sme";
+        case CPU_FEATURE_SPEC_CTRL: return "spec_ctrl";
         default:
             return "";
     }
@@ -233,6 +234,9 @@ void set_common_features(const cpuid_raw_data_t *raw, cpuid_data_t *data)
         { 7, CPU_FEATURE_SMEP },
         { 8, CPU_FEATURE_BMI2 },
     };
+    const cpuid_feature_map_t regidmap_edx07[] = {
+        { 26, CPU_FEATURE_SPEC_CTRL },
+    };
     const cpuid_feature_map_t regidmap_ecx81[] = {
         { 0, CPU_FEATURE_LAHF_LM },
     };
@@ -251,8 +255,10 @@ void set_common_features(const cpuid_raw_data_t *raw, cpuid_data_t *data)
         set_feature_bits(data, regidmap_ecx01, NELEMS(regidmap_ecx01), raw->cpuid[1][ecx]);
         set_feature_bits(data, regidmap_edx01, NELEMS(regidmap_edx01), raw->cpuid[1][edx]);
     }
-    if (data->cpuid_max_basic >= 7)
+    if (data->cpuid_max_basic >= 7) {
         set_feature_bits(data, regidmap_ebx07, NELEMS(regidmap_ebx07), raw->cpuid[7][ebx]);
+        set_feature_bits(data, regidmap_edx07, NELEMS(regidmap_edx07), raw->cpuid[7][edx]);
+    }
     if (data->cpuid_max_ext >= 0x80000001) {
         set_feature_bits(data, regidmap_ecx81, NELEMS(regidmap_ecx81), raw->cpuid_ext[1][ecx]);
         set_feature_bits(data, regidmap_edx81, NELEMS(regidmap_edx81), raw->cpuid_ext[1][edx]);
