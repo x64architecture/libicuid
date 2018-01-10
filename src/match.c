@@ -14,95 +14,47 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+#include <stdio.h>
 #include <ctype.h>
 #include <string.h>
 
 #include <icuid/icuid.h>
 
 #include "match.h"
+#include "intel.h"
 
-static size_t regex_match(const char c, const char *needle)
-{
-    size_t j;
-
-    if (c == '\0')
-        return 0;
-    if (c == needle[0])
-        return 1;
-    if (needle[0] == '.')
-        return 1;
-    if (needle[0] == '#' && isdigit(c))
-        return 1;
-    /* needle can be multiple values */
-    if (needle[0] == '[') {
-        j = 1;
-        while (needle[j] != '\0' && needle[j] != ']')
-            j++;
-        if (needle[j] != '\0')
-            return 0;
-        while (*needle++ != '\0')
-            if (needle[0] == c)
-                return j + 1;
-    }
-    return 0;
-}
-
-int match_pattern(const char *haystack, const char *needle)
-{
-    size_t j, dj, m = strlen(needle);
-
-    while (*haystack++ != '\0') {
-        j = 0;
-        while (j < m && (dj = regex_match(haystack[0], needle + j) != 0)) {
-            haystack++;
-            j += dj;
-        }
-        if (j == m)
-            return 1;
-    }
-    return 0;
-}
-
-static unsigned int score(const cpuid_data_t *data, const match_uarch_t *entry,
-                          const uint32_t brand_code)
+static unsigned int score(const cpuid_data_t *data, const match_codename_t *entry)
 {
     unsigned int rv = 0;
 
-    if (entry->family     == data->family)
+    if (entry->family != NA && entry->family == data->family)
         rv += 2;
-    if (entry->model      == data->model)
+    if (entry->ext_family != NA && entry->ext_family == data->ext_family)
         rv += 2;
-    if (entry->stepping   == data->stepping)
+    if (entry->model != NA && entry->model == data->model)
         rv += 2;
-    if (entry->ext_family == data->ext_family)
+    if (entry->ext_model != NA && entry->ext_model == data->ext_model)
         rv += 2;
-    if (entry->ext_model  == data->ext_model)
-        rv += 2;
-    if (entry->cores      == data->cores)
-        rv += 2;
-    if (entry->l2_cache   == data->l2_cache)
-        rv += 1;
-    if (entry->l3_cache   == data->l3_cache)
-        rv += 1;
-    if (entry->brand_code == brand_code)
+    if (entry->stepping != NA && entry->stepping == data->stepping)
         rv += 2;
 
     return rv;
 }
 
-void match_cpu_uarch(cpuid_data_t *data, const match_uarch_t *matchtable,
-                     const unsigned int array_size, const uint32_t brand_code)
+void cpu_to_codename(cpuid_data_t *data, const match_codename_t *matchtable,
+                     const unsigned int array_size)
 {
     unsigned int bestscore = 0;
     unsigned int bestindex = 0;
     unsigned int i, t;
 
     for (i = 0; i < array_size; i++) {
-        t = score(data, &matchtable[i], brand_code);
+        t = score(data, &matchtable[i]);
         if (t > bestscore) {
             bestscore = t;
             bestindex = i;
         }
     }
-    data->codename = matchtable[bestindex].uarch;
+
+    data->codename = matchtable[bestindex].codename;
 }

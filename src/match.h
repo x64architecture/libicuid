@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Kurt Cancemi (kurt@x64architecture.com)
+ * Copyright (c) 2016 - 2017, Kurt Cancemi (kurt@x64architecture.com)
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -15,11 +15,17 @@
  */
 
 typedef struct {
-    uint32_t family, model, stepping, ext_family, ext_model;
-    uint32_t cores, l2_cache, l3_cache, brand_code;
-    const char *uarch;
-} match_uarch_t;
+    uint32_t family;
+    uint32_t ext_model;
+    uint32_t model;
+    uint32_t ext_family;
+    uint32_t stepping;
+    const char *codename;
+} match_codename_t;
 
-int match_pattern(const char *haystack, const char *needle);
-void match_cpu_uarch(cpuid_data_t *data, const match_uarch_t *matchtable,
-                     const unsigned int array_size, const uint32_t brand_code);
+#if !defined(NA)
+#define NA (unsigned)-1
+#endif
+
+void cpu_to_codename(cpuid_data_t *data, const match_codename_t *matchtable,
+                     const unsigned int array_size);

@@ -46,128 +46,120 @@ static void get_amd_number_cores(const cpuid_raw_data_t *raw, cpuid_data_t *data
     }
 }
 
-typedef enum {
-    NA = -1,
-    NO_CODE,
-} amd_uarch_t;
-
-const match_uarch_t uarch_amd_t[] = {
-    { NA, NA,  NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Unknown CPU uarch"             },
-
+const match_codename_t codename_amd_t[] = {
     /* 486 */
-    { 4, 3,    NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Am486 DX2WT"                   },
-    { 4, 7,    NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Am486 DX2WB"                   },
-    { 4, 8,    NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Am486 DX4WT"                   },
-    { 4, 9,    NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Am486 DX4WB"                   },
-    { 4, 10,   NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Elan SC4xx"                    },
-    { 4, 14,   NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Am5x86WT"                      },
-    { 4, 15,   NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Am5x86WB"                      },
+    { 4, 3,    NA, NA, NA, "Am486 DX2WT"                   },
+    { 4, 7,    NA, NA, NA, "Am486 DX2WB"                   },
+    { 4, 8,    NA, NA, NA, "Am486 DX4WT"                   },
+    { 4, 9,    NA, NA, NA, "Am486 DX4WB"                   },
+    { 4, 10,   NA, NA, NA, "Elan SC4xx"                    },
+    { 4, 14,   NA, NA, NA, "Am5x86WT"                      },
+    { 4, 15,   NA, NA, NA, "Am5x86WB"                      },
 
     /* K5 */
-    { 5, NA,   NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Unknown K5"                    },
-    { 5, 0,    NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "K5"                            },
-    { 5, 1,    NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "K5"                            },
-    { 5, 2,    NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "K5"                            },
-    { 5, 3,    NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "K5"                            },
+    { 5, NA,   NA, NA, NA, "Unknown K5"                    },
+    { 5, 0,    NA, NA, NA, "K5"                            },
+    { 5, 1,    NA, NA, NA, "K5"                            },
+    { 5, 2,    NA, NA, NA, "K5"                            },
+    { 5, 3,    NA, NA, NA, "K5"                            },
 
     /* K6 */
-    { 5, 6,    NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "K6"                            },
-    { 5, 7,    NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "K6"                            },
-    { 5, 8,    NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "K6-2"                          },
-    { 5, 9,    NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "K6-III"                        },
-    { 5, 13,   NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "K6-2+"                         },
+    { 5, 6,    NA, NA, NA, "K6"                            },
+    { 5, 7,    NA, NA, NA, "K6"                            },
+    { 5, 8,    NA, NA, NA, "K6-2"                          },
+    { 5, 9,    NA, NA, NA, "K6-III"                        },
+    { 5, 13,   NA, NA, NA, "K6-2+"                         },
 
     /* K7 */
-    { 6, 1,    NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "K7"                            },
-    { 6, 2,    NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "K7"                            },
-    { 6, 3,    NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "K7"                            },
-    { 6, 4,    NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "K7"                            },
-    { 6, 6,    NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "K7"                            },
-    { 6, 7,    NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "K7"                            },
-    { 6, 8,    NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "K7"                            },
-    { 6, 10,   NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "K7"                            },
+    { 6, 1,    NA, NA, NA, "K7"                            },
+    { 6, 2,    NA, NA, NA, "K7"                            },
+    { 6, 3,    NA, NA, NA, "K7"                            },
+    { 6, 4,    NA, NA, NA, "K7"                            },
+    { 6, 6,    NA, NA, NA, "K7"                            },
+    { 6, 7,    NA, NA, NA, "K7"                            },
+    { 6, 8,    NA, NA, NA, "K7"                            },
+    { 6, 10,   NA, NA, NA, "K7"                            },
 
     /* K8/K9 */
-    { 15, NA,  NA, 15, NA,   1,    NA,    NA, NO_CODE           ,     "Unknown K8"                    },
-    { 15, NA,  NA, 16, NA,   1,    NA,    NA, NO_CODE           ,     "Unknown K9"                    },
-    { 15, 4,   NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "K8"                            },
-    { 15, 5,   NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "K8"                            },
-    { 15, 7,   NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "K8 (Athon 64)"                 },
-    { 15, 8,   NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "K8"                            },
-    { 15, 11,  NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "K8 (Athlon 64)"                },
-    { 15, 12,  NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "K8"                            },
-    { 15, 14,  NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "K8"                            },
-    { 15, 15,  NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "K8"                            },
-    { 15, 20,  NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "K8"                            },
-    { 15, 21,  NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "K8"                            },
-    { 15, 23,  NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "K8"                            },
-    { 15, 27,  NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "K8 (Athlon 64)"                },
-    { 15, 28,  NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "K8"                            },
-    { 15, 31,  NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "K8"                            },
-    { 15, 33,  NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "K8 (rev. E)"                   },
-    { 15, 35,  NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Opteron K8 (rev. E)"           },
-    { 15, 36,  NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "K8 (rev. E)"                   },
-    { 15, 37,  NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "K8 (rev. E)"                   },
-    { 15, 43,  NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Athlon 64 X2 K8 (rev. E)"      },
-    { 15, 44,  NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "K8 (rev. E)"                   },
-    { 15, 47,  NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "K8 (rev. E)"                   },
-    { 15, 65,  NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Opteron K8 (rev. F+)"          },
-    { 15, 67,  NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "K8 (rev. F+)"                  },
-    { 15, 72,  NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "K8 (rev. F+)"                  },
-    { 15, 75,  NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Athlon 64 X2 K8 (rev. F+)"     },
-    { 15, 76,  NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "K8 (rev. F+)"                  },
-    { 15, 79,  NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "K8 (rev. F+)"                  },
-    { 15, 93,  NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Opteron K8 (rev. F+)"          },
-    { 15, 95,  NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "K8 (rev. F+)"                  },
-    { 15, 104, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "K8 (rev. F+)"                  },
-    { 15, 107, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "K8 (rev. F+)"                  },
-    { 15, 108, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "K8 (rev. F+)"                  },
-    { 15, 111, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "K8 (rev. F+)"                  },
-    { 15, 124, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "K8 (rev. F+)"                  },
-    { 15, 127, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "K8 (rev. F+)"                  },
-    { 15, 193, NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Athlon 64 FX DC K8 (rev. F+)"  },
+    { 15, NA,  NA, 15, NA, "Unknown K8"                    },
+    { 15, NA,  NA, 16, NA, "Unknown K9"                    },
+    { 15, 4,   NA, NA, NA, "K8"                            },
+    { 15, 5,   NA, NA, NA, "K8"                            },
+    { 15, 7,   NA, NA, NA, "K8 (Athon 64)"                 },
+    { 15, 8,   NA, NA, NA, "K8"                            },
+    { 15, 11,  NA, NA, NA, "K8 (Athlon 64)"                },
+    { 15, 12,  NA, NA, NA, "K8"                            },
+    { 15, 14,  NA, NA, NA, "K8"                            },
+    { 15, 15,  NA, NA, NA, "K8"                            },
+    { 15, 20,  NA, NA, NA, "K8"                            },
+    { 15, 21,  NA, NA, NA, "K8"                            },
+    { 15, 23,  NA, NA, NA, "K8"                            },
+    { 15, 27,  NA, NA, NA, "K8 (Athlon 64)"                },
+    { 15, 28,  NA, NA, NA, "K8"                            },
+    { 15, 31,  NA, NA, NA, "K8"                            },
+    { 15, 33,  NA, NA, NA, "K8 (rev. E)"                   },
+    { 15, 35,  NA, NA, NA, "Opteron K8 (rev. E)"           },
+    { 15, 36,  NA, NA, NA, "K8 (rev. E)"                   },
+    { 15, 37,  NA, NA, NA, "K8 (rev. E)"                   },
+    { 15, 43,  NA, NA, NA, "Athlon 64 X2 K8 (rev. E)"      },
+    { 15, 44,  NA, NA, NA, "K8 (rev. E)"                   },
+    { 15, 47,  NA, NA, NA, "K8 (rev. E)"                   },
+    { 15, 65,  NA, NA, NA, "Opteron K8 (rev. F+)"          },
+    { 15, 67,  NA, NA, NA, "K8 (rev. F+)"                  },
+    { 15, 72,  NA, NA, NA, "K8 (rev. F+)"                  },
+    { 15, 75,  NA, NA, NA, "Athlon 64 X2 K8 (rev. F+)"     },
+    { 15, 76,  NA, NA, NA, "K8 (rev. F+)"                  },
+    { 15, 79,  NA, NA, NA, "K8 (rev. F+)"                  },
+    { 15, 93,  NA, NA, NA, "Opteron K8 (rev. F+)"          },
+    { 15, 95,  NA, NA, NA, "K8 (rev. F+)"                  },
+    { 15, 104, NA, NA, NA, "K8 (rev. F+)"                  },
+    { 15, 107, NA, NA, NA, "K8 (rev. F+)"                  },
+    { 15, 108, NA, NA, NA, "K8 (rev. F+)"                  },
+    { 15, 111, NA, NA, NA, "K8 (rev. F+)"                  },
+    { 15, 124, NA, NA, NA, "K8 (rev. F+)"                  },
+    { 15, 127, NA, NA, NA, "K8 (rev. F+)"                  },
+    { 15, 193, NA, NA, NA, "Athlon 64 FX DC K8 (rev. F+)"  },
 
     /* K10 */
-    { 10, NA,  NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Unknown K10"                   },
-    { 10, 4,   NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "K10"                           },
-    { 10, 5,   NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "K10"                           },
-    { 10, 6,   NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "K10"                           },
-    { 10, 8,   NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "K10"                           },
-    { 10, 9,   NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "K10"                           },
-    { 10, 10,  NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "K10"                           },
+    { 10, NA,  NA, NA, NA, "Unknown K10"                   },
+    { 10, 4,   NA, NA, NA, "K10"                           },
+    { 10, 5,   NA, NA, NA, "K10"                           },
+    { 10, 6,   NA, NA, NA, "K10"                           },
+    { 10, 8,   NA, NA, NA, "K10"                           },
+    { 10, 9,   NA, NA, NA, "K10"                           },
+    { 10, 10,  NA, NA, NA, "K10"                           },
 
-    { 11, 3,   NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "K8 (rev. E+)"                  },
+    { 11, 3,   NA, NA, NA, "K8 (rev. E+)"                  },
 
-    { 12, 1,   NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "K10"                           },
+    { 12, 1,   NA, NA, NA, "K10"                           },
 
-    { 14, NA,  NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Unknown Bobcat"                },
-    { 14, 1,   NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Bobcat"                        },
-    { 14, 2,   NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Bobcat"                        },
+    { 14, NA,  NA, NA, NA, "Unknown Bobcat"                },
+    { 14, 1,   NA, NA, NA, "Bobcat"                        },
+    { 14, 2,   NA, NA, NA, "Bobcat"                        },
 
-    { 15, 1,   NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Bulldozer"                     },
-    { 15, 2,   NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Piledriver"                    },
-    { 15, 16,  NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Piledriver"                    },
-    { 15, 19,  NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Piledriver"                    },
-    { 15, 48,  NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Steamroller"                   },
+    { 15, 1,   NA, NA, NA, "Bulldozer"                     },
+    { 15, 2,   NA, NA, NA, "Piledriver"                    },
+    { 15, 16,  NA, NA, NA, "Piledriver"                    },
+    { 15, 19,  NA, NA, NA, "Piledriver"                    },
+    { 15, 48,  NA, NA, NA, "Steamroller"                   },
 
-    { 16, 0,   NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Jaguar"                        },
-    { 16, 30,  NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Jaguar (Puma)"                 },
+    { 16, 0,   NA, NA, NA, "Jaguar"                        },
+    { 16, 30,  NA, NA, NA, "Jaguar (Puma)"                 },
 
-    { 17, NA,  NA, NA, NA,   1,    NA,    NA, NO_CODE           ,     "Zen"                           },
-
+    { 17, NA,  NA, NA, NA, "Zen"                           },
 };
 
 /**
  * Get codename
+ * N.B. Not in spec so custom method is used
+ * The codename will be selected based on data in the above table
  */
-static void get_amd_procinfo(cpuid_data_t *data)
+static void get_amd_codename(cpuid_data_t *data)
 {
-    amd_uarch_t uarch = NO_CODE;
-
     if (data->cpuid_max_basic < 1)
         return;
 
-    match_cpu_uarch(data, uarch_amd_t, NELEMS(uarch_amd_t), uarch);
+    cpu_to_codename(data, codename_amd_t, NELEMS(codename_amd_t));
 }
 
 /**
@@ -284,5 +276,5 @@ void read_amd_data(const cpuid_raw_data_t *raw, cpuid_data_t *data)
     get_amd_features(raw, data);
     get_amd_number_cores(raw, data);
     get_amd_cache_info(raw, data);
-    get_amd_procinfo(data);
+    get_amd_codename(data);
 }
