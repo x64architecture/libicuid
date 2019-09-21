@@ -22,12 +22,32 @@
 #include "internal.h"
 #include "features.h"
 
-void set_feature_bits(cpuid_data_t *data, const cpuid_feature_map_t *feature,
+#define IS_AMD   (data->vendor == VENDOR_AMD)
+#define IS_INTEL (data->vendor == VENDOR_INTEL)
+
+#define VEND_INTEL  0
+#define VEND_AMD    1
+#define VEND_SHARED 2
+
+typedef struct {
+    uint8_t bit;
+    cpuid_feature_t feature;
+    uint8_t vendor;
+} cpuid_feature_map_t;
+
+static void set_feature_bits(cpuid_data_t *data,
+                      const cpuid_feature_map_t *feature,
                       const unsigned int array_size, const uint32_t reg)
 {
     unsigned int i;
     for (i = 0; i < array_size; i++) {
-        if (reg & (1 << feature[i].bit))
+        if (!(reg & (1 << feature[i].bit)))
+            continue;
+        if (feature[i].vendor == VEND_SHARED)
+            data->flags[feature[i].feature] = 1;
+        else if (feature[i].vendor == VEND_INTEL && IS_INTEL)
+            data->flags[feature[i].feature] = 1;
+        else if (feature[i].vendor == VEND_AMD && IS_AMD)
             data->flags[feature[i].feature] = 1;
     }
 }
@@ -180,75 +200,164 @@ const char *cpu_feature_str(cpuid_feature_t feature)
     }
 }
 
-/* Set common features (shared between Intel & AMD) */
-void set_common_features(const cpuid_raw_data_t *raw, cpuid_data_t *data)
+void set_cpuid_features(const cpuid_raw_data_t *raw, cpuid_data_t *data)
 {
     const cpuid_feature_map_t regidmap_ecx01[] = {
-        { 0, CPU_FEATURE_PNI },
-        { 1, CPU_FEATURE_PCLMULDQ },
-        { 3, CPU_FEATURE_MONITOR },
-        { 9, CPU_FEATURE_SSSE3 },
-        { 12, CPU_FEATURE_FMA },
-        { 13, CPU_FEATURE_CX16 },
-        { 19, CPU_FEATURE_SSE4_1 },
-        { 20, CPU_FEATURE_SSE4_2 },
-        { 22, CPU_FEATURE_MOVBE },
-        { 23, CPU_FEATURE_POPCNT },
-        { 25, CPU_FEATURE_AES },
-        { 26, CPU_FEATURE_XSAVE },
-        { 27, CPU_FEATURE_OSXSAVE },
-        { 28, CPU_FEATURE_AVX },
-        { 29, CPU_FEATURE_F16C },
-        { 30, CPU_FEATURE_RDRAND },
-        { 31, CPU_FEATURE_HYPERVISOR },
+        { 0,  CPU_FEATURE_PNI,             VEND_SHARED },
+        { 1,  CPU_FEATURE_PCLMULDQ,        VEND_SHARED },
+        { 2,  CPU_FEATURE_DTS64,           VEND_INTEL  },
+        { 3,  CPU_FEATURE_MONITOR,         VEND_SHARED },
+        { 4,  CPU_FEATURE_DS_CPL,          VEND_INTEL  },
+        { 5,  CPU_FEATURE_VMX,             VEND_INTEL  },
+        { 6,  CPU_FEATURE_SMX,             VEND_INTEL  },
+        { 7,  CPU_FEATURE_EST,             VEND_INTEL  },
+        { 8,  CPU_FEATURE_TM2,             VEND_INTEL  },
+        { 9,  CPU_FEATURE_SSSE3,           VEND_SHARED },
+        { 10, CPU_FEATURE_CID,             VEND_INTEL  },
+        { 11, CPU_FEATURE_SDBG,            VEND_INTEL  },
+        { 12, CPU_FEATURE_FMA,             VEND_SHARED },
+        { 13, CPU_FEATURE_CX16,            VEND_SHARED },
+        { 14, CPU_FEATURE_XTPR,            VEND_INTEL  },
+        { 15, CPU_FEATURE_PDCM,            VEND_INTEL  },
+        { 17, CPU_FEATURE_PCID,            VEND_INTEL  },
+        { 18, CPU_FEATURE_DCA,             VEND_INTEL  },
+        { 19, CPU_FEATURE_SSE4_1,          VEND_SHARED },
+        { 20, CPU_FEATURE_SSE4_2,          VEND_SHARED },
+        { 21, CPU_FEATURE_X2APIC,          VEND_INTEL  },
+        { 22, CPU_FEATURE_MOVBE,           VEND_SHARED },
+        { 23, CPU_FEATURE_POPCNT,          VEND_SHARED },
+        { 24, CPU_FEATURE_TSC_DEADLINE,    VEND_INTEL  },
+        { 25, CPU_FEATURE_AES,             VEND_SHARED },
+        { 26, CPU_FEATURE_XSAVE,           VEND_SHARED },
+        { 27, CPU_FEATURE_OSXSAVE,         VEND_SHARED },
+        { 28, CPU_FEATURE_AVX,             VEND_SHARED },
+        { 29, CPU_FEATURE_F16C,            VEND_SHARED },
+        { 30, CPU_FEATURE_RDRAND,          VEND_SHARED },
+        { 31, CPU_FEATURE_HYPERVISOR,      VEND_SHARED },
     };
     const cpuid_feature_map_t regidmap_edx01[] = {
-        { 0, CPU_FEATURE_FPU },
-        { 1, CPU_FEATURE_VME },
-        { 2, CPU_FEATURE_DE },
-        { 3, CPU_FEATURE_PSE },
-        { 4, CPU_FEATURE_TSC },
-        { 5, CPU_FEATURE_MSR },
-        { 6, CPU_FEATURE_PAE },
-        { 7, CPU_FEATURE_MCE },
-        { 8, CPU_FEATURE_CX8 },
-        { 9, CPU_FEATURE_APIC },
-        { 11, CPU_FEATURE_SEP },
-        { 12, CPU_FEATURE_MTRR },
-        { 13, CPU_FEATURE_PGE },
-        { 14, CPU_FEATURE_MCA },
-        { 15, CPU_FEATURE_CMOV },
-        { 16, CPU_FEATURE_PAT },
-        { 17, CPU_FEATURE_PSE36 },
-        { 19, CPU_FEATURE_CLFLUSH },
-        { 23, CPU_FEATURE_MMX },
-        { 24, CPU_FEATURE_FXSR },
-        { 25, CPU_FEATURE_SSE },
-        { 26, CPU_FEATURE_SSE2 },
-        { 28, CPU_FEATURE_HT },
+        { 0,  CPU_FEATURE_FPU,             VEND_SHARED },
+        { 1,  CPU_FEATURE_VME,             VEND_SHARED },
+        { 2,  CPU_FEATURE_DE,              VEND_SHARED },
+        { 3,  CPU_FEATURE_PSE,             VEND_SHARED },
+        { 4,  CPU_FEATURE_TSC,             VEND_SHARED },
+        { 5,  CPU_FEATURE_MSR,             VEND_SHARED },
+        { 6,  CPU_FEATURE_PAE,             VEND_SHARED },
+        { 7,  CPU_FEATURE_MCE,             VEND_SHARED },
+        { 8,  CPU_FEATURE_CX8,             VEND_SHARED },
+        { 9,  CPU_FEATURE_APIC,            VEND_SHARED },
+        { 11, CPU_FEATURE_SEP,             VEND_SHARED },
+        { 12, CPU_FEATURE_MTRR,            VEND_SHARED },
+        { 13, CPU_FEATURE_PGE,             VEND_SHARED },
+        { 14, CPU_FEATURE_MCA,             VEND_SHARED },
+        { 15, CPU_FEATURE_CMOV,            VEND_SHARED },
+        { 16, CPU_FEATURE_PAT,             VEND_SHARED },
+        { 17, CPU_FEATURE_PSE36,           VEND_SHARED },
+        { 18, CPU_FEATURE_PN,              VEND_INTEL  },
+        { 19, CPU_FEATURE_CLFLUSH,         VEND_SHARED },
+        { 21, CPU_FEATURE_DTS,             VEND_INTEL  },
+        { 22, CPU_FEATURE_ACPI,            VEND_INTEL  },
+        { 23, CPU_FEATURE_MMX,             VEND_SHARED },
+        { 24, CPU_FEATURE_FXSR,            VEND_SHARED },
+        { 25, CPU_FEATURE_SSE,             VEND_SHARED },
+        { 26, CPU_FEATURE_SSE2,            VEND_SHARED },
+        { 27, CPU_FEATURE_SS,              VEND_INTEL  },
+        { 28, CPU_FEATURE_HT,              VEND_SHARED },
+        { 29, CPU_FEATURE_TM,              VEND_INTEL  },
+        { 30, CPU_FEATURE_IA64,            VEND_INTEL  },
+        { 31, CPU_FEATURE_PBE,             VEND_INTEL  },
     };
     const cpuid_feature_map_t regidmap_ebx07[] = {
-        { 0, CPU_FEATURE_FSGSBASE },
-        { 3, CPU_FEATURE_BMI1 },
-        { 5, CPU_FEATURE_AVX2 },
-        { 7, CPU_FEATURE_SMEP },
-        { 8, CPU_FEATURE_BMI2 },
+        { 0,  CPU_FEATURE_FSGSBASE,        VEND_SHARED },
+        { 1,  CPU_FEATURE_TSC_ADJUST,      VEND_INTEL  },
+        { 2,  CPU_FEATURE_SGX,             VEND_INTEL  },
+        { 3,  CPU_FEATURE_BMI1,            VEND_SHARED },
+        { 4,  CPU_FEATURE_HLE,             VEND_INTEL  },
+        { 5,  CPU_FEATURE_AVX2,            VEND_SHARED },
+        { 7,  CPU_FEATURE_SMEP,            VEND_SHARED },
+        { 8,  CPU_FEATURE_BMI2,            VEND_SHARED },
+        { 9,  CPU_FEATURE_ERMS,            VEND_INTEL  },
+        { 10, CPU_FEATURE_INVPCID,         VEND_INTEL  },
+        { 11, CPU_FEATURE_RTM,             VEND_INTEL  },
+        { 12, CPU_FEATURE_CQM,             VEND_INTEL  },
+        { 14, CPU_FEATURE_MPX,             VEND_INTEL  },
+        { 16, CPU_FEATURE_AVX512F,         VEND_INTEL  },
+        { 17, CPU_FEATURE_AVX512DQ,        VEND_INTEL  },
+        { 18, CPU_FEATURE_RDSEED,          VEND_INTEL  },
+        { 19, CPU_FEATURE_ADX,             VEND_INTEL  },
+        { 20, CPU_FEATURE_SMAP,            VEND_INTEL  },
+        { 22, CPU_FEATURE_PCOMMIT,         VEND_INTEL  },
+        { 23, CPU_FEATURE_CLFLUSHOPT,      VEND_INTEL  },
+        { 24, CPU_FEATURE_CLWB,            VEND_INTEL  },
+        { 26, CPU_FEATURE_AVX512PF,        VEND_INTEL  },
+        { 27, CPU_FEATURE_AVX512ER,        VEND_INTEL  },
+        { 28, CPU_FEATURE_AVX512CD,        VEND_INTEL  },
+        { 29, CPU_FEATURE_SHA,             VEND_INTEL  },
+        { 30, CPU_FEATURE_AVX512BW,        VEND_INTEL  },
+        { 31, CPU_FEATURE_AVX512VL,        VEND_INTEL  },
     };
     const cpuid_feature_map_t regidmap_edx07[] = {
-        { 26, CPU_FEATURE_SPEC_CTRL },
+        { 26, CPU_FEATURE_SPEC_CTRL,       VEND_SHARED },
     };
     const cpuid_feature_map_t regidmap_ecx81[] = {
-        { 0, CPU_FEATURE_LAHF_LM },
+        { 0,  CPU_FEATURE_LAHF_LM,         VEND_SHARED },
+        { 1,  CPU_FEATURE_CMP_LEGACY,      VEND_AMD    },
+        { 2,  CPU_FEATURE_SVM,             VEND_AMD    },
+        { 3,  CPU_FEATURE_EXTAPIC,         VEND_AMD    },
+        { 4,  CPU_FEATURE_CR8_LEGACY,      VEND_AMD    },
+        { 5,  CPU_FEATURE_ABM,             VEND_AMD    },
+        { 6,  CPU_FEATURE_SSE4A,           VEND_AMD    },
+        { 7,  CPU_FEATURE_MISALIGNSSE,     VEND_AMD    },
+        { 8,  CPU_FEATURE_3DNOWPREFETCH,   VEND_AMD    },
+        { 9,  CPU_FEATURE_OSVW,            VEND_AMD    },
+        { 10, CPU_FEATURE_IBS,             VEND_AMD    },
+        { 11, CPU_FEATURE_XOP,             VEND_AMD    },
+        { 12, CPU_FEATURE_SKINIT,          VEND_AMD    },
+        { 13, CPU_FEATURE_WDT,             VEND_AMD    },
+        { 15, CPU_FEATURE_LWP,             VEND_AMD    },
+        { 16, CPU_FEATURE_FMA4,            VEND_AMD    },
+        { 17, CPU_FEATURE_TCE,             VEND_AMD    },
+        { 19, CPU_FEATURE_NODEID_MSR,      VEND_AMD    },
+        { 21, CPU_FEATURE_TBM,             VEND_AMD    },
+        { 22, CPU_FEATURE_TOPOEXT,         VEND_AMD    },
+        { 23, CPU_FEATURE_PERFCTR_CORE,    VEND_AMD    },
+        { 24, CPU_FEATURE_PERFCTR_NB,      VEND_AMD    },
+        { 26, CPU_FEATURE_BPEXT,           VEND_AMD    },
+        { 28, CPU_FEATURE_PERFCTR_L2,      VEND_AMD    },
+        { 29, CPU_FEATURE_MONITORX,        VEND_AMD    },
     };
     const cpuid_feature_map_t regidmap_edx81[] = {
-        { 11, CPU_FEATURE_SYSCALL },
-        { 20, CPU_FEATURE_NX },
-        { 26, CPU_FEATURE_PDPE1GB },
-        { 27, CPU_FEATURE_RDTSCP },
-        { 29, CPU_FEATURE_LM },
+        { 11, CPU_FEATURE_SYSCALL,         VEND_SHARED },
+        { 20, CPU_FEATURE_NX,              VEND_SHARED },
+        { 22, CPU_FEATURE_MMXEXT,          VEND_AMD    },
+        { 25, CPU_FEATURE_FXSR_OPT,        VEND_AMD    },
+        { 26, CPU_FEATURE_PDPE1GB,         VEND_SHARED },
+        { 27, CPU_FEATURE_RDTSCP,          VEND_SHARED },
+        { 29, CPU_FEATURE_LM,              VEND_SHARED },
+        { 30, CPU_FEATURE_3DNOWEXT,        VEND_AMD    },
+        { 31, CPU_FEATURE_3DNOW,           VEND_AMD    },
     };
     const cpuid_feature_map_t regidmap_edx87[] = {
-        { 8, CPU_FEATURE_CONSTANT_TSC },
+        { 0,  CPU_FEATURE_TS,              VEND_AMD    },
+        { 1,  CPU_FEATURE_FID,             VEND_AMD    },
+        { 2,  CPU_FEATURE_VID,             VEND_AMD    },
+        { 3,  CPU_FEATURE_TTP,             VEND_AMD    },
+        { 4,  CPU_FEATURE_TM_AMD,          VEND_AMD    },
+        { 5,  CPU_FEATURE_STC,             VEND_AMD    },
+        { 6,  CPU_FEATURE_100MHZSTEPS,     VEND_AMD    },
+        { 7,  CPU_FEATURE_HWPSTATE,        VEND_AMD    },
+        { 8,  CPU_FEATURE_CONSTANT_TSC,    VEND_SHARED },
+        { 9,  CPU_FEATURE_CPB,             VEND_AMD    },
+        { 10, CPU_FEATURE_APERFMPERF,      VEND_AMD    },
+        { 11, CPU_FEATURE_PFI,             VEND_AMD    },
+        { 12, CPU_FEATURE_PA,              VEND_AMD    },
+    };
+    const cpuid_feature_map_t regidmap_ebx88[] = {
+        {  0, CPU_FEATURE_CLZERO,          VEND_AMD    },
+        {  1, CPU_FEATURE_IRPERF,          VEND_AMD    },
+    };
+    const cpuid_feature_map_t regidmap_eax_8000_1F[] = {
+        {  0, CPU_FEATURE_SME,             VEND_AMD    },
     };
 
     if (data->cpuid_max_basic >= 1) {
@@ -265,9 +374,13 @@ void set_common_features(const cpuid_raw_data_t *raw, cpuid_data_t *data)
     }
     if (data->cpuid_max_ext >= 0x80000007)
         set_feature_bits(data, regidmap_edx87, NELEMS(regidmap_edx87), raw->cpuid_ext[7][edx]);
+    if (data->cpuid_max_ext >= 0x80000008)
+        set_feature_bits(data, regidmap_ebx88, NELEMS(regidmap_ebx88), raw->cpuid_ext[8][ebx]);
+    if (data->cpuid_max_ext >= 0x8000001F)
+        set_feature_bits(data, regidmap_eax_8000_1F, NELEMS(regidmap_eax_8000_1F), raw->cpuid_ext[31][eax]);
 }
 
-void set_common_xfeatures(cpuid_data_t *data, const uint64_t xcr0)
+void set_cpuid_xfeatures(cpuid_data_t *data, const uint64_t xcr0)
 {
     unsigned int i;
     const struct {

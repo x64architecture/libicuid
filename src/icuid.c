@@ -345,7 +345,7 @@ int icuid_identify(cpuid_raw_data_t *raw, cpuid_data_t *data)
     }
 
     /* Populate data->flags */
-    set_common_features(raw, data);
+    set_cpuid_features(raw, data);
 
     /* Get addressing info */
     if (data->cpuid_max_ext >= 0x80000008) {
@@ -355,7 +355,7 @@ int icuid_identify(cpuid_raw_data_t *raw, cpuid_data_t *data)
 
     if (data->flags[CPU_FEATURE_OSXSAVE]) {
         uint64_t xcr0 = icuid_xgetbv(0);
-        set_common_xfeatures(data, xcr0);
+        set_cpuid_xfeatures(data, xcr0);
     }
 
     /* Get vendor specific info */

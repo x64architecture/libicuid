@@ -110,83 +110,8 @@ static void get_amd_cache_info(const cpuid_raw_data_t *raw, cpuid_data_t *data)
     }
 }
 
-static void get_amd_features(const cpuid_raw_data_t *raw, cpuid_data_t *data)
-{
-    const cpuid_feature_map_t regidmap_ecx81[] = {
-        {  1, CPU_FEATURE_CMP_LEGACY },
-        {  2, CPU_FEATURE_SVM },
-        {  3, CPU_FEATURE_EXTAPIC },
-        {  4, CPU_FEATURE_CR8_LEGACY },
-        {  5, CPU_FEATURE_ABM },
-        {  6, CPU_FEATURE_SSE4A },
-        {  7, CPU_FEATURE_MISALIGNSSE },
-        {  8, CPU_FEATURE_3DNOWPREFETCH },
-        {  9, CPU_FEATURE_OSVW },
-        { 10, CPU_FEATURE_IBS },
-        { 11, CPU_FEATURE_XOP },
-        { 12, CPU_FEATURE_SKINIT },
-        { 13, CPU_FEATURE_WDT },
-        { 15, CPU_FEATURE_LWP },
-        { 16, CPU_FEATURE_FMA4 },
-        { 17, CPU_FEATURE_TCE },
-        { 19, CPU_FEATURE_NODEID_MSR },
-        { 21, CPU_FEATURE_TBM },
-        { 22, CPU_FEATURE_TOPOEXT },
-        { 23, CPU_FEATURE_PERFCTR_CORE },
-        { 24, CPU_FEATURE_PERFCTR_NB },
-        { 26, CPU_FEATURE_BPEXT },
-        { 28, CPU_FEATURE_PERFCTR_L2 },
-        { 29, CPU_FEATURE_MONITORX },
-    };
-    const cpuid_feature_map_t regidmap_edx81[] = {
-        { 22, CPU_FEATURE_MMXEXT },
-        { 25, CPU_FEATURE_FXSR_OPT },
-        { 30, CPU_FEATURE_3DNOWEXT },
-        { 31, CPU_FEATURE_3DNOW },
-    };
-    const cpuid_feature_map_t regidmap_edx87[] = {
-        {  0, CPU_FEATURE_TS },
-        {  1, CPU_FEATURE_FID },
-        {  2, CPU_FEATURE_VID },
-        {  3, CPU_FEATURE_TTP },
-        {  4, CPU_FEATURE_TM_AMD },
-        {  5, CPU_FEATURE_STC },
-        {  6, CPU_FEATURE_100MHZSTEPS },
-        {  7, CPU_FEATURE_HWPSTATE },
-        {  9, CPU_FEATURE_CPB },
-        { 10, CPU_FEATURE_APERFMPERF },
-        { 11, CPU_FEATURE_PFI },
-        { 12, CPU_FEATURE_PA },
-    };
-    const cpuid_feature_map_t regidmap_ebx88[] = {
-        {  0, CPU_FEATURE_CLZERO },
-        {  1, CPU_FEATURE_IRPERF },
-    };
-    const cpuid_feature_map_t regidmap_eax_8000_1F[] = {
-        {  0, CPU_FEATURE_SME },
-    };
-
-    if (data->cpuid_max_ext < 0x80000001)
-        return;
-    set_feature_bits(data, regidmap_edx81, NELEMS(regidmap_edx81), raw->cpuid_ext[1][edx]);
-    set_feature_bits(data, regidmap_ecx81, NELEMS(regidmap_ecx81), raw->cpuid_ext[1][ecx]);
-
-    if (data->cpuid_max_ext < 0x80000007)
-        return;
-    set_feature_bits(data, regidmap_edx87, NELEMS(regidmap_edx87), raw->cpuid_ext[7][edx]);
-
-    if (data->cpuid_max_ext < 0x80000008)
-        return;
-    set_feature_bits(data, regidmap_ebx88, NELEMS(regidmap_ebx88), raw->cpuid_ext[8][ebx]);
-
-    if (data->cpuid_max_ext < 0x8000001F)
-        return;
-    set_feature_bits(data, regidmap_eax_8000_1F, NELEMS(regidmap_eax_8000_1F), raw->cpuid_ext[31][eax]);
-}
-
 void read_amd_data(const cpuid_raw_data_t *raw, cpuid_data_t *data)
 {
-    get_amd_features(raw, data);
     get_amd_number_cores(raw, data);
     get_amd_cache_info(raw, data);
     get_amd_codename(data);

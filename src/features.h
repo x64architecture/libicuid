@@ -14,12 +14,5 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-typedef struct {
-    uint8_t bit;
-    cpuid_feature_t feature;
-} cpuid_feature_map_t;
-
-void set_feature_bits(cpuid_data_t *data, const cpuid_feature_map_t *feature,
-                      const unsigned int array_size, const uint32_t reg);
-void set_common_features(const cpuid_raw_data_t *raw, cpuid_data_t *data);
-void set_common_xfeatures(cpuid_data_t *data, const uint64_t xcr0);
+void set_cpuid_features(const cpuid_raw_data_t *raw, cpuid_data_t *data);
+void set_cpuid_xfeatures(cpuid_data_t *data, const uint64_t xcr0);
