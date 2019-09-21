@@ -218,7 +218,7 @@ const match_codename_t codename_intel_t[] = {
     /* 45nm */
     { 0x06,   NA,   NA, 0x1D,   NA,    "Dunnington (MP)"        },
     { 0x06,   NA,   NA, 0x17,   NA,    "Penryn"                 },
-    { 0x06,   NA, 0x07, 0x17,   NA,    "Wolfdale"               },
+    { 0x06,   NA,   NA, 0x17, 0x0A,    "Wolfdale"               },
     { 0x06,   NA,   NA, 0x1A,   NA,    "Nehalem"                },
     { 0x06,   NA,   NA, 0x1E,   NA,    "Clarksfield"            },
     { 0x06,   NA,   NA, 0x2E,   NA,    "Nehalem EX"             },
