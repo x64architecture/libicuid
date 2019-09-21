@@ -172,82 +172,101 @@ static void get_intel_number_cores(const cpuid_raw_data_t *raw, cpuid_data_t *da
 }
 
 const match_codename_t codename_intel_t[] = {
-    /* i486 */
-    { 0x04, 0x00, 0x00, NA, NA,   "i486 DX-25/33"         },
-    { 0x04, 0x00, 0x01, NA, NA,    "i486 DX-50"            },
-    { 0x04, 0x00, 0x02, NA, NA,    "i486 SX"               },
-    { 0x04, 0x00, 0x03, NA, NA,    "i486 DX2"              },
-    { 0x04, 0x00, 0x04, NA, NA,    "i486 SL"               },
-    { 0x04, 0x00, 0x05, NA, NA,    "i486 SX2"              },
-    { 0x04, 0x00, 0x07, NA, NA,    "i486 DX2 WriteBack"    },
-    { 0x04, 0x00, 0x08, NA, NA,    "i486 DX4"              },
-    { 0x04, 0x00, 0x09, NA, NA,    "i486 DX4 WriteBack"    },
-
-    /* Pentium 1 - P5 based */
-    { 0x05, 0x00, 0x00, NA, NA,    "Pentium A-Step"         },
-    { 0x05, 0x00, 0x01, NA, NA,    "Pentium 1 (0.8u)"       },
-    { 0x05, 0x00, 0x02, NA, NA,    "Pentium 1 (0.35u)"      },
-    { 0x05, 0x00, 0x03, NA, NA,    "Pentium OverDrive"      },
-    { 0x05, 0x00, 0x04, NA, NA,    "Pentium 1 (0.35u)"      },
-    { 0x05, 0x00, 0x07, NA, NA,    "Pentium 1 (0.35u)"      },
-    { 0x05, 0x00, 0x08, NA, NA,    "Pentium MMX (0.25u)"    },
-    { 0x05, 0x00, 0x09, NA, NA,    "Clanton"                },
-
     /* Atom */
+
+    /* Bonnell (45nm) */
+    { 0x06,   NA,   NA, 0x1C,   NA,    "Bonnell"                },
+    { 0x06,   NA,   NA, 0x26,   NA,    "Lincroft"               },
+
+    /* Saltwell (32nm) */
+    { 0x06,   NA,   NA, 0x35,   NA,    "Cloverview"             },
+    { 0x06,   NA,   NA, 0x36,   NA,    "Cedarview"              },
+    { 0x06,   NA,   NA, 0x27,   NA,    "Penwell"                },
+
+    /* Silvermont (22nm)*/
+    { 0x06,   NA,   NA, 0x5D,   NA,    "SoFIA"                  },
+    { 0x06,   NA,   NA, 0x5A,   NA,    "Anniedale"              },
+    { 0x06,   NA,   NA, 0x4D,   NA,    "Silvermont"             },
+    { 0x06,   NA,   NA, 0x4A,   NA,    "Tangier"                },
+    { 0x06,   NA,   NA, 0x37,   NA,    "Bay Trail"              },
+
     /* Moorefield (22nm) */
-    { 0x06, 0x00, 0x37, NA, NA,    "Moorefield"             },
-    /* Cherry Trail (14nm) */
-    { 0x06, 0x00, 0x35, NA, NA,    "Cherry Trail"           },
+    { 0x06,   NA,   NA, 0x37,   NA,    "Moorefield"             },
+
+    /* Airmont (14nm) */
+    { 0x06,   NA,   NA, 0x4C,   NA,    "Airmont"                },
+
+    /* Goldmont (14nm) */
+    { 0x06,   NA,   NA, 0x5C,   NA,    "Apollo Lake"            },
+    { 0x06,   NA,   NA, 0x5F,   NA,    "Denverton"              },
+
+    /* Goldmont Plus (14nm) */
+    { 0x06,   NA,   NA, 0x7A,   NA,    "Gemini Lake"            },
+
+    /* Tremont (10nm) */
+    { 0x06,   NA,   NA, 0x86,   NA,    "Tremont"                },
 
     /* 90nm */
-    { 0x0F, 0x00, 0x03, NA, NA,    "Prescott"               },
-    { 0x0F, 0x00, 0x04, NA, NA,    "Prescott"               },
-    /* 65nm */
-    { 0x0F, 0x00, 0x06, NA, NA,    "Presler"                },
-    { 0x06, 0x00, 0x0F, NA, NA,    "Merom"                  },
-    { 0x06, 0x00, 0x16, NA, NA,    "Merom"                  },
-    /* 45nm */
-    { 0x06, 0x1D, NA, NA, NA,    "Dunnington (MP)"        },
-    { 0x06, 0x17, NA, NA, NA,    "Penryn"                 },
-    { 0x06, 0x1A, NA, NA, NA,    "Nehalem"                },
-    { 0x06, 0x1E, NA, NA, NA,    "Nehalem"                },
-    { 0x06, 0x2E, NA, NA, NA,    "Nehalem EX"             },
-    /* 32nm */
-    { 0x06, 0x25, NA, NA, NA,    "Westmere"               },
-    { 0x06, 0x2C, NA, NA, NA,    "Westmere"               },
-    { 0x06, 0x2F, NA, NA, NA,    "Westmere EX"            },
+    { 0x0F,   NA, 0x03, 0x00,   NA,    "Prescott"               },
+    { 0x0F,   NA, 0x04, 0x00,   NA,    "Prescott"               },
 
-    { 0x06, 0x2A, NA, NA, NA,    "Sandy Bridge"           },
-    { 0x06, 0x2D, NA, NA, NA,    "Sandy Bridge-E[NP]"     },
+    /* 65nm */
+    { 0x0F,   NA, 0x06, 0x00,   NA,    "Presler"                },
+    { 0x06,   NA, 0x0F, 0x00,   NA,    "Merom"                  },
+    { 0x06,   NA, 0x16, 0x00,   NA,    "Merom"                  },
+
+    /* 45nm */
+    { 0x06,   NA,   NA, 0x1D,   NA,    "Dunnington (MP)"        },
+    { 0x06,   NA,   NA, 0x17,   NA,    "Penryn"                 },
+    { 0x06,   NA,   NA, 0x1A,   NA,    "Nehalem"                },
+    { 0x06,   NA,   NA, 0x1E,   NA,    "Clarksfield"            },
+    { 0x06,   NA,   NA, 0x2E,   NA,    "Nehalem EX"             },
+
+    /* 32nm */
+    { 0x06,   NA,   NA, 0x25,   NA,    "Westmere"               },
+    { 0x06,   NA,   NA, 0x2C,   NA,    "Westmere"               },
+    { 0x06,   NA,   NA, 0x2F,   NA,    "Westmere EX"            },
+
+    { 0x06,   NA,   NA, 0x2A,   NA,    "Sandy Bridge"           },
+    { 0x06,   NA,   NA, 0x2D,   NA,    "Sandy Bridge-E[NP]"     },
+
     /* Ivy Bridge (22nm) */
-    { 0x06, 0x3A, NA, NA, NA,    "Ivy Bridge"             },
-    { 0x06, 0x2B, NA, NA, NA,    "Ivy Bridge LGA 2011"    },
-    { 0x06, 0x3E, NA, NA, NA,    "Ivy Bridge E"           },
+    { 0x06,   NA,   NA, 0x3A,   NA,    "Ivy Bridge"             },
+    { 0x06,   NA,   NA, 0x2B,   NA,    "Ivy Bridge LGA 2011"    },
+    { 0x06,   NA,   NA, 0x3E,   NA,    "Ivy Bridge E"           },
 
     /* Haswell (22nm) */
-    { 0x06, 0x3C, NA, NA, NA,    "Haswell"                },
-    { 0x06, 0x3F, NA, NA, NA,    "Haswell-E"              },
-    { 0x06, 0x45, NA, NA, NA,    "Haswell-ULT"            },
-    { 0x06, 0x46, NA, NA, NA,    "Crystal Well"           },
+    { 0x06,   NA,   NA, 0x3C,   NA,    "Haswell"                },
+    { 0x06,   NA,   NA, 0x3F,   NA,    "Haswell-E"              },
+    { 0x06,   NA,   NA, 0x45,   NA,    "Haswell-ULT"            },
+    { 0x06,   NA,   NA, 0x46,   NA,    "Crystal Well"           },
 
     /* Broadwell (14nm) */
-    { 0x06, 0x3D, NA, NA, NA,    "Broadwell"              },
-    { 0x06, 0x47, NA, NA, NA,    "Broadwell"              },
-    { 0x06, 0x4F, NA, NA, NA,    "Broadwell"              },
-    { 0x06, 0x56, NA, NA, NA,    "Broadwell"              },
+    { 0x06,   NA,   NA, 0x3D,   NA,    "Broadwell"              },
+    { 0x06,   NA,   NA, 0x47,   NA,    "Broadwell"              },
+    { 0x06,   NA,   NA, 0x4F,   NA,    "Broadwell"              },
+    { 0x06,   NA,   NA, 0x56,   NA,    "Broadwell"              },
 
     /* Skylake (14nm) */
-    { 0x06, 0x4E, NA, NA, NA,    "Skylake"                },
-    { 0x06, 0x5E, NA, NA, NA,    "Skylake"                },
+    { 0x06,   NA,   NA, 0x4E,   NA,    "Skylake"                },
+    { 0x06,   NA,   NA, 0x5E,   NA,    "Skylake"                },
 
     /* Knights Landing (14nm) */
-    { 0x06, 0x57, NA, NA, NA,    "Knights Landing"        },
+    { 0x06,   NA,   NA, 0x75,   NA,    "Knights Landing"        },
+    { 0x06,   NA,   NA, 0x58,   NA,    "Knights Mill"           },
 
     /* Kaby Lake (14nm) */
-    { 0x06, 0x8E, NA, NA, NA,    "Kaby Lake"              },
+    { 0x06,   NA,   NA, 0x8E,   NA,    "Kaby Lake"              },
 
     /* Coffee Lake (14nm) */
-    { 0x06, 0x9E, NA, NA, NA,    "Coffee Lake"            },
+    { 0x06,   NA,   NA, 0x9E,   NA,    "Coffee Lake"            },
+
+    /* Cannon Lake (14nm) */
+    { 0x06,   NA,   NA, 0x66,   NA,    "Cannon Lake"            },
+
+    /* Ice Lake (10nm) */
+    { 0x06,   NA,   NA, 0x7D,   NA,    "Ice Lake"               },
+    { 0x06,   NA,   NA, 0x7E,   NA,    "Ice Lake"               },
 };
 
 /**

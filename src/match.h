@@ -16,9 +16,9 @@
 
 typedef struct {
     uint32_t family;
-    uint32_t ext_model;
-    uint32_t model;
     uint32_t ext_family;
+    uint32_t model;
+    uint32_t ext_model;
     uint32_t stepping;
     const char *codename;
 } match_codename_t;
