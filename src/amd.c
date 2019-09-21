@@ -30,7 +30,7 @@ static void get_amd_number_cores(const cpuid_raw_data_t *raw, cpuid_data_t *data
     if (data->cpuid_max_basic >= 1) {
         logical_cpus = (raw->cpuid[1][ebx] >> 16) & 0xFF;
         if (raw->cpuid_ext[0][0] >= 8) {
-            cores = 1 + (raw->cpuid_ext[8][ecx] & 0xFF);
+            cores = (raw->cpuid_ext[8][ecx] >> 12) & 0xF; // ApicIdCoreIdSize
         }
     }
     if (data->flags[CPU_FEATURE_HT]) {
