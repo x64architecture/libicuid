@@ -195,6 +195,9 @@ const char *cpu_feature_str(cpuid_feature_t feature)
         case CPU_FEATURE_SGX: return "sgx";
         case CPU_FEATURE_SME: return "sme";
         case CPU_FEATURE_SPEC_CTRL: return "spec_ctrl";
+        case CPU_FEATURE_SEV: return "sev";
+        case CPU_FEATURE_PAGEFLUSH: return "page_flush";
+        case CPU_FEATURE_SEV_ES: return "sev_es";
         default:
             return "";
     }
@@ -283,16 +286,16 @@ void set_cpuid_features(const cpuid_raw_data_t *raw, cpuid_data_t *data)
         { 14, CPU_FEATURE_MPX,             VEND_INTEL  },
         { 16, CPU_FEATURE_AVX512F,         VEND_INTEL  },
         { 17, CPU_FEATURE_AVX512DQ,        VEND_INTEL  },
-        { 18, CPU_FEATURE_RDSEED,          VEND_INTEL  },
-        { 19, CPU_FEATURE_ADX,             VEND_INTEL  },
-        { 20, CPU_FEATURE_SMAP,            VEND_INTEL  },
+        { 18, CPU_FEATURE_RDSEED,          VEND_SHARED },
+        { 19, CPU_FEATURE_ADX,             VEND_SHARED },
+        { 20, CPU_FEATURE_SMAP,            VEND_SHARED },
         { 22, CPU_FEATURE_PCOMMIT,         VEND_INTEL  },
-        { 23, CPU_FEATURE_CLFLUSHOPT,      VEND_INTEL  },
+        { 23, CPU_FEATURE_CLFLUSHOPT,      VEND_SHARED },
         { 24, CPU_FEATURE_CLWB,            VEND_INTEL  },
         { 26, CPU_FEATURE_AVX512PF,        VEND_INTEL  },
         { 27, CPU_FEATURE_AVX512ER,        VEND_INTEL  },
         { 28, CPU_FEATURE_AVX512CD,        VEND_INTEL  },
-        { 29, CPU_FEATURE_SHA,             VEND_INTEL  },
+        { 29, CPU_FEATURE_SHA,             VEND_SHARED },
         { 30, CPU_FEATURE_AVX512BW,        VEND_INTEL  },
         { 31, CPU_FEATURE_AVX512VL,        VEND_INTEL  },
     };
@@ -358,6 +361,9 @@ void set_cpuid_features(const cpuid_raw_data_t *raw, cpuid_data_t *data)
     };
     const cpuid_feature_map_t regidmap_eax_8000_1F[] = {
         {  0, CPU_FEATURE_SME,             VEND_AMD    },
+        {  1, CPU_FEATURE_SEV,             VEND_AMD    },
+        {  2, CPU_FEATURE_PAGEFLUSH,       VEND_AMD    },
+        {  3, CPU_FEATURE_SEV_ES,          VEND_AMD    },
     };
 
     if (data->cpuid_max_basic >= 1) {

@@ -155,7 +155,7 @@ err:
     return 0;
 }
 
-#define BUF_SIZE 512
+#define BUF_SIZE 4096
 
 int run_test(cpuid_data_t *data, const char *file)
 {

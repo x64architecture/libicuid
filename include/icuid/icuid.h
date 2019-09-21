@@ -181,8 +181,8 @@ typedef enum {
     /* 15 Reserved */
     CPU_FEATURE_AVX512F,       /*!< AVX-512 Foundation */
     CPU_FEATURE_AVX512DQ,      /*!< AVX-512 Doubleword and Quadword */
-    CPU_FEATURE_RDSEED,        /*!< Intel RDSEED Instruction */
-    CPU_FEATURE_ADX,           /*!< Intel ADX Extensions */
+    CPU_FEATURE_RDSEED,        /*!< RDSEED Instruction */
+    CPU_FEATURE_ADX,           /*!< ADX Extensions */
     CPU_FEATURE_SMAP,          /*!< Supervisor Mode Access Prevention */
     /* 21 Reserved */
     CPU_FEATURE_PCOMMIT,       /*!< PCOMMIT Instruction */
@@ -191,7 +191,7 @@ typedef enum {
     CPU_FEATURE_AVX512PF,      /*!< AVX-512 Prefetch Instructions */
     CPU_FEATURE_AVX512ER,      /*!< AVX-512 Exponential and Reciprocal Instructions */
     CPU_FEATURE_AVX512CD,      /*!< AVX-512 Conflict Detection Instructions */
-    CPU_FEATURE_SHA,           /*!< Intel SHA Extensions */
+    CPU_FEATURE_SHA,           /*!< SHA Extensions */
     CPU_FEATURE_AVX512BW,      /*!< AVX-512 Byte and Word Instructions */
     CPU_FEATURE_AVX512VL,      /*!< AVX-512 Vector Length Instructions */
 
@@ -269,7 +269,10 @@ typedef enum {
 
     /* cpuid 0x8000001F, eax */
     CPU_FEATURE_SME,           /*!< Secure Memory Encryption Support (AMD Only) */
-    /* 1-31 Reserved */
+    CPU_FEATURE_SEV,           /*!< Secure Encrypted Virtualization (AMD Only) */
+    CPU_FEATURE_PAGEFLUSH,     /*!< Page Flush MSR Supported (AMD Only) */
+    CPU_FEATURE_SEV_ES,        /*!< SEV Encrypted State (AMD Only) */
+    /* 4-31 Reserved */
 
     NUM_CPU_FEATURES,
 } cpuid_feature_t;
