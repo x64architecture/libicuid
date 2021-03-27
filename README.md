@@ -13,7 +13,7 @@ licensed under the ISC License.
 
 ## Build Requirements
  - All Platforms
-  * CMake 2.8.8 or newer
+  * CMake 2.8.12 or newer
  - *NIX
   * gcc/clang
  - Windows
