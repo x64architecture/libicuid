@@ -178,16 +178,18 @@ typedef enum {
     CPU_FEATURE_CQM,           /*!< Cache QoS Monitoring */
     /* 13 Reserved */
     CPU_FEATURE_MPX,           /*!< Intel MPX Extensions */
-    /* 15 Reserved */
+    CPU_FEATURE_RDTA,          /*!< Intel RDT Extensions */
     CPU_FEATURE_AVX512F,       /*!< AVX-512 Foundation */
     CPU_FEATURE_AVX512DQ,      /*!< AVX-512 Doubleword and Quadword */
     CPU_FEATURE_RDSEED,        /*!< RDSEED Instruction */
     CPU_FEATURE_ADX,           /*!< ADX Extensions */
     CPU_FEATURE_SMAP,          /*!< Supervisor Mode Access Prevention */
+    CPU_FEATURE_AVX512IFMA,    /*!< AVX-512 Integer Fused Multiply Add Instructions */
     /* 21 Reserved */
     CPU_FEATURE_PCOMMIT,       /*!< PCOMMIT Instruction */
     CPU_FEATURE_CLFLUSHOPT,    /*!< CLFLUSHOPT Instruction */
     CPU_FEATURE_CLWB,          /*!< CLWB Instruction */
+    CPU_FEATURE_IPT,           /*!< Intel Processor Trace */
     CPU_FEATURE_AVX512PF,      /*!< AVX-512 Prefetch Instructions */
     CPU_FEATURE_AVX512ER,      /*!< AVX-512 Exponential and Reciprocal Instructions */
     CPU_FEATURE_AVX512CD,      /*!< AVX-512 Conflict Detection Instructions */
@@ -195,8 +197,68 @@ typedef enum {
     CPU_FEATURE_AVX512BW,      /*!< AVX-512 Byte and Word Instructions */
     CPU_FEATURE_AVX512VL,      /*!< AVX-512 Vector Length Instructions */
 
+    /* cpuid 0x00000007, ecx */
+    CPU_FEATURE_PREFETCHWT1,   /*!< Prefetch Vector Data Into Caches with Intent to Write and T1 Hint */
+    CPU_FEATURE_AVX512_VBMI,   /*!< AVX-512 Vector Byte Manipulation Instructions */
+    CPU_FEATURE_UMIP,          /*!< User-mode Instruction Prevention */
+    CPU_FEATURE_PKU,           /*!< Memory Protection Keys for Userspace */
+    CPU_FEATURE_OSPKE,         /*!< Indicates OS Support for Protection Keys */
+    CPU_FEATURE_WAITPKG,       /*!< UMONITOR/UMWAIT/TPAUSE Instructions */
+    CPU_FEATURE_AVX512_VBMI2,  /*!< AVX-512 Vector Byte Manipulation 2 Instructions */
+    CPU_FEATURE_CETSS,         /*!< Supports CET shadow stack feature */
+    CPU_FEATURE_GFNI,          /*!< Galois Field New Instructions */
+    CPU_FEATURE_VAES,          /*!< Vector AES Instructions */
+    CPU_FEATURE_VPCLMULQDQ,    /*!< Vector Carry-Less Multiplication Instructions */
+    CPU_FEATURE_AVX512_VNNI,   /*!< AVX-512 Vector Neural Network Instructions */
+    CPU_FEATURE_AVX512_BITALG, /*!< AVX-512 Bit Algorithms */
+    /* 13 Reserved */
+    CPU_FEATURE_AVX512_VPOPCNTDQ, /*!< Vector POPCNTDQ instructions */
+    /* 15 Reserved */
+    CPU_FEATURE_LA57,          /*!< 57-bit linear addresses and five-level paging */
+    /* Bits 17 - 21: The value of MAWAU used by the BNDLDX and BNDSTX instructions in 64-bit mode. */
+    CPU_FEATURE_RDPID,         /*!< RDPID Instruction */
+    CPU_FEATURE_KL,            /*!< Key Locker */
+    /* 24 Reserved */
+    CPU_FEATURE_CLDEMOTE,      /*!< CLDEMOTE Instruction */
+    /* 26 Reserved */
+    CPU_FEATURE_MOVDIRI,       /*!< MOVDIRI Instruction */
+    CPU_FEATURE_MOVDIR64B,     /*!< MOVDIRI64B Instruction */
+    CPU_FEATURE_ENQCMD,        /*!< ENQCMD and ENQCMDS Instructions */
+    CPU_FEATURE_SGX_LC,        /*!< Software Guard Extensions Launch Control */
+    CPU_FEATURE_PKS,           /*!< Protection Keys for Supervisor-mode Pages */
+
     /* cpuid 0x00000007, edx */
-    CPU_FEATURE_SPEC_CTRL,     /*!< Control Speculation Control */
+    /* 1 Reserved */
+    CPU_FEATURE_AVX512_4VNNIW,       /*!< AVX-512 Neural Network Instructions */
+    CPU_FEATURE_AVX512_4FMAPS,       /*!< AVX-512 Multiply Accumulation Single Precision */
+    CPU_FEATURE_AVX512_FSRM,         /*!< Fast Short Rep Mov */
+    /* 5 Reserved */
+    /* 6 Reserved */
+    /* 7 Reserved */
+    CPU_FEATURE_AVX512_VP2INTERSECT, /*!< AVX-512 Intersect */
+    CPU_FEATURE_SRBDS_CTRL,          /*!< SRBDS mitigation MSR available */
+    CPU_FEATURE_MD_CLEAR,            /*!< VERW clears CPU buffers */
+    /* 11 Reserved */
+    /* 12 Reserved */
+    CPU_FEATURE_TSX_FORCE_ABORT,     /*!< TSX_FORCE_ABORT */
+    CPU_FEATURE_SERIALIZE,           /*!< SERIALIZE instruction */
+    /* 15 Reserved */
+    CPU_FEATURE_TSXLDTRK,            /*!< TSX Suspend Load Address Tracking */
+    /* 17 Reserved */
+    CPU_FEATURE_PCONFIG,             /*!< Intel PCONFIG */
+    CPU_FEATURE_ARCH_LBR,            /*!< Intel ARCH LBR */
+    /* 20 Reserved */
+    /* 21 Reserved */
+    /* 22 Reserved */
+    CPU_FEATURE_AVX512_FP16,         /*!< AVX-512 FP16 */
+    /* 24 Reserved */
+    /* 25 Reserved */
+    CPU_FEATURE_SPEC_CTRL,           /*!< Control Speculation Control (IBRS + IBPB) */
+    CPU_FEATURE_INTEL_STIBP,         /*!< Single Thread Indirect Branch Predictors */
+    CPU_FEATURE_FLUSH_L1D,           /*!< Flush L1D cache */
+    CPU_FEATURE_ARCH_CAPABILITIES,   /*!< IA32_ARCH_CAPABILITIES MSR (Intel only) */
+    CPU_FEATURE_CORE_CAPABILITIES,   /*!< IA32_CORE_CAPABILITIES MSR */
+    CPU_FEATURE_SPEC_CTRL_SSBD,      /*!< Speculative Store Bypass Disable */
 
     /* cpuid 0x80000001, ecx */
     CPU_FEATURE_LAHF_LM,       /*!< LAHF/SAHF Supported In 64-bit Mode */

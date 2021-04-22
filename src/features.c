@@ -162,9 +162,11 @@ const char *cpu_feature_str(cpuid_feature_t feature)
         case CPU_FEATURE_ERMS: return "erms";
         case CPU_FEATURE_INVPCID: return "invpcid";
         case CPU_FEATURE_MPX: return "mpx";
+        case CPU_FEATURE_RDTA: return "rdt_a";
         case CPU_FEATURE_RDSEED: return "rdseed";
         case CPU_FEATURE_ADX: return "adx";
         case CPU_FEATURE_SMAP: return "smap";
+        case CPU_FEATURE_AVX512IFMA: return "avx512_ifma";
         case CPU_FEATURE_SHA: return "sha";
         case CPU_FEATURE_CLZERO: return "clzero";
         case CPU_FEATURE_IRPERF: return "irperf";
@@ -187,6 +189,7 @@ const char *cpu_feature_str(cpuid_feature_t feature)
         case CPU_FEATURE_PCOMMIT: return "pcommit";
         case CPU_FEATURE_CLFLUSHOPT: return "clflushopt";
         case CPU_FEATURE_CLWB: return "clwb";
+        case CPU_FEATURE_IPT: return "ipt";
         case CPU_FEATURE_AVX512PF: return "avx512pf";
         case CPU_FEATURE_AVX512ER: return "avx512er";
         case CPU_FEATURE_AVX512CD: return "avx512cd";
@@ -194,7 +197,47 @@ const char *cpu_feature_str(cpuid_feature_t feature)
         case CPU_FEATURE_AVX512VL: return "avx512vl";
         case CPU_FEATURE_SGX: return "sgx";
         case CPU_FEATURE_SME: return "sme";
+        case CPU_FEATURE_PREFETCHWT1: return "prefetchwt1";
+        case CPU_FEATURE_AVX512_VBMI: return "avx512_vbmi";
+        case CPU_FEATURE_UMIP: return "umip";
+        case CPU_FEATURE_PKU: return "pku";
+        case CPU_FEATURE_OSPKE: return "ospke";
+        case CPU_FEATURE_WAITPKG: return "waitpkg";
+        case CPU_FEATURE_AVX512_VBMI2: return "avx512_vbmi2";
+        case CPU_FEATURE_CETSS: return "cetss";
+        case CPU_FEATURE_GFNI: return "gfni";
+        case CPU_FEATURE_VAES: return "vaes";
+        case CPU_FEATURE_VPCLMULQDQ: return "vpclmulqdq";
+        case CPU_FEATURE_AVX512_VNNI: return "avx512_vnni";
+        case CPU_FEATURE_AVX512_BITALG: return "avx512_bitalg";
+        case CPU_FEATURE_AVX512_VPOPCNTDQ: return "avx512_vpopcntdq";
+        case CPU_FEATURE_LA57: return "la57";
+        case CPU_FEATURE_RDPID: return "rdpid";
+        case CPU_FEATURE_KL: return "kl";
+        case CPU_FEATURE_CLDEMOTE: return "cldemote";
+        case CPU_FEATURE_MOVDIRI: return "movdiri";
+        case CPU_FEATURE_MOVDIR64B: return "movdir64b";
+        case CPU_FEATURE_ENQCMD: return "enqcmd";
+        case CPU_FEATURE_SGX_LC: return "sqx_lc";
+        case CPU_FEATURE_PKS: return "pks";
+        case CPU_FEATURE_AVX512_4VNNIW: return "avx512_4vnniw";
+        case CPU_FEATURE_AVX512_4FMAPS: return "avx512_4fmaps";
+        case CPU_FEATURE_AVX512_FSRM: return "avx512_fsrm";
+        case CPU_FEATURE_AVX512_VP2INTERSECT: return "avx512_vp2intersect";
+        case CPU_FEATURE_SRBDS_CTRL: return "srbds_ctrl";
+        case CPU_FEATURE_MD_CLEAR: return "md_clear";
+        case CPU_FEATURE_TSX_FORCE_ABORT: return "tsx_force_abort";
+        case CPU_FEATURE_SERIALIZE: return "serialize";
+        case CPU_FEATURE_TSXLDTRK: return "tsxldtrk";
+        case CPU_FEATURE_PCONFIG: return "pconfig";
+        case CPU_FEATURE_ARCH_LBR: return "arch_lbr";
+        case CPU_FEATURE_AVX512_FP16: return "avx512_fp16";
         case CPU_FEATURE_SPEC_CTRL: return "spec_ctrl";
+        case CPU_FEATURE_INTEL_STIBP: return "intel_stibp";
+        case CPU_FEATURE_FLUSH_L1D: return "flush_l1d";
+        case CPU_FEATURE_ARCH_CAPABILITIES: return "arch_capabilities";
+        case CPU_FEATURE_CORE_CAPABILITIES: return "core_capabilities";
+        case CPU_FEATURE_SPEC_CTRL_SSBD: return "spec_ctrl_ssbd";
         case CPU_FEATURE_SEV: return "sev";
         case CPU_FEATURE_PAGEFLUSH: return "page_flush";
         case CPU_FEATURE_SEV_ES: return "sev_es";
@@ -284,14 +327,17 @@ void set_cpuid_features(const cpuid_raw_data_t *raw, cpuid_data_t *data)
         { 11, CPU_FEATURE_RTM,             VEND_INTEL  },
         { 12, CPU_FEATURE_CQM,             VEND_INTEL  },
         { 14, CPU_FEATURE_MPX,             VEND_INTEL  },
+        { 15, CPU_FEATURE_RDTA,            VEND_INTEL  },
         { 16, CPU_FEATURE_AVX512F,         VEND_INTEL  },
         { 17, CPU_FEATURE_AVX512DQ,        VEND_INTEL  },
         { 18, CPU_FEATURE_RDSEED,          VEND_SHARED },
         { 19, CPU_FEATURE_ADX,             VEND_SHARED },
         { 20, CPU_FEATURE_SMAP,            VEND_SHARED },
+        { 21, CPU_FEATURE_AVX512IFMA,      VEND_INTEL  },
         { 22, CPU_FEATURE_PCOMMIT,         VEND_INTEL  },
         { 23, CPU_FEATURE_CLFLUSHOPT,      VEND_SHARED },
-        { 24, CPU_FEATURE_CLWB,            VEND_INTEL  },
+        { 24, CPU_FEATURE_CLWB,            VEND_SHARED },
+        { 25, CPU_FEATURE_IPT,             VEND_INTEL  },
         { 26, CPU_FEATURE_AVX512PF,        VEND_INTEL  },
         { 27, CPU_FEATURE_AVX512ER,        VEND_INTEL  },
         { 28, CPU_FEATURE_AVX512CD,        VEND_INTEL  },
@@ -299,8 +345,50 @@ void set_cpuid_features(const cpuid_raw_data_t *raw, cpuid_data_t *data)
         { 30, CPU_FEATURE_AVX512BW,        VEND_INTEL  },
         { 31, CPU_FEATURE_AVX512VL,        VEND_INTEL  },
     };
+    const cpuid_feature_map_t regidmap_ecx07[] = {
+        { 0,  CPU_FEATURE_PREFETCHWT1,      VEND_INTEL  },
+        { 1,  CPU_FEATURE_AVX512_VBMI,      VEND_INTEL  },
+        { 2,  CPU_FEATURE_UMIP,             VEND_SHARED },
+        { 3,  CPU_FEATURE_PKU,              VEND_SHARED },
+        { 4,  CPU_FEATURE_OSPKE,            VEND_SHARED },
+        { 5,  CPU_FEATURE_WAITPKG,          VEND_INTEL  },
+        { 6,  CPU_FEATURE_AVX512_VBMI2,     VEND_INTEL  },
+        { 7,  CPU_FEATURE_CETSS,            VEND_SHARED },
+        { 8,  CPU_FEATURE_GFNI,             VEND_INTEL  },
+        { 9,  CPU_FEATURE_VAES,             VEND_SHARED },
+        { 10, CPU_FEATURE_VPCLMULQDQ,       VEND_SHARED },
+        { 11, CPU_FEATURE_AVX512_VNNI,      VEND_INTEL  },
+        { 12, CPU_FEATURE_AVX512_BITALG,    VEND_INTEL  },
+        { 14, CPU_FEATURE_AVX512_VPOPCNTDQ, VEND_INTEL  },
+        { 16, CPU_FEATURE_LA57,             VEND_INTEL  },
+        { 22, CPU_FEATURE_RDPID,            VEND_SHARED },
+        { 23, CPU_FEATURE_KL,               VEND_INTEL  },
+        { 25, CPU_FEATURE_CLDEMOTE,         VEND_INTEL  },
+        { 27, CPU_FEATURE_MOVDIRI,          VEND_INTEL  },
+        { 28, CPU_FEATURE_MOVDIR64B,        VEND_INTEL  },
+        { 29, CPU_FEATURE_ENQCMD,           VEND_INTEL  },
+        { 30, CPU_FEATURE_SGX_LC,           VEND_INTEL  },
+        { 31, CPU_FEATURE_PKS,              VEND_INTEL  },
+    };
     const cpuid_feature_map_t regidmap_edx07[] = {
-        { 26, CPU_FEATURE_SPEC_CTRL,       VEND_SHARED },
+        { 2,  CPU_FEATURE_AVX512_4VNNIW,       VEND_INTEL },
+        { 3,  CPU_FEATURE_AVX512_4FMAPS,       VEND_INTEL },
+        { 4,  CPU_FEATURE_AVX512_FSRM,         VEND_INTEL },
+        { 8,  CPU_FEATURE_AVX512_VP2INTERSECT, VEND_INTEL },
+        { 9,  CPU_FEATURE_SRBDS_CTRL,          VEND_INTEL },
+        { 10, CPU_FEATURE_MD_CLEAR,            VEND_INTEL },
+        { 13, CPU_FEATURE_TSX_FORCE_ABORT,     VEND_INTEL },
+        { 14, CPU_FEATURE_SERIALIZE,           VEND_INTEL },
+        { 16, CPU_FEATURE_TSXLDTRK,            VEND_INTEL },
+        { 18, CPU_FEATURE_PCONFIG,             VEND_INTEL },
+        { 19, CPU_FEATURE_ARCH_LBR,            VEND_INTEL },
+        { 23, CPU_FEATURE_AVX512_FP16,         VEND_INTEL },
+        { 26, CPU_FEATURE_SPEC_CTRL,           VEND_INTEL },
+        { 26, CPU_FEATURE_INTEL_STIBP,         VEND_INTEL },
+        { 27, CPU_FEATURE_FLUSH_L1D,           VEND_INTEL },
+        { 28, CPU_FEATURE_ARCH_CAPABILITIES,   VEND_INTEL },
+        { 29, CPU_FEATURE_CORE_CAPABILITIES,   VEND_INTEL },
+        { 30, CPU_FEATURE_SPEC_CTRL_SSBD,      VEND_INTEL },
     };
     const cpuid_feature_map_t regidmap_ecx81[] = {
         { 0,  CPU_FEATURE_LAHF_LM,         VEND_SHARED },
@@ -372,6 +460,7 @@ void set_cpuid_features(const cpuid_raw_data_t *raw, cpuid_data_t *data)
     }
     if (data->cpuid_max_basic >= 7) {
         set_feature_bits(data, regidmap_ebx07, NELEMS(regidmap_ebx07), raw->cpuid[7][ebx]);
+        set_feature_bits(data, regidmap_ecx07, NELEMS(regidmap_ecx07), raw->cpuid[7][ecx]);
         set_feature_bits(data, regidmap_edx07, NELEMS(regidmap_edx07), raw->cpuid[7][edx]);
     }
     if (data->cpuid_max_ext >= 0x80000001) {
