@@ -9,8 +9,8 @@ cpuid_is_supported endp
 icuid_cpuid proc
     mov r8, rdx
 
+    mov eax, ecx
     xor ecx, ecx
-    mov rax, rcx
 
     push rbx
 
